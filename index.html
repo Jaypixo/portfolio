@@ -1,151 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jaypix</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Jaypix · Digital Playground</title>
+    <!-- Google Fonts + smooth base -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (free icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        body {
+            background: radial-gradient(circle at 10% 20%, rgb(12, 10, 29), rgb(5, 2, 22));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 1.5rem;
+            position: relative;
+            cursor: default;
+        }
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        /* subtle animated grain overlay (fun texture) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjciIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuMDYiLz48L3N2Zz4=');
+            background-repeat: repeat;
+            pointer-events: none;
+            opacity: 0.25;
+            z-index: 0;
+        }
 
-    body {
-      font-family: "Inter", sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background:
-        radial-gradient(circle at top left, #1f2937 0%, transparent 35%),
-        radial-gradient(circle at bottom right, #2563eb 0%, transparent 40%),
-        linear-gradient(135deg, #0f172a, #020617);
-      color: white;
-      overflow: hidden;
-      padding: 2rem;
-    }
+        .glass-card {
+            max-width: 780px;
+            width: 100%;
+            background: rgba(22, 20, 45, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            padding: 2.5rem 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            position: relative;
+            z-index: 2;
+        }
 
-    .card {
-      width: 100%;
-      max-width: 720px;
-      padding: 4rem;
-      border-radius: 28px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 55px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        }
 
-    .tag {
-      display: inline-block;
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(96, 165, 250, 0.25);
-      color: #93c5fd;
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.3px;
-    }
+        /* fun decorative floating blob */
+        .blob {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(255, 100, 200, 0.25), rgba(100, 80, 255, 0.1));
+            border-radius: 62% 38% 72% 28% / 48% 32% 68% 52%;
+            filter: blur(55px);
+            z-index: 1;
+            pointer-events: none;
+            animation: floatBlob 18s infinite alternate;
+        }
 
-    h1 {
-      font-size: clamp(3rem, 8vw, 5rem);
-      font-weight: 700;
-      letter-spacing: -2px;
-      margin-bottom: 1rem;
-      line-height: 1;
-    }
+        .blob-1 {
+            top: -80px;
+            right: -50px;
+            animation-duration: 22s;
+        }
+        .blob-2 {
+            bottom: -70px;
+            left: -40px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(80, 200, 255, 0.2), rgba(255, 140, 70, 0.1));
+            animation-duration: 26s;
+            animation-direction: alternate-reverse;
+        }
 
-    .gradient {
-      background: linear-gradient(90deg, #ffffff, #93c5fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) rotate(0deg); border-radius: 62% 38% 72% 28% / 48% 32% 68% 52%;}
+            100% { transform: translate(20px, 30px) rotate(8deg); border-radius: 48% 52% 34% 66% / 57% 35% 65% 43%;}
+        }
 
-    p {
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: rgba(255, 255, 255, 0.78);
-      max-width: 580px;
-      margin-bottom: 2.2rem;
-    }
+        h1 {
+            font-size: 3.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFE6F0, #C084FC, #60A5FA);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
 
-    .links {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
+        .badge {
+            display: inline-block;
+            background: rgba(255,215,0,0.12);
+            border-radius: 100px;
+            padding: 0.2rem 0.9rem;
+            font-size: 0.8rem;
+            font-family: 'Space Mono', monospace;
+            font-weight: 400;
+            color: #FFE6B3;
+            border: 1px solid rgba(255,215,0,0.3);
+            margin-left: 1rem;
+            vertical-align: middle;
+            backdrop-filter: blur(4px);
+        }
 
-    .links a {
-      text-decoration: none;
-      color: white;
-      padding: 0.95rem 1.4rem;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.25s ease;
-      font-weight: 500;
-    }
+        .tagline {
+            font-size: 1.2rem;
+            color: #cdd9ff;
+            margin-top: 0.5rem;
+            margin-bottom: 1.8rem;
+            border-left: 3px solid #c084fc;
+            padding-left: 1rem;
+            font-weight: 400;
+        }
 
-    .links a:hover {
-      transform: translateY(-3px);
-      background: rgba(59, 130, 246, 0.18);
-      border-color: rgba(96, 165, 250, 0.35);
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
-    }
+        .bio {
+            font-size: 1.08rem;
+            line-height: 1.5;
+            color: #eef2ff;
+            margin-bottom: 2.2rem;
+            background: rgba(0,0,0,0.25);
+            padding: 1rem 1.4rem;
+            border-radius: 1.5rem;
+            backdrop-filter: blur(2px);
+        }
 
-    .footer {
-      margin-top: 2.5rem;
-      font-size: 0.92rem;
-      color: rgba(255, 255, 255, 0.45);
-    }
+        .construction-sign {
+            background: rgba(0,0,0,0.4);
+            padding: 0.8rem 1.2rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            color: #facc15;
+            margin-bottom: 2rem;
+            border: 1px dashed rgba(250,204,21,0.4);
+        }
 
-    @media (max-width: 768px) {
-      .card {
-        padding: 2.5rem;
-      }
+        .construction-sign i {
+            font-size: 1.2rem;
+        }
 
-      p {
-        font-size: 1rem;
-      }
-    }
-  </style>
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 2rem 0 2.2rem;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(20, 18, 45, 0.75);
+            backdrop-filter: blur(12px);
+            padding: 0.9rem 1.8rem;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255,255,240,0.2);
+            color: white;
+            letter-spacing: -0.2px;
+        }
+
+        .social-btn i {
+            font-size: 1.7rem;
+        }
+
+        .social-btn.youtube {
+            background: rgba(255, 0, 0, 0.15);
+            box-shadow: 0 0 6px rgba(255, 60, 60, 0.3);
+        }
+        .social-btn.youtube:hover {
+            background: #cc0000dd;
+            border-color: #ffaaaa;
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px #cc000055;
+        }
+
+        .social-btn.github {
+            background: rgba(36, 41, 46, 0.7);
+        }
+        .social-btn.github:hover {
+            background: #24292e;
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+        }
+
+        /* easter egg zone - hidden til clicked */
+        .easter-zone {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.7rem;
+            color: #8a8db0;
+            font-family: monospace;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .easter-msg {
+            background: #0a081ccc;
+            border-radius: 2rem;
+            padding: 0.3rem 1rem;
+            display: inline-block;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            border: 1px solid #3a3a66;
+        }
+
+        .disclaimer {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 1.2rem;
+            font-size: 0.75rem;
+            color: #aaaad0;
+            text-align: center;
+            margin-top: 2rem;
+            border-left: 4px solid #facc1566;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .disclaimer a {
+            color: #facc15;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        button, .easter-zone {
+            user-select: none;
+        }
+
+        @media (max-width: 550px) {
+            .glass-card {
+                padding: 1.8rem;
+            }
+            h1 {
+                font-size: 2.6rem;
+            }
+            .badge {
+                font-size: 0.7rem;
+                margin-left: 0.3rem;
+                display: inline-block;
+                margin-top: 0.2rem;
+            }
+            .social-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* secret button effect */
+        .cheeky-tooltip {
+            cursor: help;
+            border-bottom: 1px dotted #facc15;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 16px;
+            opacity: 0.5;
+        }
+    </style>
 </head>
 <body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
 
-  <div class="card">
-    <div class="tag">Personal Website</div>
+<main class="glass-card">
+    <div>
+        <h1>Jaypix <span class="badge"><i class="fas fa-code"></i>  pixel sorcerer</span></h1>
+        <div class="tagline">
+            <i class="fas fa-meteor"></i> building weird & wonderful things · dev by moonlight
+        </div>
+    </div>
 
-    <h1 class="gradient">Jaypix</h1>
+    <div class="bio">
+        👋 Hey there! I'm <strong>Jaypix</strong>, a monster-powered developer, tinkerer.  
+        I break things, then fix them (usually). Right now this corner of the internet is <strong class="cheeky-tooltip" title="i.e. I'm procrastinating on the perfect design">✨ under construction ✨</strong> — but epic stuff is coming soon.  
+        Stay tuned for chaos, creativity, and a lot of <i class="fas fa-terminal"></i> magic.
+    </div>
 
-    <p>
-      Developer, creator, and technology enthusiast.
-      This is my small corner of the internet where I’ll share projects and more stuff in the future.
-      <br><br>
-      The site is currently under construction.
-      More coming soon.
-    </p>
+    <div class="construction-sign">
+        <i class="fas fa-hard-hat"></i> 🚧 UNDER CONSTRUCTION 🚧 <i class="fas fa-person-digging"></i>
+        <span style="font-size:0.8rem;">(more madness soon™)</span>
+    </div>
 
     <div class="links">
-      <a href="https://www.youtube.com/@Jaypixo" target="_blank">YouTube</a>
-      <a href="https://github.com/Jaypixo" target="_blank">GitHub</a>
+        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener noreferrer" class="social-btn youtube">
+            <i class="fab fa-youtube"></i> YouTube · @Jaypixo
+        </a>
+        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener noreferrer" class="social-btn github">
+            <i class="fab fa-github"></i> GitHub · Jaypixo
+        </a>
     </div>
 
-    <div class="footer">
-      © 2026 Jaypix
+    <!-- FUN EASTER EGG (click the secret message) -->
+    <div class="easter-zone" id="eggTrigger">
+        <i class="fas fa-egg"></i> [ hidden surprise — click me ] <i class="fas fa-egg"></i>
+        <div id="easterMessage" style="min-height: 32px;"></div>
     </div>
-  </div>
 
+    <!-- DISCLAIMER (photographer from boston) -->
+    <div class="disclaimer">
+        <i class="fas fa-camera-retro"></i> <strong>Heads-up, detective:</strong> If you were looking for the <strong>legendary Boston photographer Jaypix</strong> (jaypixworx.com) — that's not me!  I'm the *other* Jaypix, the one who writes code and occasionally breaks the build.  
+        He captures beautiful moments, I capture segfaults. 📸 → <a href="https://www.jaypixworx.com/" target="_blank" rel="noopener noreferrer">jaypixworx.com</a> is his awesome portfolio. Go check him out!
+    </div>
+    <footer>
+        <i class="fas fa-dragon"></i>  no cookies were harmed · pure HTML/CSS sass
+    </footer>
+</main>
+
+<script>
+    // small Easter egg: funny messages on click, also console fun (extra)
+    const eggDiv = document.getElementById('eggTrigger');
+    const msgContainer = document.getElementById('easterMessage');
+    let clickCount = 0;
+    const messages = [
+        "🐣 Bawk! Nothing to see here... yet. Try again?",
+        "🍳 Psst. This site runs on 100% pure sarcasm and <3",
+        "🤣 You found the egg! Jaypix rewards you: imaginary cookie 🍪",
+        "🛸 Fact: real devs ship under construction pages with glitter ✨",
+        "⚡ Easter egg level 2: I see you're a clicker of culture.",
+        "🔧 The construction will be over... eventually. Maybe.",
+        "🎉 Congrats! You've wasted 5 seconds of your life. Worth it!"
+    ];
+    let eggEnabled = true;
+    let extraSurprise = false;
+
+    function showRandomEggMessage() {
+        if(!eggEnabled) return;
+        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+        msgContainer.innerHTML = `<div class="easter-msg"><i class="fas fa-laugh-squint"></i> ${randomMsg} <i class="fas fa-feather-alt"></i></div>`;
+        // also console humor for the real geeks
+        console.log("%c🐣 EASTER: " + randomMsg.replace(/<[^>]*>/g, ''), "color: #facc15; font-size: 12px; font-weight: bold;");
+        // additional after 3 clicks we trigger a little confetti freebie? minimal and non-intrusive (just fun)
+        clickCount++;
+        if(clickCount === 4 && !extraSurprise) {
+            extraSurprise = true;
+            msgContainer.innerHTML += `<div class="easter-msg" style="margin-top:6px; background:#c084fc33"><i class="fas fa-tools"></i> surprise! Jaypix says: “I'm legally required to remind you, this site will be epic later.” ✨</div>`;
+            console.log("%c✨ SECRET UNLOCKED: Jaypix appreciates your persistence!", "background:#222; color:#ffaa66; font-size:14px");
+        }
+        if(clickCount === 7) {
+            msgContainer.innerHTML += `<div class="easter-msg" style="margin-top:6px; background:#ffa50033"><i class="fas fa-crown"></i> You've reached max egg-level. Here's a virtual high-five ✋ . Now go code something!</div>`;
+            eggEnabled = false; // disable further repeats after too many clicks to be polite
+        }
+        setTimeout(() => {
+            if(clickCount < 7 && eggEnabled) {
+                // keep the last message for a while, then remove after 4 sec (except final)
+                if(clickCount < 7) {
+                    setTimeout(() => {
+                        if(msgContainer.firstChild && clickCount<7) msgContainer.innerHTML = '';
+                    }, 4000);
+                }
+            } else if(clickCount >=7) {
+                // keep final message but no extra spam
+            } else {
+                setTimeout(() => { if(msgContainer.firstChild && clickCount<7) msgContainer.innerHTML = ''; }, 4000);
+            }
+        }, 10);
+    }
+
+    eggDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showRandomEggMessage();
+    });
+
+    // hidden console fun: friendly message for curious devs
+    console.log("%c👾 Yo, fellow dev! Jaypix says hi. (Check the disclaimer about the Boston photographer btw)", "color: #b67cff; font-size: 14px; font-weight: 500");
+    console.log("%c🔨 This page looks gorgeous, but wait til the real deal arrives. We're just getting started.", "color: #facc15");
+
+    // tiny easter egg: triple click on the construction sign produces a silly sound emoji effect? not sound but fun text
+    const constrSign = document.querySelector('.construction-sign');
+    let constrClicks = 0;
+    if(constrSign) {
+        constrSign.style.cursor = "pointer";
+        constrSign.addEventListener('click', (e) => {
+            e.stopPropagation();
+            constrClicks++;
+            if(constrClicks === 3) {
+                const toast = document.createElement('div');
+                toast.innerText = "🔨🔧 BONK! Construction workers say: 'stop clicking the sign, go watch Jaypix YouTube' 😆";
+                toast.style.position = "fixed";
+                toast.style.bottom = "20px";
+                toast.style.left = "20px";
+                toast.style.backgroundColor = "#000000bb";
+                toast.style.backdropFilter = "blur(8px)";
+                toast.style.padding = "8px 16px";
+                toast.style.borderRadius = "40px";
+                toast.style.color = "#facc15";
+                toast.style.fontFamily = "monospace";
+                toast.style.fontSize = "0.75rem";
+                toast.style.border = "1px solid #facc15";
+                toast.style.zIndex = "999";
+                toast.style.pointerEvents = "none";
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2800);
+                constrClicks = 0;
+            }
+        });
+    }
+
+    // also make the badge sparkle easter egg: hover adds some flair
+    const badge = document.querySelector('.badge');
+    if(badge) {
+        badge.addEventListener('mouseenter', () => {
+            badge.style.transition = "0.1s";
+            badge.style.textShadow = "0 0 4px gold";
+        });
+        badge.addEventListener('mouseleave', () => {
+            badge.style.textShadow = "none";
+        });
+    }
+</script>
 </body>
 </html>
