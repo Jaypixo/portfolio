@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jaypix's homepage -- software developer & web wizard</title>
+<style>
+  /* ===== CUSTOM CURSOR ===== */
+  * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpolygon points='0,0 0,16 4,12 7,19 9,18 6,11 11,11' fill='%23000' stroke='%23fff' stroke-width='1'/%3E%3C/svg%3E"), auto; }
+  a, button { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpolygon points='0,0 0,16 4,12 7,19 9,18 6,11 11,11' fill='%23ffff00' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E"), pointer; }
+
+  /* ===== RESET & BASE ===== */
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #000080;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='2' height='2' fill='%230000aa'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%230000aa'/%3E%3C/svg%3E");
+    font-family: 'Verdana', 'Tahoma', Geneva, sans-serif;
+    font-size: 12px;
+    color: #000;
+    min-height: 100vh;
+  }
+
+  /* ===== SPARKLE TRAIL ===== */
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 9999;
+    animation: sparkle-fade 0.7s ease-out forwards;
+  }
+  @keyframes sparkle-fade {
+    0%   { transform: scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: scale(0) rotate(180deg); opacity: 0; }
+  }
+
+  /* ===== OUTER WRAPPER ===== */
+  #wrapper {
+    width: 780px;
+    margin: 10px auto;
+  }
+
+  /* ===== TOP BANNER ===== */
+  #banner {
+    background: #c0c0c0;
+    border: 3px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 0;
+    margin-bottom: 4px;
+  }
+  #banner-inner {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a6e 0%, #000080 40%, #003399 60%, #1a1a6e 100%);
+    padding: 12px 16px;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+  }
+  #logo-placeholder {
+    width: 90px;
+    height: 90px;
+    border: 2px solid #ffff00;
+    background: #000033;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #aaaaaa;
+    text-align: center;
+    gap: 6px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  #logo-placeholder .logo-icon {
+    width: 40px;
+    height: 40px;
+    border: 2px dashed #ffff00;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  #logo-placeholder span {
+    font-size: 8px;
+    color: #888;
+    font-family: 'Tahoma', sans-serif;
+  }
+  @keyframes bounce {
+    0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)}
+  }
+
+  #banner-text {
+    flex: 1;
+    padding-left: 16px;
+  }
+  #banner-text h1 {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 36px;
+    color: #ffff00;
+    text-shadow: 3px 3px #ff0000, -1px -1px #ff6600;
+    margin: 0 0 4px 0;
+    letter-spacing: 2px;
+  }
+  #banner-text .subtitle {
+    font-family: 'Verdana', sans-serif;
+    font-size: 11px;
+    color: #00ffff;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+  #banner-text .subtitle b { color: #ffffff; }
+
+  .banner-right {
+    text-align: right;
+    color: #88ccff;
+    font-size: 9px;
+    font-family: 'Courier New', monospace;
+    align-self: flex-start;
+    padding-top: 6px;
+    line-height: 1.8;
+  }
+
+  /* ===== MARQUEE BAR ===== */
+  .marquee-bar {
+    background: #000000;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    padding: 3px 0;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+  .marquee-bar marquee {
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+  }
+  .marquee-bar marquee .star { color: #ffff00; }
+
+  /* ===== NAV BAR ===== */
+  #navbar {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 4px 6px;
+    margin-bottom: 4px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .nav-label {
+    font-weight: bold;
+    font-size: 10px;
+    color: #000080;
+    padding-right: 4px;
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 3px 10px;
+    font-family: 'Tahoma', sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    background: #c0c0c0;
+    color: #000080;
+    text-decoration: none;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    white-space: nowrap;
+  }
+  .nav-btn:hover {
+    background: #000080;
+    color: #ffffff;
+    border-color: #808080 #ffffff #ffffff #808080;
+  }
+  .nav-btn:active {
+    border-color: #808080 #ffffff #ffffff #808080;
+    background: #808080;
+  }
+  .nav-sep {
+    color: #808080;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  #main-layout {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+  }
+
+  /* ===== LEFT COLUMN ===== */
+  #left-col {
+    width: 170px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* ===== RIGHT COLUMN ===== */
+  #right-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* ===== WIN98 BOX ===== */
+  .win-box {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+  }
+  .win-titlebar {
+    background: linear-gradient(to right, #000080, #1084d0);
+    color: #ffffff;
+    font-family: 'Tahoma', sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  .win-titlebar .title-left {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .win-controls {
+    display: flex;
+    gap: 2px;
+  }
+  .win-btn-small {
+    width: 16px;
+    height: 14px;
+    background: #c0c0c0;
+    border: 1px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    font-size: 9px;
+    font-weight: bold;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .win-content {
+    padding: 8px;
+    background: #ffffff;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    margin: 3px;
+  }
+
+  /* ===== PROFILE ===== */
+  .profile-img {
+    width: 100px;
+    height: 100px;
+    border: 3px solid #000080;
+    background: linear-gradient(135deg, #e0e0ff, #c0c0ff);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+  }
+  .online-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #006600;
+    font-weight: bold;
+    margin-top: 4px;
+  }
+  .online-dot {
+    width: 8px;
+    height: 8px;
+    background: #00aa00;
+    border-radius: 50%;
+    border: 1px solid #006600;
+    animation: pulse 2s infinite;
+    display: inline-block;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .profile-info { font-size: 10px; line-height: 1.8; }
+  .profile-info .label { color: #000080; font-weight: bold; }
+
+  /* ===== BLINKING ===== */
+  @keyframes blink {
+    0%,49%{opacity:1} 50%,100%{opacity:0}
+  }
+  .blink { animation: blink 1s step-end infinite; }
+  .blink-slow { animation: blink 2s step-end infinite; }
+
+  /* ===== SKILL BARS ===== */
+  .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 5px;
+    font-size: 10px;
+  }
+  .skill-label {
+    width: 55px;
+    font-weight: bold;
+    color: #000080;
+    font-size: 9px;
+    flex-shrink: 0;
+  }
+  .skill-bar-outer {
+    flex: 1;
+    height: 10px;
+    background: #808080;
+    border: 1px solid;
+    border-color: #404040 #c0c0c0 #c0c0c0 #404040;
+  }
+  .skill-bar-inner {
+    height: 100%;
+    background: repeating-linear-gradient(
+      90deg,
+      #000080 0px, #000080 6px,
+      #0000cc 6px, #0000cc 10px
+    );
+  }
+
+  /* ===== GUESTBOOK ===== */
+  .gb-entry {
+    border-bottom: 1px dashed #c0c0c0;
+    padding: 5px 0;
+    font-size: 10px;
+    line-height: 1.5;
+  }
+  .gb-entry:last-child { border-bottom: none; }
+  .gb-name { color: #000080; font-weight: bold; }
+  .gb-date { color: #808080; font-size: 9px; }
+
+  /* ===== FORMS ===== */
+  .contact-form input, .contact-form textarea {
+    background: #ffffff;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    font-family: 'Verdana', sans-serif;
+    font-size: 11px;
+    padding: 2px 4px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 4px;
+  }
+  .contact-form textarea { height: 60px; resize: vertical; }
+  .submit-btn {
+    padding: 3px 14px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    font-family: 'Tahoma', sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    color: #000080;
+  }
+  .submit-btn:hover { background: #d0d0d0; }
+  .submit-btn:active { border-color: #808080 #ffffff #ffffff #808080; background: #a0a0a0; }
+
+  /* ===== PROJECT CARDS ===== */
+  .project-card {
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    margin-bottom: 8px;
+    background: #c0c0c0;
+  }
+  .project-title-bar {
+    background: linear-gradient(to right, #800000, #cc3300);
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    font-family: 'Tahoma', sans-serif;
+  }
+  .project-body {
+    padding: 6px 8px;
+    background: #ffffff;
+    margin: 2px;
+    font-size: 10px;
+    line-height: 1.6;
+    border: 1px solid #c0c0c0;
+  }
+  .project-tags {
+    margin-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .tag {
+    background: #000080;
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 5px;
+    font-family: 'Courier New', monospace;
+  }
+  .project-link {
+    display: inline-block;
+    margin-top: 5px;
+    color: #0000cc;
+    font-size: 10px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  .project-link:hover { text-decoration: underline; color: #cc0000; }
+
+  /* ===== ABOUT TEXT ===== */
+  .about-text {
+    font-size: 11px;
+    line-height: 1.7;
+    color: #000;
+  }
+  .about-text p { margin: 0 0 8px 0; }
+
+  /* ===== HIT COUNTER ===== */
+  .seg {
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: #ff0000;
+    text-shadow: 0 0 4px #ff000088;
+  }
+
+  /* ===== BADGES ===== */
+  #badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+    padding: 6px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+  }
+  .badge {
+    width: 80px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid #333;
+  }
+  .badge-left {
+    background: #003399;
+    color: #fff;
+    padding: 0 2px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex: 0 0 30px;
+    justify-content: center;
+    font-size: 6px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+  }
+  .badge-right {
+    background: #cc6600;
+    color: #fff;
+    padding: 0 2px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    font-size: 6px;
+    font-family: 'Verdana', sans-serif;
+    font-weight: bold;
+    justify-content: center;
+  }
+
+  /* ===== NOW PLAYING ===== */
+  .now-playing {
+    background: #000;
+    color: #00ff00;
+    padding: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 9px;
+    border: 1px inset #333;
+  }
+  .np-track {
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .np-label { color: #888; font-size: 8px; }
+  .np-controls {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .np-btn {
+    background: #333;
+    color: #00ff00;
+    border: 1px solid #555;
+    font-size: 9px;
+    padding: 1px 5px;
+    font-family: 'Courier New', monospace;
+  }
+  .np-btn:hover { background: #555; }
+  .np-progress-outer {
+    height: 6px;
+    background: #333;
+    margin-top: 4px;
+    border: 1px inset #555;
+  }
+  .np-progress-inner {
+    height: 100%;
+    background: #00aa00;
+    width: 0%;
+    animation: np-progress 30s linear infinite;
+  }
+  @keyframes np-progress { 0%{width:0%} 100%{width:100%} }
+
+  /* ===== BOTTOM BAR ===== */
+  #bottom-bar {
+    margin-top: 6px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    padding: 4px 8px;
+    font-size: 9px;
+    color: #808080;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #bottom-bar a { color: #000080; }
+
+  /* ===== BLINKING TAGS ===== */
+  .new-gif {
+    display: inline-block;
+    background: #ff0000;
+    color: #ffff00;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 0px 3px;
+    font-family: 'Arial', sans-serif;
+    animation: blink 0.8s step-end infinite;
+    vertical-align: middle;
+    margin-left: 3px;
+    border: 1px solid #cc0000;
+  }
+  .updated-gif {
+    display: inline-block;
+    background: #ff6600;
+    color: #ffffff;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 0px 3px;
+    font-family: 'Arial', sans-serif;
+    animation: blink 1.2s step-end infinite;
+    vertical-align: middle;
+    margin-left: 3px;
+    border: 1px solid #cc4400;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 16px; }
+  ::-webkit-scrollbar-track { background: #c0c0c0; }
+  ::-webkit-scrollbar-thumb {
+    background: #808080;
+    border: 2px solid;
+    border-color: #ffffff #404040 #404040 #ffffff;
+  }
+
+  /* ===== UTILS ===== */
+  hr.win-hr {
+    border: none;
+    border-top: 2px solid #808080;
+    border-bottom: 2px solid #ffffff;
+    margin: 6px 0;
+  }
+  .under-construction {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffff00;
+    border: 2px solid #ff6600;
+    padding: 3px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 4px;
+  }
+  .rainbow {
+    background: linear-gradient(90deg, #ff0000,#ff7700,#ffff00,#00aa00,#0000ff,#8800ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: bold;
+  }
+  section { scroll-margin-top: 10px; }
+
+  /* tooltip */
+  [data-tip] { position: relative; }
+  [data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffe1;
+    border: 1px solid #000;
+    color: #000;
+    font-size: 10px;
+    white-space: nowrap;
+    padding: 2px 5px;
+    z-index: 9999;
+    pointer-events: none;
+    font-family: 'Tahoma', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<div id="wrapper">
+
+  <!-- BANNER -->
+  <div id="banner">
+    <div id="banner-inner">
+      <div id="logo-placeholder">
+        <div class="logo-icon">🖼</div>
+        <span>YOUR LOGO</span>
+        <span>88×88</span>
+      </div>
+      <div id="banner-text">
+        <h1>::: jaypix :::</h1>
+        <p class="subtitle">
+          <b>SOFTWARE DEVELOPER</b> &bull; CODE WIZARD &bull; WEB CRAFTSMAN<br>
+          <span style="color:#ffcc00;font-size:10px;">&#9733; Building the web since before it was cool &#9733;</span>
+        </p>
+      </div>
+      <div class="banner-right">
+        BEST VIEWED IN:<br>
+        <b style="color:#fff;">800×600</b><br>
+        IE 6.0 / Netscape<br>
+        <span class="blink" style="color:#00ff00;">&#9679; ONLINE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="marquee-bar">
+    <marquee behavior="scroll" direction="left" scrollamount="3">
+      <span class="star">&#9733;</span> &nbsp; WELCOME TO MY PAGE! &nbsp;
+      <span class="star">&#9733;</span> &nbsp; FEEL FREE TO SIGN MY GUESTBOOK &nbsp;
+      <span class="star">&#9733;</span> &nbsp; LAST UPDATED: MAY 2026 &nbsp;
+      <span class="star">&#9733;</span> &nbsp; OPEN TO NEW PROJECTS &amp; FREELANCE WORK &nbsp;
+      <span class="star">&#9733;</span> &nbsp; NO HOTLINKING PLEASE &nbsp;
+      <span class="star">&#9733;</span> &nbsp; YOU ARE VISITOR #<span id="marquee-count">012847</span> &nbsp;
+      <span class="star">&#9733;</span> &nbsp;
+    </marquee>
+  </div>
+
+  <!-- NAVBAR -->
+  <div id="navbar">
+    <span class="nav-label">NAVIGATE:</span>
+    <a class="nav-btn" href="#about">[ About Me ]</a>
+    <span class="nav-sep">|</span>
+    <a class="nav-btn" href="#projects">[ Projects ]<span class="new-gif">NEW</span></a>
+    <span class="nav-sep">|</span>
+    <a class="nav-btn" href="#skills">[ Skills ]</a>
+    <span class="nav-sep">|</span>
+    <a class="nav-btn" href="#contact">[ Contact ]</a>
+    <span class="nav-sep">|</span>
+    <a class="nav-btn" href="#guestbook">[ Guestbook ]</a>
+    <span class="nav-sep">|</span>
+    <a class="nav-btn" href="#links">[ Links ]</a>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div id="main-layout">
+
+    <!-- LEFT COLUMN -->
+    <div id="left-col">
+
+      <!-- Profile box -->
+      <div class="win-box">
+        <div class="win-titlebar">
+          <div class="title-left">&#128100; jaypix.exe</div>
+          <div class="win-controls">
+            <div class="win-btn-small">_</div>
+            <div class="win-btn-small">&#9744;</div>
+            <div class="win-btn-small" style="color:#cc0000;">&#10005;</div>
+          </div>
+        </div>
+        <div class="win-content" style="text-align:center;">
+          <div style="margin-bottom:8px;">
+            <div class="profile-img">&#128104;&#8205;&#128187;</div><br>
+            <div class="online-indicator">
+              <span class="online-dot"></span> ONLINE NOW
+            </div>
+          </div>
+          <div class="profile-info" style="text-align:left;">
+            <div><span class="label">name:</span> jaypix</div>
+            <div><span class="label">role:</span> Software Dev</div>
+            <div><span class="label">loc:</span> The Internet</div>
+            <div><span class="label">mood:</span> &#127911; Coding</div>
+            <div><span class="label">avail:</span> <span style="color:green;font-weight:bold;">YES</span></div>
+          </div>
+          <hr class="win-hr">
+          <a href="#contact" class="nav-btn" style="display:block;text-align:center;text-decoration:none;margin-top:4px;">&#9993; Hire Me!</a>
+        </div>
+      </div>
+
+      <!-- Now Playing -->
+      <div class="win-box">
+        <div class="win-titlebar">
+          <div class="title-left">&#127925; WinAmp Jr.</div>
+          <div class="win-controls"><div class="win-btn-small">_</div></div>
+        </div>
+        <div style="margin:3px;">
+          <div class="now-playing">
+            <div class="np-label">NOW PLAYING:</div>
+            <div class="np-track" id="np-track">&#9654; Daft Punk - Harder...</div>
+            <div class="np-progress-outer"><div class="np-progress-inner" id="np-progress"></div></div>
+            <div class="np-controls">
+              <button class="np-btn" onclick="prevTrack()">|&#9664;</button>
+              <button class="np-btn" id="play-btn" onclick="togglePlay()">&#9646;&#9646;</button>
+              <button class="np-btn" onclick="nextTrack()">&#9654;|</button>
+              <button class="np-btn">&#128256;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hit Counter -->
+      <div class="win-box">
+        <div class="win-titlebar">
+          <div class="title-left">&#128202; Hit Counter</div>
+        </div>
+        <div style="margin:3px; background:#000; padding:5px; text-align:center; border:1px inset #333;">
+          <div class="seg" id="counter-display">012847</div>
+          <div style="color:#888; font-size:8px; font-family:'Courier New',monospace; margin-top:2px;">visitors since 2003</div>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div id="badges">
+        <div class="badge" data-tip="Made with HTML"><div class="badge-left">HTML</div><div class="badge-right">4EVER</div></div>
+        <div class="badge" data-tip="Powered by JavaScript"><div class="badge-left">JS</div><div class="badge-right">POWERED</div></div>
+        <div class="badge" data-tip="Anti-spam"><div class="badge-left">NO</div><div class="badge-right">SPAM!</div></div>
+        <div class="badge" data-tip="Open Source"><div class="badge-left">OSS</div><div class="badge-right">RULES</div></div>
+        <div class="badge" data-tip="Valid HTML"><div class="badge-left">W3C</div><div class="badge-right">VALID</div></div>
+        <div class="badge" data-tip="Best viewed 800x600"><div class="badge-left">800</div><div class="badge-right">x600</div></div>
+      </div>
+
+      <!-- Links -->
+      <section id="links">
+        <div class="win-box">
+          <div class="win-titlebar">
+            <div class="title-left">&#128279; Cool Links</div>
+          </div>
+          <div class="win-content" style="font-size:10px; line-height:2.2;">
+            <a href="https://github.com" target="_blank" style="color:#000080; display:block;">&#187; GitHub</a>
+            <a href="https://stackoverflow.com" target="_blank" style="color:#000080; display:block;">&#187; Stack Overflow</a>
+            <a href="https://www.w3schools.com" target="_blank" style="color:#000080; display:block;">&#187; W3Schools</a>
+            <a href="https://css-tricks.com" target="_blank" style="color:#000080; display:block;">&#187; CSS-Tricks</a>
+            <a href="https://news.ycombinator.com" target="_blank" style="color:#000080; display:block;">&#187; Hacker News</a>
+            <hr class="win-hr">
+            <span style="font-size:9px; color:#808080;">want to exchange links?<br>
+            <a href="#contact" style="color:#000080;">contact me!</a></span>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- end left col -->
+
+    <!-- RIGHT COLUMN -->
+    <div id="right-col">
+
+      <!-- Under construction -->
+      <div class="under-construction">
+        <span>&#x1F6A7;</span>
+        SITE UNDER CONSTRUCTION &mdash; More content coming soon! Check back often.
+        <span>&#x1F6A7;</span>
+        <span class="blink-slow" style="margin-left:auto; color:#ff0000;">&#9888;</span>
+      </div>
+
+      <!-- About -->
+      <section id="about">
+        <div class="win-box">
+          <div class="win-titlebar">
+            <div class="title-left">&#128196; About Me &mdash; notepad.exe</div>
+            <div class="win-controls">
+              <div class="win-btn-small">_</div>
+              <div class="win-btn-small">&#9744;</div>
+              <div class="win-btn-small" style="color:#cc0000;">&#10005;</div>
+            </div>
+          </div>
+          <div class="win-content">
+            <div class="about-text">
+              <p>
+                <b>Hey there, welcome to my corner of the web!</b> :-) I'm <span class="rainbow">jaypix</span>, a software developer who loves building things that live on the internet. I've been writing code for as long as I can remember and I'm not stopping any time soon.
+              </p>
+              <p>
+                I specialise in <b>full-stack web development</b> &mdash; meaning I handle everything from server-side logic all the way through to the pixels you actually see on screen. Clean code, fast apps, and sites that actually <i>work</i> are what I'm about.
+              </p>
+              <p>
+                When I'm not writing code, you'll probably find me messing with new frameworks, contributing to open source, or procrastinating by redesigning my homepage for the fourth time this year. (No comment on how this one turned out.)
+              </p>
+              <p>
+                <b>I'm currently available for freelance work and open to full-time opportunities.</b> <span class="updated-gif">UPDATED</span><br>
+                Drop me a message below or ping me on any of the links in the sidebar!
+              </p>
+            </div>
+            <hr class="win-hr">
+            <table style="font-size:10px; border-collapse:collapse; width:100%;">
+              <tr>
+                <td style="padding:2px 8px 2px 0; font-weight:bold; color:#000080; width:100px;">Full Name:</td>
+                <td>jaypix</td>
+                <td style="padding:2px 8px 2px 0; font-weight:bold; color:#000080; width:100px;">Status:</td>
+                <td style="color:green; font-weight:bold;">Available &#10003;</td>
+              </tr>
+              <tr>
+                <td style="padding:2px 8px 2px 0; font-weight:bold; color:#000080;">Experience:</td>
+                <td>Full-Stack Dev</td>
+                <td style="padding:2px 8px 2px 0; font-weight:bold; color:#000080;">Languages:</td>
+                <td>JS, Python, Go, SQL</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section id="skills">
+        <div class="win-box">
+          <div class="win-titlebar">
+            <div class="title-left">&#9881; Skills &mdash; skill_meter.exe</div>
+            <div class="win-controls"><div class="win-btn-small">_</div><div class="win-btn-small">&#9744;</div></div>
+          </div>
+          <div class="win-content">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 16px;">
+              <div>
+                <div class="skill-row"><span class="skill-label">JavaScript</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:95%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">Python</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:88%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">React</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:90%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">Node.js</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:85%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">TypeScript</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:82%"></div></div></div>
+              </div>
+              <div>
+                <div class="skill-row"><span class="skill-label">SQL / DBs</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:80%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">HTML/CSS</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:99%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">Docker</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:75%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">Go</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:70%"></div></div></div>
+                <div class="skill-row"><span class="skill-label">Git</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:92%"></div></div></div>
+              </div>
+            </div>
+            <hr class="win-hr">
+            <div style="font-size:10px; color:#808080;">
+              <b style="color:#000080;">Also familiar with:</b> AWS &bull; Linux &bull; REST APIs &bull; GraphQL &bull; Redis &bull; Nginx &bull; CI/CD &bull; Agile
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section id="projects">
+        <div class="win-box">
+          <div class="win-titlebar">
+            <div class="title-left">&#128190; Projects &mdash; explorer.exe <span class="new-gif">NEW</span></div>
+            <div class="win-controls"><div class="win-btn-small">_</div><div class="win-btn-small">&#9744;</div><div class="win-btn-small" style="color:#cc0000;">&#10005;</div></div>
+          </div>
+          <div class="win-content">
+
+            <div class="project-card">
+              <div class="project-title-bar">&#128193; Project #1 &mdash; DevTrackr</div>
+              <div class="project-body">
+                A full-stack project management tool built for developers who hate project management tools. Lightweight, fast, no bloat. Built with Node + React + PostgreSQL. Self-hostable in under 5 minutes.
+                <div class="project-tags">
+                  <span class="tag">React</span><span class="tag">Node.js</span><span class="tag">PostgreSQL</span><span class="tag">Docker</span>
+                </div>
+                <a href="#" class="project-link">&#187; View on GitHub &rarr;</a>
+                <a href="#" class="project-link" style="margin-left:12px;">&#187; Live Demo &rarr;</a>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="project-title-bar">&#128193; Project #2 &mdash; quickapi</div>
+              <div class="project-body">
+                A CLI tool for scaffolding REST APIs in seconds. Supports Express, Fastify, and Go Fiber. Over 400 stars on GitHub. Generates routes, middleware, and database boilerplate from a simple config file.
+                <div class="project-tags">
+                  <span class="tag">Go</span><span class="tag">CLI</span><span class="tag">Node.js</span><span class="tag">Open Source</span>
+                </div>
+                <a href="#" class="project-link">&#187; View on GitHub &rarr;</a>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div class="project-title-bar">&#128193; Project #3 &mdash; pixelboard <span class="updated-gif">UPDATED</span></div>
+              <div class="project-body">
+                A real-time collaborative pixel art canvas. WebSockets + Redis for live updates. Inspired by r/place but for small teams. Supports layers, animation export, and public sharing.
+                <div class="project-tags">
+                  <span class="tag">WebSockets</span><span class="tag">Redis</span><span class="tag">Canvas API</span><span class="tag">Python</span>
+                </div>
+                <a href="#" class="project-link">&#187; View on GitHub &rarr;</a>
+                <a href="#" class="project-link" style="margin-left:12px;">&#187; Live Demo &rarr;</a>
+              </div>
+            </div>
+
+            <div style="font-size:10px; color:#808080; text-align:center; margin-top:4px;">
+              More projects on <a href="https://github.com" target="_blank" style="color:#000080; font-weight:bold;">GitHub</a> &mdash; come take a look!
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Guestbook -->
+      <section id="guestbook">
+        <div class="win-box">
+          <div class="win-titlebar">
+            <div class="title-left">&#128218; Guestbook</div>
+            <div class="win-controls"><div class="win-btn-small">_</div></div>
+          </div>
+          <div class="win-content">
+            <div id="gb-entries">
+              <div class="gb-entry">
+                <div class="gb-name">xXCodeMasterXx <span class="gb-date">&mdash; Apr 28, 2026</span></div>
+                sick portfolio bro, that devtrackr project is exactly what ive been looking for!! bookmarked &#128278;
+              </div>
+              <div class="gb-entry">
+                <div class="gb-name">sarah_devs <span class="gb-date">&mdash; Apr 15, 2026</span></div>
+                Really clean projects! Loved the pixelboard demo, spent like an hour on it lol. Hope to see more stuff from you soon.
+              </div>
+              <div class="gb-entry">
+                <div class="gb-name">retro_webmaster <span class="gb-date">&mdash; Mar 3, 2026</span></div>
+                nice page!! love the old school vibes. keep up the good work!! &#9733;&#9733;&#9733;&#9733;&#9733;
+              </div>
+            </div>
+            <hr class="win-hr">
+            <div style="font-size:11px; font-weight:bold; color:#000080; margin-bottom:5px;">Sign the Guestbook:</div>
+            <div class="contact-form">
+              <input type="text" id="gb-name-input" placeholder="Your name / handle" style="width:48%; display:inline-block; margin-right:4%;">
+              <input type="text" id="gb-site" placeholder="Your website (optional)" style="width:48%; display:inline-block;">
+              <textarea id="gb-msg" placeholder="Leave a message..." style="height:50px;"></textarea>
+              <button class="submit-btn" onclick="submitGuestbook()">Post Entry &#10003;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section id="contact">
+        <div class="win-box">
+          <div class="win-titlebar">
+            <div class="title-left">&#9993; Contact Me &mdash; mailto.exe</div>
+            <div class="win-controls"><div class="win-btn-small">_</div><div class="win-btn-small">&#9744;</div></div>
+          </div>
+          <div class="win-content">
+            <div style="display:flex; gap:16px; flex-wrap:wrap;">
+              <div style="flex:1; min-width:160px;">
+                <div style="font-size:11px; line-height:2.2; color:#000;">
+                  <b>&#128231; Email:</b><br>
+                  <a href="mailto:hi@jaypix.dev" style="color:#0000cc;">hi@jaypix.dev</a><br>
+                  <b>&#128024; GitHub:</b><br>
+                  <a href="https://github.com" target="_blank" style="color:#0000cc;">github.com/jaypix</a><br>
+                  <b>&#128188; LinkedIn:</b><br>
+                  <a href="#" style="color:#0000cc;">linkedin.com/in/jaypix</a>
+                </div>
+              </div>
+              <div style="flex:2; min-width:200px;">
+                <div class="contact-form">
+                  <input type="text" id="c-name" placeholder="Your name">
+                  <input type="text" id="c-email" placeholder="Your email">
+                  <textarea id="c-msg" placeholder="Your message..."></textarea>
+                  <button class="submit-btn" onclick="submitContact()">Send Message &#9993;</button>
+                  <span id="contact-confirm" style="font-size:10px; color:green; margin-left:8px; display:none;">Message sent! &#10003;</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- end right col -->
+  </div><!-- end main layout -->
+
+  <!-- BOTTOM BAR -->
+  <div id="bottom-bar">
+    <span>&copy; 2003&ndash;2026 jaypix &bull; All Rights Reserved &bull; No Hotlinking &bull; <a href="#about">Back to Top &uarr;</a></span>
+    <span><span class="blink">&#9679;</span> jaypix.dev &bull; Made with &hearts; and too much coffee</span>
+  </div>
+
+</div><!-- end wrapper -->
+
+<script>
+  // === SPARKLE CURSOR TRAIL ===
+  const sparkleColors = ['#ffff00','#ff6600','#00ff00','#00ccff','#ff00ff','#ffffff'];
+  let lastSparkle = 0;
+  document.addEventListener('mousemove', function(e) {
+    const now = Date.now();
+    if (now - lastSparkle < 45) return;
+    lastSparkle = now;
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    const color = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+    const chars = ['&#9733;','&#10022;','+','*','&#8226;'];
+    s.innerHTML = chars[Math.floor(Math.random() * chars.length)];
+    s.style.cssText = [
+      'left:' + (e.clientX - 4 + window.scrollX) + 'px',
+      'top:' + (e.clientY - 4 + window.scrollY) + 'px',
+      'color:' + color,
+      'font-size:' + (8 + Math.random() * 8) + 'px',
+      'position:absolute',
+      'pointer-events:none',
+      'z-index:9999'
+    ].join(';');
+    document.body.appendChild(s);
+    setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 700);
+  });
+
+  // === HIT COUNTER ===
+  let count = 12847;
+  function updateCounter() {
+    count++;
+    const str = String(count).padStart(6, '0');
+    var el = document.getElementById('counter-display');
+    var mq = document.getElementById('marquee-count');
+    if (el) el.textContent = str;
+    if (mq) mq.textContent = str;
+  }
+  setInterval(updateCounter, 9000 + Math.random() * 8000);
+
+  // === NOW PLAYING ===
+  var tracks = [
+    '\u25B6 Daft Punk - Harder...',
+    '\u25B6 Boards of Canada - ...',
+    '\u25B6 Chemical Bros - Bloc...',
+    '\u25B6 Gorillaz - DARE',
+    '\u25B6 Air - La Femme D\'Arg...'
+  ];
+  var trackIdx = 0;
+  var isPlaying = true;
+
+  function nextTrack() {
+    trackIdx = (trackIdx + 1) % tracks.length;
+    document.getElementById('np-track').textContent = tracks[trackIdx];
+    restartProgress();
+  }
+  function prevTrack() {
+    trackIdx = (trackIdx - 1 + tracks.length) % tracks.length;
+    document.getElementById('np-track').textContent = tracks[trackIdx];
+    restartProgress();
+  }
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    document.getElementById('play-btn').innerHTML = isPlaying ? '&#9646;&#9646;' : '&#9654;';
+    var bar = document.getElementById('np-progress');
+    bar.style.animationPlayState = isPlaying ? 'running' : 'paused';
+  }
+  function restartProgress() {
+    var bar = document.getElementById('np-progress');
+    bar.style.animation = 'none';
+    bar.offsetHeight;
+    bar.style.animation = 'np-progress 30s linear infinite';
+  }
+
+  // === GUESTBOOK ===
+  function submitGuestbook() {
+    var name = document.getElementById('gb-name-input').value.trim();
+    var msg = document.getElementById('gb-msg').value.trim();
+    if (!name || !msg) { alert('Please fill in both your name and a message!'); return; }
+    var entry = document.createElement('div');
+    entry.className = 'gb-entry';
+    var today = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+    entry.innerHTML = '<div class="gb-name">' + esc(name) + ' <span class="gb-date">&mdash; ' + today + '</span></div>' + esc(msg);
+    var entries = document.getElementById('gb-entries');
+    entries.insertBefore(entry, entries.firstChild);
+    document.getElementById('gb-name-input').value = '';
+    document.getElementById('gb-site').value = '';
+    document.getElementById('gb-msg').value = '';
+  }
+
+  // === CONTACT FORM ===
+  function submitContact() {
+    var n = document.getElementById('c-name').value.trim();
+    var e = document.getElementById('c-email').value.trim();
+    var m = document.getElementById('c-msg').value.trim();
+    if (!n || !e || !m) { alert('Please fill in all fields!'); return; }
+    var conf = document.getElementById('contact-confirm');
+    conf.style.display = 'inline';
+    document.getElementById('c-name').value = '';
+    document.getElementById('c-email').value = '';
+    document.getElementById('c-msg').value = '';
+    setTimeout(function() { conf.style.display = 'none'; }, 4000);
+  }
+
+  function esc(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // === SMOOTH ANCHOR SCROLL ===
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var href = a.getAttribute('href');
+      if (href === '#') return;
+      var target = document.querySelector(href);
+      if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+    });
+  });
+</script>
+</body>
+</html>
