@@ -1,438 +1,691 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Jaypix · Digital Playground</title>
-    <!-- Google Fonts + smooth base -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (free icons) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>jaypix.dev — the workshop</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            background: radial-gradient(circle at 10% 20%, rgb(12, 10, 29), rgb(5, 2, 22));
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding: 1.5rem;
-            position: relative;
-            cursor: default;
-        }
+:root {
+  --ink: #1a1716;
+  --paper: #f5f0e8;
+  --paper2: #ede8dc;
+  --smudge: #9b8f82;
+  --accent: #c7522a;
+  --accent2: #3b6e8f;
+  --accent3: #5c7a3e;
+  --yellow: #d4a017;
+  --red: #b83232;
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Crimson Pro', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+}
 
-        /* subtle animated grain overlay (fun texture) */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjciIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuMDYiLz48L3N2Zz4=');
-            background-repeat: repeat;
-            pointer-events: none;
-            opacity: 0.25;
-            z-index: 0;
-        }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  min-height: 100vh;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
 
-        .glass-card {
-            max-width: 780px;
-            width: 100%;
-            background: rgba(22, 20, 45, 0.65);
-            backdrop-filter: blur(12px);
-            border-radius: 3rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-            padding: 2.5rem 2rem;
-            transition: transform 0.2s ease, box-shadow 0.2s;
-            position: relative;
-            z-index: 2;
-        }
+/* paper texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.018) 28px, rgba(0,0,0,0.018) 29px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,0,0,0.008) 40px, rgba(0,0,0,0.008) 41px);
+  pointer-events: none;
+  z-index: 0;
+}
 
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 55px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-        }
+/* torn paper edge */
+.torn-top {
+  width: 100%;
+  height: 18px;
+  background: var(--paper2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  clip-path: polygon(0 0,3% 100%,6.5% 30%,10% 95%,13% 10%,16% 85%,20% 5%,23% 90%,27% 20%,30% 100%,34% 15%,37% 80%,41% 0,44% 100%,48% 25%,51% 95%,55% 5%,58% 85%,62% 10%,65% 100%,68% 20%,72% 95%,75% 5%,79% 80%,82% 0,85% 90%,89% 15%,92% 95%,96% 10%,100% 0);
+}
 
-        /* fun decorative floating blob */
-        .blob {
-            position: absolute;
-            width: 250px;
-            height: 250px;
-            background: radial-gradient(circle, rgba(255, 100, 200, 0.25), rgba(100, 80, 255, 0.1));
-            border-radius: 62% 38% 72% 28% / 48% 32% 68% 52%;
-            filter: blur(55px);
-            z-index: 1;
-            pointer-events: none;
-            animation: floatBlob 18s infinite alternate;
-        }
+/* MAIN CONTAINER — CENTERED & PACED */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
 
-        .blob-1 {
-            top: -80px;
-            right: -50px;
-            animation-duration: 22s;
-        }
-        .blob-2 {
-            bottom: -70px;
-            left: -40px;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(80, 200, 255, 0.2), rgba(255, 140, 70, 0.1));
-            animation-duration: 26s;
-            animation-direction: alternate-reverse;
-        }
+.layout {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  min-height: 100vh;
+  background: transparent;
+  margin: 0;
+}
 
-        @keyframes floatBlob {
-            0% { transform: translate(0, 0) rotate(0deg); border-radius: 62% 38% 72% 28% / 48% 32% 68% 52%;}
-            100% { transform: translate(20px, 30px) rotate(8deg); border-radius: 48% 52% 34% 66% / 57% 35% 65% 43%;}
-        }
+/* ─── SIDEBAR (perfectly aligned, left edge flush) ─── */
+.sidebar {
+  border-right: 1px solid rgba(26,23,22,0.12);
+  padding: 2.5rem 1.8rem 2.5rem 1.8rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--paper2);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
 
-        h1 {
-            font-size: 3.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #FFE6F0, #C084FC, #60A5FA);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-            display: inline-block;
-        }
+.avatar-area {
+  position: relative;
+}
 
-        .badge {
-            display: inline-block;
-            background: rgba(255,215,0,0.12);
-            border-radius: 100px;
-            padding: 0.2rem 0.9rem;
-            font-size: 0.8rem;
-            font-family: 'Space Mono', monospace;
-            font-weight: 400;
-            color: #FFE6B3;
-            border: 1px solid rgba(255,215,0,0.3);
-            margin-left: 1rem;
-            vertical-align: middle;
-            backdrop-filter: blur(4px);
-        }
+.avatar-scribble {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  border: 3px dashed var(--smudge);
+  outline: 6px solid transparent;
+  outline-offset: 3px;
+  cursor: pointer;
+  transition: border-style 0.1s;
+  user-select: none;
+}
 
-        .tagline {
-            font-size: 1.2rem;
-            color: #cdd9ff;
-            margin-top: 0.5rem;
-            margin-bottom: 1.8rem;
-            border-left: 3px solid #c084fc;
-            padding-left: 1rem;
-            font-weight: 400;
-        }
+.avatar-scribble span {
+  font-family: var(--serif);
+  color: var(--paper);
+  font-size: 2.2rem;
+  font-style: italic;
+}
 
-        .bio {
-            font-size: 1.08rem;
-            line-height: 1.5;
-            color: #eef2ff;
-            margin-bottom: 2.2rem;
-            background: rgba(0,0,0,0.25);
-            padding: 1rem 1.4rem;
-            border-radius: 1.5rem;
-            backdrop-filter: blur(2px);
-        }
+.avatar-scribble::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 90px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--smudge);
+  font-style: italic;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
 
-        .construction-sign {
-            background: rgba(0,0,0,0.4);
-            padding: 0.8rem 1.2rem;
-            border-radius: 2rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85rem;
-            color: #facc15;
-            margin-bottom: 2rem;
-            border: 1px dashed rgba(250,204,21,0.4);
-        }
+.avatar-scribble:hover::after { opacity: 1; }
+.avatar-scribble:active { border-style: solid; }
 
-        .construction-sign i {
-            font-size: 1.2rem;
-        }
+.name-block .name {
+  font-family: var(--serif);
+  font-size: 1.9rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 4px;
+}
 
-        .links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin: 2rem 0 2.2rem;
-        }
+.name-block .handle {
+  font-size: 11px;
+  color: var(--smudge);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
-        .social-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(20, 18, 45, 0.75);
-            backdrop-filter: blur(12px);
-            padding: 0.9rem 1.8rem;
-            border-radius: 60px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            border: 1px solid rgba(255,255,240,0.2);
-            color: white;
-            letter-spacing: -0.2px;
-        }
+.name-block .handle span {
+  color: var(--accent);
+}
 
-        .social-btn i {
-            font-size: 1.7rem;
-        }
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--smudge);
+  margin-top: 1rem;
+}
 
-        .social-btn.youtube {
-            background: rgba(255, 0, 0, 0.15);
-            box-shadow: 0 0 6px rgba(255, 60, 60, 0.3);
-        }
-        .social-btn.youtube:hover {
-            background: #cc0000dd;
-            border-color: #ffaaaa;
-            transform: scale(1.02);
-            box-shadow: 0 8px 18px #cc000055;
-        }
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent3);
+  animation: pulse 2.5s ease-in-out infinite;
+}
 
-        .social-btn.github {
-            background: rgba(36, 41, 46, 0.7);
-        }
-        .social-btn.github:hover {
-            background: #24292e;
-            transform: scale(1.02);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.4);
-        }
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
 
-        /* easter egg zone - hidden til clicked */
-        .easter-zone {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.7rem;
-            color: #8a8db0;
-            font-family: monospace;
-            cursor: pointer;
-            transition: 0.1s;
-        }
+.sidebar-nav {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-        .easter-msg {
-            background: #0a081ccc;
-            border-radius: 2rem;
-            padding: 0.3rem 1rem;
-            display: inline-block;
-            font-size: 0.7rem;
-            margin-top: 0.5rem;
-            border: 1px solid #3a3a66;
-        }
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--ink);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: border-color 0.15s, background 0.15s;
+  letter-spacing: 0.03em;
+}
 
-        .disclaimer {
-            background: rgba(0,0,0,0.3);
-            padding: 1rem;
-            border-radius: 1.2rem;
-            font-size: 0.75rem;
-            color: #aaaad0;
-            text-align: center;
-            margin-top: 2rem;
-            border-left: 4px solid #facc1566;
-            font-family: 'Space Mono', monospace;
-        }
+.sidebar-nav a:hover {
+  border-left-color: var(--accent);
+  background: rgba(199,82,42,0.06);
+}
 
-        .disclaimer a {
-            color: #facc15;
-            text-decoration: underline;
-            font-weight: 500;
-        }
+.sidebar-nav .icon {
+  width: 14px;
+  opacity: 0.5;
+  font-size: 11px;
+}
 
-        button, .easter-zone {
-            user-select: none;
-        }
+.sidebar-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-        @media (max-width: 550px) {
-            .glass-card {
-                padding: 1.8rem;
-            }
-            h1 {
-                font-size: 2.6rem;
-            }
-            .badge {
-                font-size: 0.7rem;
-                margin-left: 0.3rem;
-                display: inline-block;
-                margin-top: 0.2rem;
-            }
-            .social-btn {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
-            }
-        }
+.pill-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 0;
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: 1px solid;
+  transition: all 0.15s;
+}
 
-        /* secret button effect */
-        .cheeky-tooltip {
-            cursor: help;
-            border-bottom: 1px dotted #facc15;
-        }
+.pill-link.yt {
+  color: var(--red);
+  border-color: var(--red);
+  background: transparent;
+}
 
-        footer {
-            font-size: 0.7rem;
-            text-align: center;
-            margin-top: 16px;
-            opacity: 0.5;
-        }
-    </style>
+.pill-link.yt:hover {
+  background: var(--red);
+  color: var(--paper);
+}
+
+.pill-link.gh {
+  color: var(--ink);
+  border-color: var(--ink);
+  background: transparent;
+}
+
+.pill-link.gh:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.pill-link.sp {
+  color: #1DB954;
+  border-color: #1DB954;
+  background: transparent;
+}
+.pill-link.sp:hover {
+  background: #1DB954;
+  color: var(--paper);
+}
+
+/* ─── MAIN (padding ensures text never clipped) ─── */
+.main {
+  padding: 2rem 3rem 4rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* sticky tab bar */
+.tabs {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  z-index: 9;
+  border-bottom: 1px solid rgba(26,23,22,0.12);
+  display: flex;
+  gap: 0;
+  margin: -2rem -3rem 0;
+  padding: 0 3rem;
+}
+
+.tab {
+  padding: 12px 24px;
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--smudge);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+
+.tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+.tab:hover { color: var(--ink); }
+
+/* home hero */
+.hero {
+  padding-top: 1rem;
+}
+.typewriter-block {
+  position: relative;
+  margin-bottom: 2rem;
+}
+.typewriter-block .pre-text {
+  font-size: 11px;
+  color: var(--smudge);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.big-title {
+  font-family: var(--serif);
+  font-size: 4.8rem;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0.5rem 0 0.8rem;
+  position: relative;
+  display: inline-block;
+  word-break: keep-all;
+}
+.big-title .strike {
+  text-decoration: line-through;
+  opacity: 0.3;
+  font-size: 1.8rem;
+  vertical-align: super;
+  font-style: normal;
+}
+.big-title .cursor-blink {
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  background: var(--accent);
+  margin-left: 4px;
+  vertical-align: -0.1em;
+  animation: blink 1.2s step-end infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.subtitle-line {
+  font-size: 13px;
+  color: var(--smudge);
+  font-style: italic;
+  border-left: 3px solid var(--paper2);
+  padding-left: 12px;
+  max-width: 480px;
+  line-height: 1.6;
+}
+.subtitle-line:hover { border-left-color: var(--accent); }
+
+/* sticky note */
+.sticky-note {
+  background: #f9f3c0;
+  border: 1px solid #e6d96a;
+  padding: 1.5rem 1.8rem;
+  max-width: 540px;
+  position: relative;
+  transform: rotate(-0.3deg);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.07);
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #3a3530;
+  transition: transform 0.2s;
+}
+.sticky-note:hover { transform: rotate(0deg) scale(1.01); }
+.sticky-note::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #e8d22e, #d4a017, #e8d22e);
+}
+.sticky-note .note-pin {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e88, var(--red));
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+.crossed { text-decoration: line-through; opacity: 0.45; }
+.underline { border-bottom: 2px solid var(--accent); cursor: help; }
+
+/* ticker wrap */
+.ticker-wrap {
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 0;
+  position: relative;
+  width: calc(100% + 6rem);
+  margin-left: -3rem;
+}
+.ticker-wrap::before, .ticker-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  z-index: 2;
+}
+.ticker-wrap::before { left: 0; background: linear-gradient(to right, var(--ink), transparent); }
+.ticker-wrap::after { right: 0; background: linear-gradient(to left, var(--ink), transparent); }
+.ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker 22s linear infinite;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  gap: 3rem;
+}
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.ticker-item { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
+.ticker-item .sep { color: var(--accent); font-size: 14px; }
+
+/* section & grid */
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--smudge);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.2rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(26,23,22,0.1);
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1px;
+  border: 1px solid rgba(26,23,22,0.1);
+  background: rgba(26,23,22,0.1);
+}
+.grid-card {
+  background: var(--paper);
+  padding: 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: relative;
+  overflow: hidden;
+}
+.grid-card:hover { background: var(--paper2); }
+.grid-card::before {
+  content: attr(data-num);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 40px;
+  font-family: var(--serif);
+  font-style: italic;
+  color: rgba(26,23,22,0.04);
+  pointer-events: none;
+}
+.card-tag { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.card-title { font-family: var(--serif); font-size: 1.1rem; font-style: italic; line-height: 1.3; }
+.card-desc { font-size: 11px; color: var(--smudge); line-height: 1.5; }
+.card-badge { display: inline-block; font-size: 9px; padding: 2px 7px; border: 1px solid currentColor; margin-top: 4px; width: fit-content; }
+.card-badge.wip { color: var(--yellow); }
+.card-badge.done { color: var(--accent3); }
+.card-badge.idea { color: var(--accent2); }
+
+/* terminal */
+.terminal-block {
+  background: #1a1716;
+  padding: 1.5rem;
+  font-size: 12px;
+  line-height: 1.9;
+  border-left: 3px solid var(--accent);
+}
+.terminal-block .tbar { display: flex; gap: 6px; margin-bottom: 1rem; }
+.terminal-block .tbar span { width: 10px; height: 10px; border-radius: 50%; }
+.tbar .t1 { background: #ff5f57; }
+.tbar .t2 { background: #ffbd2e; }
+.tbar .t3 { background: #28c840; }
+.log-line { display: flex; gap: 12px; }
+.log-line .ts { color: #4a4540; min-width: 60px; font-size: 10px; }
+.log-line .prompt { color: var(--accent); }
+.log-line .cmd { color: #d4c9b8; }
+.log-line .out { color: #8aa88a; }
+.log-line .err { color: #c47474; }
+.log-line .warn { color: #c4a464; }
+.log-line .dim { color: #4a4540; font-style: italic; }
+
+/* about page */
+.about-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.specs-table tr { border-bottom: 1px solid rgba(26,23,22,0.08); }
+.specs-table td { padding: 8px 4px; vertical-align: top; }
+.specs-table td:first-child { color: var(--smudge); width: 110px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+.specs-table td:last-child { color: var(--ink); line-height: 1.6; }
+.stack-pill {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  background: rgba(26,23,22,0.06);
+  border: 1px solid rgba(26,23,22,0.1);
+  margin: 2px;
+  transition: background 0.1s;
+}
+.stack-pill:hover { background: rgba(199,82,42,0.1); border-color: rgba(199,82,42,0.3); color: var(--accent); }
+
+/* footnotes & footer */
+.footnote-zone { border-top: 1px solid rgba(26,23,22,0.1); padding-top: 1.5rem; margin-top: 0.5rem; }
+.footnote { font-size: 10px; color: var(--smudge); display: flex; gap: 8px; cursor: default; }
+.footnote .fn-num { color: var(--accent); font-style: italic; min-width: 12px; }
+.secret-text { cursor: pointer; border-bottom: 1px dotted rgba(26,23,22,0.3); transition: all 0.15s; }
+.secret-text:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.site-footer { border-top: 1px solid rgba(26,23,22,0.1); padding: 1.5rem 0 0; font-size: 10px; color: rgba(26,23,22,0.3); display: flex; justify-content: space-between; letter-spacing: 0.05em; }
+.disclaimer-strip {
+  background: rgba(199,82,42,0.07);
+  border: 1px dashed rgba(199,82,42,0.3);
+  padding: 0.9rem 1.2rem;
+  font-size: 11px;
+  color: var(--smudge);
+  display: flex;
+  gap: 10px;
+}
+
+/* toast */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  border-left: 3px solid var(--accent);
+  animation: toastIn 0.2s ease, toastOut 0.3s ease 2.8s forwards;
+  white-space: nowrap;
+}
+@keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(-6px); } }
+
+.konami-hint { font-size: 10px; color: rgba(26,23,22,0.15); text-align: right; user-select: none; transition: color 0.3s; }
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+@media (max-width: 780px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid rgba(26,23,22,0.1); }
+  .main { padding: 1.5rem; }
+  .tabs { margin: -1.5rem -1.5rem 0; padding: 0 1.5rem; }
+  .ticker-wrap { width: calc(100% + 3rem); margin-left: -1.5rem; }
+  .about-layout { grid-template-columns: 1fr; }
+  .big-title { font-size: 3.2rem; }
+}
+</style>
 </head>
 <body>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-
-<main class="glass-card">
-    <div>
-        <h1>Jaypix <span class="badge"><i class="fas fa-code"></i>  pixel sorcerer</span></h1>
-        <div class="tagline">
-            <i class="fas fa-meteor"></i> · building weird things · 
+<div class="container">
+  <div class="torn-top"></div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="avatar-area">
+          <div class="avatar-scribble" data-tip="click me" id="avatarBtn">
+            <span>J</span>
+          </div>
         </div>
-    </div>
+      </div>
+      <div class="name-block">
+        <div class="name">Jaypix</div>
+        <div class="handle">@<span>jaypixo</span> · jaypix.dev</div>
+        <div class="status-indicator"><div class="dot"></div><span>building · online</span></div>
+      </div>
+      <nav>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="switchTab('home',this)" class="nav-link active-nav"><span class="icon">~/</span> home</a></li>
+          <li><a href="#" onclick="switchTab('about',this)" class="nav-link"><span class="icon">./</span> about.txt</a></li>
+          <li><a href="#" onclick="switchTab('projects',this)" class="nav-link"><span class="icon">_</span> projects/</a></li>
+          <li><a href="#" onclick="switchTab('log',this)" class="nav-link"><span class="icon">$</span> devlog</a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-links">
+        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener" class="pill-link yt">▶ youtube · @jaypixo</a>
+        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener" class="pill-link gh">◆ github · jaypixo</a>
+        <a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" rel="noopener" class="pill-link sp">🎧 spotify · jaypix</a>
+      </div>
+    </aside>
 
-    <div class="bio">
-        Hey there! I'm <strong>Jaypix</strong>, a monster-powered developer and tinkerer. Now this just sounds weird. Idk. I build stuff. 
-        I break things, then fix them (usually). Right now this corner of the internet is <strong class="cheeky-tooltip" title="i.e. I'm procrastinating on the perfect design">✨ under construction ✨</strong> but epic stuff is coming soon.  
-        Stay tuned for chaos, creativity, and a lot of <i class="fas fa-terminal"></i> magic.
-    </div>
+    <main class="main">
+      <div class="tabs">
+        <button class="tab active" data-tab="home" onclick="switchTab('home',this)">home</button>
+        <button class="tab" data-tab="about" onclick="switchTab('about',this)">about.txt</button>
+        <button class="tab" data-tab="projects" onclick="switchTab('projects',this)">projects/</button>
+        <button class="tab" data-tab="log" onclick="switchTab('log',this)">devlog</button>
+      </div>
 
-    <div class="construction-sign">
-        <i class="fas fa-hard-hat"></i> 🚧 UNDER CONSTRUCTION 🚧 <i class="fas fa-person-digging"></i>
-        <span style="font-size:0.8rem;">(more madness soon™)</span>
-    </div>
+      <div id="tab-home" class="page-section active">
+        <div class="hero">
+          <div class="typewriter-block">
+            <div class="pre-text">jaypix.dev · v0.∞</div>
+            <div class="big-title">Jaypix<span class="cursor-blink"></span></div>
+            <div class="subtitle-line">developer · tinkerer · <span style="text-decoration:line-through;opacity:0.5">responsible adult</span> · professional tab hoarder</div>
+          </div>
+        </div>
+        <div class="ticker-wrap"><div class="ticker" id="tickerEl"><div class="ticker-item"><span>UNDER CONSTRUCTION</span><span class="sep">◆</span><span>this site will be done "soon"</span><span class="sep">◆</span><span>probably</span><span class="sep">◆</span><span>definition of soon: ambiguous</span><span class="sep">◆</span><span>UNDER CONSTRUCTION</span><span class="sep">◆</span><span>building in public · failing in public</span><span class="sep">◆</span><span>the site works tho (kinda)</span><span class="sep">◆</span></div><div class="ticker-item" aria-hidden="true"><span>UNDER CONSTRUCTION</span><span class="sep">◆</span><span>this site will be done "soon"</span><span class="sep">◆</span><span>probably</span><span class="sep">◆</span><span>definition of soon: ambiguous</span><span class="sep">◆</span><span>UNDER CONSTRUCTION</span><span class="sep">◆</span><span>building in public · failing in public</span><span class="sep">◆</span><span>the site works tho (kinda)</span><span class="sep">◆</span></div></div></div>
+        <div style="height: 2rem;"></div>
+        <div class="sticky-note" id="stickyNote"><div class="note-pin" title="push here" onclick="pinClick()"></div><p>Hey! I'm Jaypix — a developer who builds things that <span class="crossed">make sense</span> exist. I break stuff, reverse-engineer the breakage, and occasionally ship something cool. This site is basically a work in progress that's been promoted to <span class="underline" title="ship it or it doesn't exist">production</span>.</p><p style="margin-top: 0.8rem; font-size: 0.92rem; opacity: 0.75;">Currently: procrastinating on the perfect portfolio while building other things. the grind never stops.</p></div>
+        <div style="height: 2rem;"></div>
+        <div class="disclaimer-strip"><span class="flag">⚠</span><span>if you googled "jaypix" looking for the Boston photographer — that's not me. his portfolio is <a href="https://www.jaypixworx.com/" target="_blank" rel="noopener">jaypixworx.com</a>. we've never met. this is fine.</span></div>
+        <div class="footnote-zone"><div class="section-label">footnotes</div><div class="footnote"><span class="fn-num">1</span><span>"under construction" has been the status since day 1. it's a <span class="secret-text" onclick="secretReveal(1)">feature</span>.</span></div><div class="footnote"><span class="fn-num">2</span><span>yes the page has <span class="secret-text" onclick="secretReveal(2)">easter eggs</span>. you've already almost found one.</span></div><div class="footnote"><span class="fn-num">3</span><span>this site was built with frustration and caffeine<span class="secret-text" onclick="secretReveal(3)">*</span></span></div><div class="konami-hint">↑ ↑ ↓ ↓ ← → ← → B A</div></div>
+        <div class="site-footer"><span>jaypix.dev · <span id="year"></span></span><span>made with frustration and caffeine</span></div>
+      </div>
 
-    <div class="links">
-        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener noreferrer" class="social-btn youtube">
-            <i class="fab fa-youtube"></i> YouTube · @Jaypixo
-        </a>
-        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener noreferrer" class="social-btn github">
-            <i class="fab fa-github"></i> GitHub · Jaypixo
-        </a>
-    </div>
+      <div id="tab-about" class="page-section"><div style="padding-top: 1rem;"><div class="section-label">about.txt</div><div class="about-layout"><div class="about-col"><p style="font-family: var(--serif); font-size: 1.1rem; font-style: italic;">Developer. Tinkerer. Chronic "one more feature" disease patient.</p><p style="font-size: 12px; color: var(--smudge); margin-top: 1rem;">I build things that are sometimes useful, often weird. YouTube is where I dump dev content. GitHub is where I dump the code.</p><table class="specs-table"><tr><td>status</td><td><span style="color: var(--accent3);">● alive</span> · building stuff</td></tr><tr><td>occupation</td><td>developer / professional googler</td></tr><tr><td>based</td><td>on the internet mostly</td></tr><tr><td>current fixation</td><td id="fixation">loading...</td></tr><tr><td>tab count</td><td id="tabCount">---</td></tr></table></div><div class="about-col"><div class="section-label">stack / tech</div><div id="stack-pills" style="line-height: 2.5;"></div><div class="section-label" style="margin-top: 1rem;">can be found</div><table class="specs-table"><tr><td>youtube</td><td><a href="https://www.youtube.com/@Jaypixo" target="_blank" style="color:var(--accent2);">@Jaypixo</a></td></tr><tr><td>github</td><td><a href="https://github.com/Jaypixo" target="_blank" style="color:var(--accent2);">Jaypixo</a></td></tr><tr><td>spotify</td><td><a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" style="color:#1DB954;">jaypix (listening)</a></td></tr></table></div></div></div></div>
 
-    <!-- FUN EASTER EGG (click the secret message) -->
-    <div class="easter-zone" id="eggTrigger">
-        <i class="fas fa-egg"></i> [ hidden surprise! Click me ] <i class="fas fa-egg"></i>
-        <div id="easterMessage" style="min-height: 32px;"></div>
-    </div>
+      <div id="tab-projects" class="page-section"><div style="padding-top: 1rem;"><div class="section-label">projects/</div><p style="font-size: 12px; color: var(--smudge); margin-bottom: 1.5rem;">a graveyard and a garden at the same time.</p><div class="cards-grid"><div class="grid-card" data-num="01"><div class="card-tag">coming soon</div><div class="card-title">[ redacted ]</div><div class="card-desc">can't tell you. not ready. when it's ready you'll know.</div><span class="card-badge wip">WIP · 47%</span></div><div class="grid-card" data-num="02"><div class="card-tag">idea → void</div><div class="card-title">the great refactor</div><div class="card-desc">started rewriting because code was messy. rewrite is also messy.</div><span class="card-badge wip">WIP · 12%</span></div><div class="grid-card" data-num="03"><div class="card-tag">actually shipped</div><div class="card-title">this website</div><div class="card-desc">you're looking at it. it counts. don't ask questions.</div><span class="card-badge done">LIVE</span></div><div class="grid-card" data-num="04"><div class="card-tag">github</div><div class="card-title">misc. repos</div><div class="card-desc">various things in various states. some haunted.</div><span class="card-badge idea">EXPLORE →</span></div><div class="grid-card" data-num="05"><div class="card-tag">youtube content</div><div class="card-title">dev videos</div><div class="card-desc">building things, fails, "wait it works now??" moments.</div><span class="card-badge done">ONGOING</span></div><div class="grid-card" data-num="06"><div class="card-tag">somewhere in the future</div><div class="card-title">???</div><div class="card-desc">there are plans. exist in a notes app.</div><span class="card-badge idea">IDEA</span></div></div></div></div>
 
-    <!-- DISCLAIMER (photographer from boston) -->
-    <div class="disclaimer">
-        <i class="fas fa-camera-retro"></i> <strong>Heads-up, detective:</strong> If you were looking for the <strong>Boston photographer Jaypix</strong> that's not me!  I'm the *other* Jaypix.
- <a href="https://www.jaypixworx.com/" target="_blank" rel="noopener noreferrer">jaypixworx.com</a> is his awesome portfolio. Go check him out!
-    </div>
-    <footer>
-        <i class="fas fa-dragon"></i>  No cookies were harmed in the making of this website · pure HTML/CSS sass
-    </footer>
-</main>
-
+      <div id="tab-log" class="page-section"><div style="padding-top: 1rem;"><div class="section-label">devlog · stdout</div><div class="terminal-block"><div class="tbar"><span class="t1"></span><span class="t2"></span><span class="t3"></span></div><div id="logOutput"></div></div><div style="margin-top: 1rem; font-size: 11px; color: var(--smudge);">* fake terminal but the chaos is real</div></div></div>
+    </main>
+  </div>
+</div>
+<div class="toast-container" id="toastContainer"></div>
 <script>
-    // small Easter egg: funny messages on click, also console fun (extra)
-    const eggDiv = document.getElementById('eggTrigger');
-    const msgContainer = document.getElementById('easterMessage');
-    let clickCount = 0;
-    const messages = [
-        "🐣 Bawk! Nothing to see here... yet. Try again?",
-        "🍳 Psst. This site runs on 100% pure sarcasm and <3",
-        "🤣 You found the egg! Jaypix rewards you: imaginary cookie 🍪",
-        "🛸 Fact: real devs ship under construction pages with glitter ✨",
-        "⚡ Easter egg level 2: I see you're a clicker of culture.",
-        "🔧 The construction will be over... eventually. Maybe.",
-        "🎉 Congrats! You've wasted 5 seconds of your life. Worth it!"
-    ];
-    let eggEnabled = true;
-    let extraSurprise = false;
-
-    function showRandomEggMessage() {
-        if(!eggEnabled) return;
-        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-        msgContainer.innerHTML = `<div class="easter-msg"><i class="fas fa-laugh-squint"></i> ${randomMsg} <i class="fas fa-feather-alt"></i></div>`;
-        // also console humor for the real geeks
-        console.log("%c🐣 EASTER: " + randomMsg.replace(/<[^>]*>/g, ''), "color: #facc15; font-size: 12px; font-weight: bold;");
-        // additional after 3 clicks we trigger a little confetti freebie? minimal and non-intrusive (just fun)
-        clickCount++;
-        if(clickCount === 4 && !extraSurprise) {
-            extraSurprise = true;
-            msgContainer.innerHTML += `<div class="easter-msg" style="margin-top:6px; background:#c084fc33"><i class="fas fa-tools"></i> surprise! Jaypix says: “I'm legally required to remind you, this site will be epic later.” ✨</div>`;
-            console.log("%c✨ SECRET UNLOCKED: Jaypix appreciates your persistence!", "background:#222; color:#ffaa66; font-size:14px");
-        }
-        if(clickCount === 7) {
-            msgContainer.innerHTML += `<div class="easter-msg" style="margin-top:6px; background:#ffa50033"><i class="fas fa-crown"></i> You've reached max egg-level. Here's a virtual high-five ✋ . Now go code something!</div>`;
-            eggEnabled = false; // disable further repeats after too many clicks to be polite
-        }
-        setTimeout(() => {
-            if(clickCount < 7 && eggEnabled) {
-                // keep the last message for a while, then remove after 4 sec (except final)
-                if(clickCount < 7) {
-                    setTimeout(() => {
-                        if(msgContainer.firstChild && clickCount<7) msgContainer.innerHTML = '';
-                    }, 4000);
-                }
-            } else if(clickCount >=7) {
-                // keep final message but no extra spam
-            } else {
-                setTimeout(() => { if(msgContainer.firstChild && clickCount<7) msgContainer.innerHTML = ''; }, 4000);
-            }
-        }, 10);
-    }
-
-    eggDiv.addEventListener('click', (e) => {
-        e.stopPropagation();
-        showRandomEggMessage();
-    });
-
-    // hidden console fun: friendly message for curious devs
-    console.log("%c👾 Hello, fellow dev! Jaypix says hi.", "color: #b67cff; font-size: 14px; font-weight: 500");
-    console.log("%c🔨 This page looks gorgeous, but wait til the real deal arrives. We're just getting started.", "color: #facc15");
-
-    // tiny easter egg: triple click on the construction sign produces a silly sound emoji effect? not sound but fun text
-    const constrSign = document.querySelector('.construction-sign');
-    let constrClicks = 0;
-    if(constrSign) {
-        constrSign.style.cursor = "pointer";
-        constrSign.addEventListener('click', (e) => {
-            e.stopPropagation();
-            constrClicks++;
-            if(constrClicks === 3) {
-                const toast = document.createElement('div');
-                toast.innerText = "🔨🔧 BONK! Construction workers say: 'stop clicking the sign, go watch Jaypix YouTube'";
-                toast.style.position = "fixed";
-                toast.style.bottom = "20px";
-                toast.style.left = "20px";
-                toast.style.backgroundColor = "#000000bb";
-                toast.style.backdropFilter = "blur(8px)";
-                toast.style.padding = "8px 16px";
-                toast.style.borderRadius = "40px";
-                toast.style.color = "#facc15";
-                toast.style.fontFamily = "monospace";
-                toast.style.fontSize = "0.75rem";
-                toast.style.border = "1px solid #facc15";
-                toast.style.zIndex = "999";
-                toast.style.pointerEvents = "none";
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2800);
-                constrClicks = 0;
-            }
-        });
-    }
-
-    // also make the badge sparkle easter egg: hover adds some flair
-    const badge = document.querySelector('.badge');
-    if(badge) {
-        badge.addEventListener('mouseenter', () => {
-            badge.style.transition = "0.1s";
-            badge.style.textShadow = "0 0 4px gold";
-        });
-        badge.addEventListener('mouseleave', () => {
-            badge.style.textShadow = "none";
-        });
-    }
+document.getElementById('year').textContent = new Date().getFullYear();
+function switchTab(name, el) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active-nav'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('[data-tab="' + name + '"]').forEach(t => t.classList.add('active'));
+  if (el && el.classList && el.classList.contains('nav-link')) el.classList.add('active-nav');
+  if (name === 'log') initLog();
+  if (name === 'about') initAbout();
+  return false;
+}
+function toast(msg) { let c = document.getElementById('toastContainer'); let d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; c.appendChild(d); setTimeout(() => d.remove(), 3200); }
+let avatarClicks = 0; const avatarMsgs = ['> access_level: nerd', '> error: personality too big', '> cat life.txt: "building stuff"', '> git commit -m "exists"', '> rm -rf regrets/'];
+document.getElementById('avatarBtn').addEventListener('click', () => { toast(avatarMsgs[avatarClicks % avatarMsgs.length]); avatarClicks++; });
+function pinClick() { toast(['📌 load-bearing pin','📌 NFT-backed (joking)','📌 pls send coffee'][Math.floor(Math.random()*3)]); }
+function secretReveal(n) { const reveals={1:'> feature: bug that survived',2:'> more eggs. check console.',3:'* and a little AI "assistance" but we wont mention that.'}; toast(reveals[n]); }
+const konami=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']; let konamiIdx=0;
+document.addEventListener('keydown',e=>{ if(e.key===konami[konamiIdx]){ konamiIdx++; if(konamiIdx===konami.length){ konamiIdx=0; toast('> konami unlocked. achievement unlocked.'); const title=document.querySelector('.big-title'); if(title){title.style.transition='all 0.3s';title.style.transform='scale(1.05) rotate(-1deg)';setTimeout(()=>title.style.transform='',800);} console.log('%c🏆 KONAMI UNLOCKED','color:#c7522a'); } } else konamiIdx=e.key===konami[0]?1:0; });
+let logDone=false;
+function initLog(){ if(logDone)return; logDone=true; const lines=[{ts:'09:12:03',type:'cmd',text:'git status'},{ts:'09:12:03',type:'out',text:'nothing to commit (lol sure)'},{ts:'09:14:55',type:'cmd',text:'npm run dev'},{ts:'09:14:56',type:'warn',text:'73 deprecated packages'},{ts:'09:22:11',type:'cmd',text:'git commit -m "fix bug"'},{ts:'09:22:11',type:'err',text:'broke something else'},{ts:'09:22:15',type:'cmd',text:'git commit -m "fix the fix"'},{ts:'09:45:00',type:'dim',text:'// TODO: write tests'},{ts:'10:30:22',type:'cmd',text:'npm install yet-another-package'},{ts:'11:02:08',type:'cmd',text:'git push origin main'},{ts:'11:15:44',type:'err',text:'prod is on fire'},{ts:'14:00:00',type:'dim',text:'resumed after lunch'},{ts:'16:30:12',type:'out',text:'it works and i don\'t know why. shipping.'}]; const out=document.getElementById('logOutput'); lines.forEach((l,i)=>{ setTimeout(()=>{ const div=document.createElement('div');div.className='log-line'; div.innerHTML=`<span class="ts">${l.ts}</span><span class="${l.type==='cmd'?'prompt':''}">${l.type==='cmd'?'$ ':''}</span><span class="${l.type}">${l.text}</span>`; out.appendChild(div); },i*70); }); }
+function initAbout(){ const fixations=['css scroll animations (again)','reinventing tools','optimizing code that runs once','side project for side project']; document.getElementById('fixation').textContent=fixations[Math.floor(Math.random()*fixations.length)]; document.getElementById('tabCount').textContent=`~${Math.floor(Math.random()*60)+40} tabs (estimate)`; const stack=['HTML','CSS','JS','TypeScript','Python','React','Node','Git','bash','Docker','caffeine']; const container=document.getElementById('stack-pills'); container.innerHTML=stack.map(s=>`<span class="stack-pill">${s}</span>`).join(''); }
+console.log('%cjaypix.dev','font-size:28px;font-family:Georgia,serif;font-style:italic;color:#c7522a;'); console.log('%cwelcome to the source, detective','color:#9b8f82;');
 </script>
 </body>
 </html>
