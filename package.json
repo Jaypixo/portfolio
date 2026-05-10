@@ -2,10 +2,8 @@
   "name": "portfolio",
   "version": "1.0.0",
   "description": "",
-  "main": "add-post.js",
-  "scripts": {
-    "add-post": "node add-post.js"
-  },
+  "main": "index.html",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Jaypixo/portfolio.git"

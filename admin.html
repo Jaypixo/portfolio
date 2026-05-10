@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Blog Posts</title>
+<title>Blog Admin - Cloudflare KV</title>
 <link rel="icon" type="image/png" href="Public/Jaylogo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -14,7 +14,11 @@
   --paper: #f5f0e8;
   --smudge: #9b8f82;
   --accent: #c7522a;
+  --accent2: #3b6e8f;
+  --accent3: #5c7a3e;
+  --red: #b83232;
   --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
 }
 
 [data-theme="dark"] {
@@ -22,6 +26,9 @@
   --paper: #18161a;
   --smudge: #7a7068;
   --accent: #e0693a;
+  --accent2: #5a9abf;
+  --accent3: #7aaa55;
+  --red: #d44444;
 }
 
 body {
@@ -30,76 +37,151 @@ body {
   color: var(--ink);
   line-height: 1.6;
   padding: 2rem;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
-h1 { color: var(--accent); }
+h1 { color: var(--accent); margin-bottom: 1rem; }
+.auth-panel {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid var(--smudge);
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.auth-panel p { margin-bottom: 1rem; }
 .form-group { margin-bottom: 1rem; }
-label { display: block; margin-bottom: 0.5rem; }
-input, textarea { width: 100%; padding: 0.5rem; }
-button { padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; cursor: pointer; margin-right: 0.5rem; }
-.auth-panel { background: rgba(255,255,255,0.95); border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; max-width: 520px; margin-bottom: 2rem; }
-.auth-panel p { margin-bottom: 1rem; color: var(--ink); }
+label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+input, textarea, button {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--smudge);
+  border-radius: 4px;
+  font-family: inherit;
+}
+input:focus, textarea:focus { outline: 2px solid var(--accent); }
+button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+button:hover { background: var(--accent2); }
+button:disabled { background: var(--smudge); cursor: not-allowed; }
+
 .posts { margin-top: 2rem; }
-.post { border: 1px solid var(--smudge); padding: 1rem; margin-bottom: 1rem; }
-.post h3 { margin-bottom: 0.5rem; }
-.export { margin-top: 2rem; }
-textarea { width: 100%; height: 200px; }
+.post {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid var(--smudge);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+}
+.post h3 {
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+.post .date {
+  font-size: 0.9rem;
+  color: var(--smudge);
+  margin-bottom: 1rem;
+}
+.post .content {
+  margin-bottom: 1rem;
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+.post-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.post-actions button {
+  width: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.add-post { margin-bottom: 2rem; }
+.add-post h2 { margin-bottom: 1rem; }
+
+.save-section {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid var(--accent3);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+  text-align: center;
+}
+.save-section p { margin-bottom: 1rem; color: var(--smudge); }
+
+.status {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.status.success { background: var(--accent3); color: white; }
+.status.error { background: var(--red); color: white; }
+.status.info { background: var(--accent2); color: white; }
+
+.edit-mode .content,
+.edit-mode input,
+.edit-mode textarea { background: var(--paper); }
+
+@media (max-width: 600px) {
+  body { padding: 1rem; }
+  .post { padding: 1rem; }
+}
 </style>
 </head>
 <body>
-<h1>Blog Admin</h1>
+<h1>Blog Admin Panel</h1>
+
 <div id="auth-screen" class="auth-panel">
-  <p>Enter the admin password to unlock the secure editor.</p>
+  <p>Enter your admin password to access the blog editor.</p>
   <div class="form-group">
     <label for="admin-password">Password:</label>
-    <input type="password" id="admin-password">
+    <input type="password" id="admin-password" placeholder="Enter password">
   </div>
-  <button onclick="authenticate()">Unlock</button>
-  <p style="margin-top:1rem; font-size:12px; color: var(--smudge);">Posts are stored in Cloudflare KV and save instantly.</p>
+  <button onclick="authenticate()">Login</button>
 </div>
+
 <div id="editor" style="display:none;">
-  <div id="add-form">
+  <div class="add-post">
     <h2>Add New Post</h2>
     <div class="form-group">
-      <label for="title">Title:</label>
-      <input type="text" id="title">
+      <label for="new-title">Title:</label>
+      <input type="text" id="new-title" placeholder="Post title">
     </div>
     <div class="form-group">
-      <label for="content">Content:</label>
-      <textarea id="content" rows="10"></textarea>
+      <label for="new-content">Content:</label>
+      <textarea id="new-content" rows="8" placeholder="Write your post content here..."></textarea>
     </div>
     <button onclick="addPost()">Add Post</button>
   </div>
 
   <div class="posts">
-    <h2>Existing Posts</h2>
+    <h2>Manage Posts</h2>
     <div id="posts-list"></div>
   </div>
 
-  <div class="export">
-    <h2>Save Posts</h2>
-    <button onclick="savePosts()">Save to Cloudflare KV</button>
-    <button onclick="exportJSON()">Export JSON</button>
-    <button onclick="logout()">Logout</button>
-    <span id="save-status" style="display:inline-block; margin-left:1rem; font-size:12px; color: var(--smudge);"></span>
-    <div id="json-export" style="display:none; margin-top:1rem;">
-      <textarea id="json-output" readonly style="width:100%; height:200px;"></textarea>
-      <button onclick="downloadJSON()">Download JSON</button>
-    </div>
+  <div class="save-section">
+    <h2>Save All Changes</h2>
+    <p>Click below to save all posts to Cloudflare KV instantly. No GitHub commits needed.</p>
+    <button id="save-btn" onclick="savePosts()">Save to Cloudflare KV</button>
+    <div id="save-status" class="status" style="display:none;"></div>
   </div>
 </div>
 
 <script>
 let authToken = localStorage.getItem('adminToken') || '';
 let posts = [];
-
-function setStatus(message, color = 'var(--smudge)') {
-  const status = document.getElementById('save-status');
-  status.textContent = message;
-  status.style.color = color;
-}
+let editingId = null;
 
 function showEditor() {
   document.getElementById('auth-screen').style.display = 'none';
@@ -108,23 +190,35 @@ function showEditor() {
 }
 
 async function authenticate() {
-  const password = document.getElementById('admin-password').value;
-  if (!password) return alert('Enter your password.');
-
-  const response = await fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password })
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    return alert(data.error || 'Login failed');
+  const password = document.getElementById('admin-password').value.trim();
+  if (!password) {
+    alert('Please enter your password.');
+    return;
   }
 
-  authToken = data.token;
-  localStorage.setItem('adminToken', authToken);
-  showEditor();
+  document.querySelector('#auth-screen button').disabled = true;
+  document.querySelector('#auth-screen button').textContent = 'Logging in...';
+
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Login failed');
+    }
+
+    authToken = data.token;
+    localStorage.setItem('adminToken', authToken);
+    showEditor();
+  } catch (error) {
+    alert('Login failed: ' + error.message);
+    document.querySelector('#auth-screen button').disabled = false;
+    document.querySelector('#auth-screen button').textContent = 'Login';
+  }
 }
 
 function logout() {
@@ -132,6 +226,8 @@ function logout() {
   localStorage.removeItem('adminToken');
   document.getElementById('editor').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'block';
+  posts = [];
+  editingId = null;
 }
 
 async function loadPosts() {
@@ -140,95 +236,141 @@ async function loadPosts() {
     if (!response.ok) throw new Error('Failed to load posts');
     posts = await response.json();
     renderPosts();
-    setStatus('Loaded posts.');
   } catch (error) {
-    console.error(error);
-    setStatus('Unable to load posts.', 'var(--red)');
+    console.error('Failed to load posts:', error);
+    showStatus('Failed to load posts. Check console for details.', 'error');
   }
 }
 
 function renderPosts() {
   const list = document.getElementById('posts-list');
-  list.innerHTML = posts.map((post, index) => `
-    <div class="post">
-      <h3>${post.title}</h3>
-      <p>${new Date(post.date).toLocaleDateString()}</p>
-      <button onclick="editPost(${index})">Edit</button>
-      <button onclick="deletePost(${index})">Delete</button>
-    </div>
-  `).join('');
+  list.innerHTML = posts.length === 0 ?
+    '<p style="text-align:center; color:var(--smudge); padding:2rem;">No posts yet. Add your first post above!</p>' :
+    posts.map((post, index) => `
+      <div class="post ${editingId === post.id ? 'edit-mode' : ''}" data-id="${post.id}">
+        ${editingId === post.id ? `
+          <div class="form-group">
+            <label>Title:</label>
+            <input type="text" value="${escapeHtml(post.title)}" onchange="updatePostField(${post.id}, 'title', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Content:</label>
+            <textarea rows="6" onchange="updatePostField(${post.id}, 'content', this.value)">${escapeHtml(post.content)}</textarea>
+          </div>
+          <div class="post-actions">
+            <button onclick="saveEdit(${post.id})">Save Edit</button>
+            <button onclick="cancelEdit()">Cancel</button>
+          </div>
+        ` : `
+          <h3>${escapeHtml(post.title)}</h3>
+          <div class="date">${new Date(post.date).toLocaleDateString()}</div>
+          <div class="content">${escapeHtml(post.content).replace(/\n/g, '<br>')}</div>
+          <div class="post-actions">
+            <button onclick="startEdit(${post.id})">Edit</button>
+            <button onclick="deletePost(${index})" style="background:var(--red);">Delete</button>
+          </div>
+        `}
+      </div>
+    `).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 function addPost() {
-  const title = document.getElementById('title').value;
-  const content = document.getElementById('content').value;
-  if (!title || !content) return alert('Title and content required');
+  const title = document.getElementById('new-title').value.trim();
+  const content = document.getElementById('new-content').value.trim();
+  if (!title || !content) {
+    alert('Please fill in both title and content.');
+    return;
+  }
+
   posts.unshift({
     id: Date.now(),
     title,
     content,
     date: new Date().toISOString()
   });
-  document.getElementById('title').value = '';
-  document.getElementById('content').value = '';
+
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-content').value = '';
   renderPosts();
 }
 
-function editPost(index) {
-  const post = posts[index];
-  const newTitle = prompt('Edit title:', post.title);
-  const newContent = prompt('Edit content:', post.content);
-  if (newTitle !== null && newContent !== null) {
-    posts[index].title = newTitle;
-    posts[index].content = newContent;
-    renderPosts();
-  }
+function startEdit(id) {
+  editingId = id;
+  renderPosts();
+}
+
+function cancelEdit() {
+  editingId = null;
+  renderPosts();
+}
+
+function updatePostField(id, field, value) {
+  const post = posts.find(p => p.id === id);
+  if (post) post[field] = value;
+}
+
+function saveEdit(id) {
+  editingId = null;
+  renderPosts();
 }
 
 function deletePost(index) {
-  if (confirm('Delete this post?')) {
-    posts.splice(index, 1);
-    renderPosts();
-  }
+  if (!confirm('Are you sure you want to delete this post?')) return;
+  posts.splice(index, 1);
+  renderPosts();
 }
 
 async function savePosts() {
-  if (!authToken) return alert('Login required.');
-  setStatus('Saving...', 'var(--accent2)');
-
-  const response = await fetch('/api/posts', {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${authToken}`
-    },
-    body: JSON.stringify({ posts })
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    setStatus(data.error || 'Save failed', 'var(--red)');
-    if (response.status === 401) logout();
+  if (!authToken) {
+    alert('Please log in first.');
     return;
   }
 
-  setStatus('Saved to Cloudflare KV!', 'var(--accent3)');
+  const btn = document.getElementById('save-btn');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  showStatus('Saving posts to Cloudflare KV...', 'info');
+
+  try {
+    const response = await fetch('/api/posts', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`
+      },
+      body: JSON.stringify({ posts })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Save failed');
+    }
+
+    showStatus('Posts saved successfully to Cloudflare KV!', 'success');
+  } catch (error) {
+    console.error('Save error:', error);
+    showStatus('Save failed: ' + error.message, 'error');
+    if (error.message.includes('Unauthorized')) logout();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
 }
 
-function exportJSON() {
-  document.getElementById('json-output').value = JSON.stringify(posts, null, 2);
-  document.getElementById('json-export').style.display = 'block';
-}
-
-function downloadJSON() {
-  const data = JSON.stringify(posts, null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'posts.json';
-  a.click();
-  URL.revokeObjectURL(url);
+function showStatus(message, type) {
+  const status = document.getElementById('save-status');
+  status.textContent = message;
+  status.className = `status ${type}`;
+  status.style.display = 'block';
+  setTimeout(() => status.style.display = 'none', 5000);
 }
 
 if (authToken) {
