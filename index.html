@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>jaypix.dev - the workshop</title>
+<link rel="icon" type="image/png" href="Public/Jaylogo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,6 +26,8 @@
   --border-heavy: rgba(26,23,22,0.2);
   --shadow: rgba(0,0,0,0.07);
   --transition-theme: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  /* logo filter: in light mode, make white logo dark */
+  --logo-filter: invert(1) brightness(0.15);
 }
 
 [data-theme="dark"] {
@@ -40,6 +43,8 @@
   --border: rgba(232,224,212,0.1);
   --border-heavy: rgba(232,224,212,0.18);
   --shadow: rgba(0,0,0,0.3);
+  /* logo filter: dark mode, keep it white/light */
+  --logo-filter: none;
 }
 
 html { scroll-behavior: smooth; }
@@ -110,49 +115,25 @@ body::before {
 
 .sidebar-top { display: flex; flex-direction: column; gap: 1.2rem; }
 
-.avatar-area { position: relative; }
+/* ─── LOGO ─── */
+.logo-area {
+  padding-bottom: 0.4rem;
+}
 
-.avatar-scribble {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px dashed var(--smudge);
+.site-logo {
+  width: 64px;
+  height: auto;
+  display: block;
+  filter: var(--logo-filter);
+  transition: filter 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+  opacity: 0.9;
   cursor: pointer;
-  transition: border-style 0.1s, transform 0.2s, background 0.25s;
-  user-select: none;
-  position: relative;
 }
 
-.avatar-scribble span {
-  font-family: var(--serif);
-  color: var(--paper);
-  font-size: 2.2rem;
-  font-style: italic;
-  transition: color 0.25s;
+.site-logo:hover {
+  transform: rotate(-4deg) scale(1.06);
+  opacity: 1;
 }
-
-.avatar-scribble::after {
-  content: attr(data-tip);
-  position: absolute;
-  left: 90px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 10px;
-  color: var(--smudge);
-  font-style: italic;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.2s;
-  pointer-events: none;
-}
-
-.avatar-scribble:hover::after { opacity: 1; }
-.avatar-scribble:hover { transform: rotate(-3deg); }
-.avatar-scribble:active { border-style: solid; transform: scale(0.95); }
 
 .name-block .name {
   font-family: var(--serif);
@@ -379,10 +360,10 @@ body::before {
 }
 .subtitle-line:hover { border-left-color: var(--accent); }
 
-/* sticky note */
+/* sticky note — proper warm yellow in both modes */
 .sticky-note {
-  background: #f9f3c0;
-  border: 1px solid #e6d96a;
+  background: #f7efb2;
+  border: 1px solid #ddd060;
   padding: 1.5rem 1.8rem;
   max-width: 540px;
   position: relative;
@@ -391,10 +372,16 @@ body::before {
   font-family: var(--serif);
   font-size: 1rem;
   line-height: 1.65;
-  color: #3a3530;
+  color: #2e2a1e;
   transition: transform 0.2s;
 }
-[data-theme="dark"] .sticky-note { background: #2a270a; border-color: #5a520a; color: #d4c870; }
+/* dark mode: brighter, more readable sticky note — lighter warm yellow */
+[data-theme="dark"] .sticky-note {
+  background: #3d3710;
+  border-color: #7a6e15;
+  color: #f0e68c;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+}
 .sticky-note:hover { transform: rotate(0deg) scale(1.01); }
 .sticky-note::before {
   content: '';
@@ -699,6 +686,44 @@ body::before {
   100% { opacity: 0; transform: translate(-50%, -120%) scale(0.3); }
 }
 
+/* ─── logo watermark in hero ─── */
+.hero-logo-watermark {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 110px;
+  opacity: 0.04;
+  filter: var(--logo-filter);
+  pointer-events: none;
+  user-select: none;
+  transition: filter 0.25s ease, opacity 0.25s ease;
+}
+
+.typewriter-block {
+  position: relative;
+}
+
+/* about page logo accent */
+.about-logo-accent {
+  width: 48px;
+  opacity: 0.18;
+  filter: var(--logo-filter);
+  transition: filter 0.25s, opacity 0.25s;
+  margin-bottom: 0.8rem;
+}
+
+/* contact logo */
+.contact-logo {
+  width: 36px;
+  opacity: 0.2;
+  filter: var(--logo-filter);
+  transition: filter 0.25s, opacity 0.25s;
+  position: absolute;
+  bottom: 1rem;
+  right: 1.2rem;
+}
+
 @media (max-width: 780px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
@@ -706,6 +731,7 @@ body::before {
   .tabs { margin: -1.5rem -1.5rem 0; padding: 0 1.5rem; overflow-x: auto; }
   .ticker-wrap { width: calc(100% + 3rem); margin-left: -1.5rem; }
   .about-layout { grid-template-columns: 1fr; }
+  .hero-logo-watermark { width: 70px; opacity: 0.03; }
 }
 </style>
 </head>
@@ -717,10 +743,10 @@ body::before {
     <!-- ─── SIDEBAR ─── -->
     <aside class="sidebar">
       <div class="sidebar-top">
-        <div class="avatar-area">
-          <div class="avatar-scribble" data-tip="click me" id="avatarBtn">
-            <span>J</span>
-          </div>
+
+        <!-- Logo replacing the circle avatar -->
+        <div class="logo-area">
+          <img src="Public/Jaylogo.png" alt="Jaypix logo" class="site-logo" id="logoBtn" title="jaypix.dev">
         </div>
 
         <div class="name-block">
@@ -766,6 +792,8 @@ body::before {
       <div id="tab-home" class="page-section active">
         <div class="hero">
           <div class="typewriter-block">
+            <!-- subtle watermark logo behind title -->
+            <img src="Public/Jaylogo.png" alt="" class="hero-logo-watermark" aria-hidden="true">
             <div class="pre-text">jaypix.dev · v0.∞ · uptime: <span id="uptime">calculating...</span></div>
             <div class="big-title" id="bigTitle">Jaypix<span class="cursor-blink"></span></div>
             <div class="subtitle-line">developer · tinkerer · <span style="text-decoration:line-through;opacity:0.5">responsible adult</span> · professional tab hoarder</div>
@@ -799,7 +827,7 @@ body::before {
         <div class="nerd-bar"><span style="min-width:100px;">caffeine</span><div class="bar-fill" style="--pct:88%"></div><span>88%</span></div>
         <div class="nerd-bar"><span style="min-width:100px;">motivation</span><div class="bar-fill green" style="--pct:62%"></div><span>62%</span></div>
         <div class="nerd-bar"><span style="min-width:100px;">tabs open</span><div class="bar-fill blue" style="--pct:94%"></div><span>94%</span></div>
-        <div class="nerd-bar"><span style="min-width:100px;">todo list</span><div class="bar-fill" style="--pct:4%; --pct:4%"></div><span style="color:var(--red)">4% done</span></div>
+        <div class="nerd-bar"><span style="min-width:100px;">todo list</span><div class="bar-fill" style="--pct:4%"></div><span style="color:var(--red)">4% done</span></div>
 
         <div style="height: 1.5rem;"></div>
 
@@ -825,6 +853,8 @@ body::before {
           <div class="section-label">about.txt</div>
           <div class="about-layout">
             <div class="about-col">
+              <!-- subtle logo above the intro text -->
+              <img src="Public/Jaylogo.png" alt="" class="about-logo-accent" aria-hidden="true">
               <p style="font-family: var(--serif); font-size: 1.1rem; font-style: italic;">Developer. Tinkerer. Chronic "one more feature" disease patient.</p>
               <p style="font-size: 12px; color: var(--smudge); margin-top: 1rem; line-height: 1.7;">I build things that are sometimes useful, often weird. YouTube is where I dump music and sometimes dev content. GitHub is where the code goes to live. Or die. Depends.</p>
               <div style="height: 1rem;"></div>
@@ -887,10 +917,12 @@ body::before {
           <div class="section-label">contact</div>
           <p style="font-size: 12px; color: var(--smudge); margin-bottom: 1.5rem; line-height: 1.7;">Slide into my inbox. It's the fastest and most reliable way to reach me. Faster than any DM, and I actually read it.</p>
 
-          <div class="contact-block">
+          <div class="contact-block" style="position:relative;">
             <div style="font-size: 11px; color: var(--smudge); text-transform: uppercase; letter-spacing: 0.1em;">primary · email</div>
             <a href="mailto:contact@jaypix.dev" class="contact-email" onclick="toast('📨 opening mail client...')">contact@jaypix.dev</a>
             <div class="contact-note">fastest + most reliable · I actually read this one</div>
+            <!-- logo tucked in corner of contact card -->
+            <img src="Public/Jaylogo.png" alt="" class="contact-logo" aria-hidden="true">
           </div>
 
           <div style="height: 1.5rem;"></div>
@@ -921,7 +953,7 @@ body::before {
 // ─── INIT ───
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// uptime counter (since page load, for vibes)
+// uptime counter
 const startTime = Date.now();
 function updateUptime() {
   const s = Math.floor((Date.now() - startTime) / 1000);
@@ -933,8 +965,6 @@ setInterval(updateUptime, 1000);
 // ─── DARK MODE ───
 const root = document.documentElement;
 let dark = false;
-
-// load from localStorage
 try { dark = localStorage.getItem('jaypix-theme') === 'dark'; } catch(e) {}
 applyTheme(dark);
 
@@ -976,9 +1006,9 @@ function toast(msg) {
   setTimeout(() => d.remove(), 3200);
 }
 
-// ─── AVATAR ───
-let avatarClicks = 0;
-const avatarMsgs = [
+// ─── LOGO CLICK ───
+let logoClicks = 0;
+const logoMsgs = [
   '> access_level: nerd',
   '> error: personality too big',
   '> cat life.txt: "building stuff"',
@@ -990,11 +1020,11 @@ const avatarMsgs = [
   '> whoami: jaypix (obviously)',
   '> ls hobbies/: too many results'
 ];
-document.getElementById('avatarBtn').addEventListener('click', () => {
-  toast(avatarMsgs[avatarClicks % avatarMsgs.length]);
-  avatarClicks++;
-  if (avatarClicks === 7) toast('> wait, you\'re still clicking??');
-  if (avatarClicks === 13) toast('> ok you unlocked something. check the title.');
+document.getElementById('logoBtn').addEventListener('click', () => {
+  toast(logoMsgs[logoClicks % logoMsgs.length]);
+  logoClicks++;
+  if (logoClicks === 7) toast('> wait, you\'re still clicking??');
+  if (logoClicks === 13) toast('> ok you unlocked something. check the title.');
 });
 
 // ─── PIN ───
@@ -1056,7 +1086,6 @@ document.addEventListener('keydown', e => {
       bigTitle.style.transform = 'scale(1.05) rotate(-1deg)';
       bigTitle.style.color = 'var(--accent)';
       setTimeout(() => { bigTitle.style.transform = ''; bigTitle.style.color = ''; }, 1000);
-      // secret: enable sparkle mode
       enableSparkles();
       console.log('%c🏆 KONAMI UNLOCKED ● sparkle mode active', 'color:#c7522a;font-size:14px;');
     }
