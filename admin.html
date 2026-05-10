@@ -57,7 +57,7 @@ textarea { width: 100%; height: 200px; }
     <input type="password" id="admin-password">
   </div>
   <button onclick="authenticate()">Unlock</button>
-  <p style="margin-top:1rem; font-size:12px; color: var(--smudge);">This page uses Cloudflare runtime auth and writes updates to GitHub. Set your secrets in Cloudflare Pages, not in the public code.</p>
+  <p style="margin-top:1rem; font-size:12px; color: var(--smudge);">Posts are stored in Cloudflare KV and save instantly.</p>
 </div>
 <div id="editor" style="display:none;">
   <div id="add-form">
@@ -79,10 +79,8 @@ textarea { width: 100%; height: 200px; }
   </div>
 
   <div class="export">
-    <h2>Post JSON</h2>
-    <textarea id="json-output" readonly></textarea>
-    <p>Save these changes to GitHub with the button below.</p>
-    <button onclick="savePosts()">Save changes to GitHub</button>
+    <h2>Save Posts</h2>
+    <button onclick="savePosts()">Save to Cloudflare KV</button>
     <button onclick="logout()">Logout</button>
     <span id="save-status" style="display:inline-block; margin-left:1rem; font-size:12px; color: var(--smudge);"></span>
   </div>
@@ -137,7 +135,6 @@ async function loadPosts() {
     if (!response.ok) throw new Error('Failed to load posts');
     posts = await response.json();
     renderPosts();
-    updateExport();
     setStatus('Loaded posts.');
   } catch (error) {
     console.error(error);
@@ -170,7 +167,6 @@ function addPost() {
   document.getElementById('title').value = '';
   document.getElementById('content').value = '';
   renderPosts();
-  updateExport();
 }
 
 function editPost(index) {
@@ -181,7 +177,6 @@ function editPost(index) {
     posts[index].title = newTitle;
     posts[index].content = newContent;
     renderPosts();
-    updateExport();
   }
 }
 
@@ -189,12 +184,7 @@ function deletePost(index) {
   if (confirm('Delete this post?')) {
     posts.splice(index, 1);
     renderPosts();
-    updateExport();
   }
-}
-
-function updateExport() {
-  document.getElementById('json-output').value = JSON.stringify(posts, null, 2);
 }
 
 async function savePosts() {
@@ -217,7 +207,7 @@ async function savePosts() {
     return;
   }
 
-  setStatus('Saved! Commit URL: ' + (data.commitUrl || 'available'), 'var(--accent3)');
+  setStatus('Saved to Cloudflare KV!', 'var(--accent3)');
 }
 
 if (authToken) {
