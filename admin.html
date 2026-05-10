@@ -81,8 +81,13 @@ textarea { width: 100%; height: 200px; }
   <div class="export">
     <h2>Save Posts</h2>
     <button onclick="savePosts()">Save to Cloudflare KV</button>
+    <button onclick="exportJSON()">Export JSON</button>
     <button onclick="logout()">Logout</button>
     <span id="save-status" style="display:inline-block; margin-left:1rem; font-size:12px; color: var(--smudge);"></span>
+    <div id="json-export" style="display:none; margin-top:1rem;">
+      <textarea id="json-output" readonly style="width:100%; height:200px;"></textarea>
+      <button onclick="downloadJSON()">Download JSON</button>
+    </div>
   </div>
 </div>
 
@@ -208,6 +213,22 @@ async function savePosts() {
   }
 
   setStatus('Saved to Cloudflare KV!', 'var(--accent3)');
+}
+
+function exportJSON() {
+  document.getElementById('json-output').value = JSON.stringify(posts, null, 2);
+  document.getElementById('json-export').style.display = 'block';
+}
+
+function downloadJSON() {
+  const data = JSON.stringify(posts, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'posts.json';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 if (authToken) {
