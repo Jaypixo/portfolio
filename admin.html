@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Blog Posts</title>
+<link rel="icon" type="image/png" href="Public/Jaylogo.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink: #1a1716;
+  --paper: #f5f0e8;
+  --smudge: #9b8f82;
+  --accent: #c7522a;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --ink: #e8e0d4;
+  --paper: #18161a;
+  --smudge: #7a7068;
+  --accent: #e0693a;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 { color: var(--accent); }
+.form-group { margin-bottom: 1rem; }
+label { display: block; margin-bottom: 0.5rem; }
+input, textarea { width: 100%; padding: 0.5rem; }
+button { padding: 0.5rem 1rem; background: var(--accent); color: white; border: none; cursor: pointer; margin-right: 0.5rem; }
+.auth-panel { background: rgba(255,255,255,0.95); border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; max-width: 520px; margin-bottom: 2rem; }
+.auth-panel p { margin-bottom: 1rem; color: var(--ink); }
+.posts { margin-top: 2rem; }
+.post { border: 1px solid var(--smudge); padding: 1rem; margin-bottom: 1rem; }
+.post h3 { margin-bottom: 0.5rem; }
+.export { margin-top: 2rem; }
+textarea { width: 100%; height: 200px; }
+</style>
+</head>
+<body>
+<h1>Blog Admin</h1>
+<div id="auth-screen" class="auth-panel">
+  <p>Enter the admin password to unlock the secure editor.</p>
+  <div class="form-group">
+    <label for="admin-password">Password:</label>
+    <input type="password" id="admin-password">
+  </div>
+  <button onclick="authenticate()">Unlock</button>
+  <p style="margin-top:1rem; font-size:12px; color: var(--smudge);">This page uses Cloudflare runtime auth and writes updates to GitHub. Set your secrets in Cloudflare Pages, not in the public code.</p>
+</div>
+<div id="editor" style="display:none;">
+  <div id="add-form">
+    <h2>Add New Post</h2>
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input type="text" id="title">
+    </div>
+    <div class="form-group">
+      <label for="content">Content:</label>
+      <textarea id="content" rows="10"></textarea>
+    </div>
+    <button onclick="addPost()">Add Post</button>
+  </div>
+
+  <div class="posts">
+    <h2>Existing Posts</h2>
+    <div id="posts-list"></div>
+  </div>
+
+  <div class="export">
+    <h2>Post JSON</h2>
+    <textarea id="json-output" readonly></textarea>
+    <p>Save these changes to GitHub with the button below.</p>
+    <button onclick="savePosts()">Save changes to GitHub</button>
+    <button onclick="logout()">Logout</button>
+    <span id="save-status" style="display:inline-block; margin-left:1rem; font-size:12px; color: var(--smudge);"></span>
+  </div>
+</div>
+
+<script>
+let authToken = localStorage.getItem('adminToken') || '';
+let posts = [];
+
+function setStatus(message, color = 'var(--smudge)') {
+  const status = document.getElementById('save-status');
+  status.textContent = message;
+  status.style.color = color;
+}
+
+function showEditor() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('editor').style.display = 'block';
+  loadPosts();
+}
+
+async function authenticate() {
+  const password = document.getElementById('admin-password').value;
+  if (!password) return alert('Enter your password.');
+
+  const response = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password })
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    return alert(data.error || 'Login failed');
+  }
+
+  authToken = data.token;
+  localStorage.setItem('adminToken', authToken);
+  showEditor();
+}
+
+function logout() {
+  authToken = '';
+  localStorage.removeItem('adminToken');
+  document.getElementById('editor').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'block';
+}
+
+async function loadPosts() {
+  try {
+    const response = await fetch('/api/posts');
+    if (!response.ok) throw new Error('Failed to load posts');
+    posts = await response.json();
+    renderPosts();
+    updateExport();
+    setStatus('Loaded posts.');
+  } catch (error) {
+    console.error(error);
+    setStatus('Unable to load posts.', 'var(--red)');
+  }
+}
+
+function renderPosts() {
+  const list = document.getElementById('posts-list');
+  list.innerHTML = posts.map((post, index) => `
+    <div class="post">
+      <h3>${post.title}</h3>
+      <p>${new Date(post.date).toLocaleDateString()}</p>
+      <button onclick="editPost(${index})">Edit</button>
+      <button onclick="deletePost(${index})">Delete</button>
+    </div>
+  `).join('');
+}
+
+function addPost() {
+  const title = document.getElementById('title').value;
+  const content = document.getElementById('content').value;
+  if (!title || !content) return alert('Title and content required');
+  posts.unshift({
+    id: Date.now(),
+    title,
+    content,
+    date: new Date().toISOString()
+  });
+  document.getElementById('title').value = '';
+  document.getElementById('content').value = '';
+  renderPosts();
+  updateExport();
+}
+
+function editPost(index) {
+  const post = posts[index];
+  const newTitle = prompt('Edit title:', post.title);
+  const newContent = prompt('Edit content:', post.content);
+  if (newTitle !== null && newContent !== null) {
+    posts[index].title = newTitle;
+    posts[index].content = newContent;
+    renderPosts();
+    updateExport();
+  }
+}
+
+function deletePost(index) {
+  if (confirm('Delete this post?')) {
+    posts.splice(index, 1);
+    renderPosts();
+    updateExport();
+  }
+}
+
+function updateExport() {
+  document.getElementById('json-output').value = JSON.stringify(posts, null, 2);
+}
+
+async function savePosts() {
+  if (!authToken) return alert('Login required.');
+  setStatus('Saving...', 'var(--accent2)');
+
+  const response = await fetch('/api/posts', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${authToken}`
+    },
+    body: JSON.stringify({ posts })
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    setStatus(data.error || 'Save failed', 'var(--red)');
+    if (response.status === 401) logout();
+    return;
+  }
+
+  setStatus('Saved! Commit URL: ' + (data.commitUrl || 'available'), 'var(--accent3)');
+}
+
+if (authToken) {
+  showEditor();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "add-post.js",
+  "scripts": {
+    "add-post": "node add-post.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jaypixo/portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Jaypixo/portfolio/issues"
+  },
+  "homepage": "https://github.com/Jaypixo/portfolio#readme"
+}
