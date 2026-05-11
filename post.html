@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Post — Jaypix</title>
+<link rel="icon" type="image/png" href="Public/Jaylogo.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --ink: #1a1716;
+  --paper: #f5f0e8;
+  --paper2: #ede8dc;
+  --smudge: #9b8f82;
+  --accent: #c7522a;
+  --accent2: #3b6e8f;
+  --accent3: #5c7a3e;
+  --border: rgba(26,23,22,0.15);
+  --shadow: rgba(0,0,0,0.08);
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Crimson Pro', Georgia, serif;
+}
+[data-theme="dark"] {
+  --ink: #e8e0d4;
+  --paper: #18161a;
+  --paper2: #201e24;
+  --smudge: #7a7068;
+  --accent: #e0693a;
+  --accent2: #5a9abf;
+  --accent3: #7aaa55;
+  --border: rgba(232,224,212,0.18);
+  --shadow: rgba(0,0,0,0.35);
+}
+html { scroll-behavior: smooth; }
+body {
+  min-height: 100vh;
+  padding: 2rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+}
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.topbar .back-btn,
+.topbar .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.85rem 1.2rem;
+  background: var(--paper2);
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: var(--mono);
+}
+.topbar .back-btn:hover,
+.topbar .theme-toggle:hover {
+  background: rgba(199,82,42,0.08);
+}
+.post-card {
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 24px 60px var(--shadow);
+  padding: 2rem;
+}
+.post-title {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  font-style: italic;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.post-date {
+  color: var(--smudge);
+  font-size: 0.95rem;
+  margin-bottom: 1.75rem;
+}
+.prose {
+  line-height: 1.8;
+  color: var(--ink);
+}
+.prose p {
+  margin-bottom: 1rem;
+}
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin: 1.4rem 0 0.6rem;
+  font-family: var(--serif);
+  color: var(--accent2);
+}
+.prose a {
+  color: var(--accent2);
+  text-decoration: none;
+}
+.prose a:hover { text-decoration: underline; }
+.prose img {
+  max-width: 100%;
+  border-radius: 16px;
+  margin: 1rem 0;
+}
+.prose ul,
+.prose ol {
+  margin: 0.9rem 0 0.9rem 1.4rem;
+}
+.prose li {
+  margin-bottom: 0.5rem;
+}
+.prose code {
+  background: rgba(26,23,22,0.06);
+  padding: 0.2rem 0.35rem;
+  border-radius: 8px;
+  font-family: var(--mono);
+}
+.prose pre {
+  background: rgba(26,23,22,0.05);
+  border-radius: 16px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--smudge);
+}
+.error-message {
+  color: var(--red);
+  margin-top: 1rem;
+}
+@media (max-width: 640px) {
+  body { padding: 1rem; }
+  .post-card { padding: 1.5rem; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <a href="index.html" class="back-btn">← Back to blog</a>
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()"><span id="themeLabel">dark mode</span></button>
+  </div>
+  <article class="post-card">
+    <div id="post-title" class="post-title">Loading...</div>
+    <div id="post-date" class="post-date"></div>
+    <div id="post-body" class="prose"></div>
+    <div id="error" class="error-message"></div>
+  </article>
+</div>
+<script>
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function inlineMarkdown(text) {
+  return text
+    .replace(/!\[([^\]]*)]\(([^)]+)\)/g, (_, alt, url) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`)
+    .replace(/\[([^\]]+)]\(([^)]+)\)/g, (_, label, url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.+?)__/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/_(.+?)_/g, '<em>$1</em>');
+}
+
+function markdownToHtml(markdown) {
+  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+  let html = '';
+  let listType = null;
+  let inBlockquote = false;
+  let inCode = false;
+
+  const closeList = () => {
+    if (!listType) return;
+    html += listType === 'ol' ? '</ol>' : '</ul>';
+    listType = null;
+  };
+
+  const closeBlockquote = () => {
+    if (inBlockquote) {
+      html += '</blockquote>';
+      inBlockquote = false;
+    }
+  };
+
+  lines.forEach(line => {
+    if (inCode) {
+      if (line.trim() === '```') {
+        html += '</code></pre>';
+        inCode = false;
+      } else {
+        html += escapeHtml(line) + '\n';
+      }
+      return;
+    }
+
+    const trimmed = line.trim();
+    if (trimmed === '```') {
+      closeList();
+      closeBlockquote();
+      inCode = true;
+      html += '<pre><code>';
+      return;
+    }
+
+    if (/^#{1,6}\s+/.test(trimmed)) {
+      closeList();
+      closeBlockquote();
+      const level = trimmed.match(/^#{1,6}/)[0].length;
+      html += `<h${level}>${inlineMarkdown(escapeHtml(trimmed.replace(/^#{1,6}\s+/, '')))}</h${level}>`;
+      return;
+    }
+
+    if (/^>\s?/.test(trimmed)) {
+      closeList();
+      if (!inBlockquote) {
+        inBlockquote = true;
+        html += '<blockquote>';
+      }
+      html += inlineMarkdown(escapeHtml(trimmed.replace(/^>\s?/, '')));
+      return;
+    }
+
+    if (/^[-*+]\s+/.test(trimmed)) {
+      closeBlockquote();
+      if (listType !== 'ul') {
+        closeList();
+        listType = 'ul';
+        html += '<ul>';
+      }
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^[-*+]\s+/, '')))}</li>`;
+      return;
+    }
+
+    if (/^\d+\.\s+/.test(trimmed)) {
+      closeBlockquote();
+      if (listType !== 'ol') {
+        closeList();
+        listType = 'ol';
+        html += '<ol>';
+      }
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^\d+\.\s+/, '')))}</li>`;
+      return;
+    }
+
+    closeList();
+    closeBlockquote();
+    if (/^---+$/.test(trimmed)) {
+      html += '<hr>';
+      return;
+    }
+
+    if (!trimmed) return;
+    html += `<p>${inlineMarkdown(escapeHtml(trimmed))}</p>`;
+  });
+
+  closeList();
+  closeBlockquote();
+  return html;
+}
+
+function initTheme() {
+  const stored = localStorage.getItem('postTheme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = stored || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeLabel').textContent = theme === 'dark' ? 'light mode' : 'dark mode';
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('postTheme', next);
+  document.getElementById('themeLabel').textContent = next === 'dark' ? 'light mode' : 'dark mode';
+}
+
+function getQueryParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+function showError(message) {
+  const error = document.getElementById('error');
+  const title = document.getElementById('post-title');
+  if (error) error.textContent = message;
+  if (title) title.textContent = 'Post not found';
+}
+
+function renderPost(post) {
+  document.getElementById('post-title').textContent = post.title;
+  document.getElementById('post-date').textContent = new Date(post.date).toLocaleDateString();
+  document.getElementById('post-body').innerHTML = markdownToHtml(post.content);
+}
+
+function loadPost() {
+  const id = getQueryParam('id');
+  if (!id) {
+    showError('No post id provided.');
+    return;
+  }
+
+  fetch('/api/posts')
+    .then(r => r.json())
+    .then(posts => {
+      const post = posts.find(p => p.id == id);
+      if (!post) {
+        showError('Post could not be found.');
+        return;
+      }
+      renderPost(post);
+    })
+    .catch(() => showError('Unable to load post. Try again later.'));
+}
+
+initTheme();
+loadPost();
+</script>
+</body>
+</html>

@@ -524,7 +524,23 @@ body::before {
   font-size: 14px;
   line-height: 1.6;
   margin-bottom: 1rem;
+  color: var(--ink);
 }
+.blog-post-content em { font-style: italic; color: var(--accent3); }
+.blog-post-content strong { font-weight: 700; }
+.blog-post-content p { margin: 0 0 0.85rem; }
+.blog-post-content code { background: rgba(26,23,22,0.06); padding: 0.15rem 0.3rem; border-radius: 4px; font-family: var(--mono); }
+.blog-post-content a { color: var(--accent2); text-decoration: none; }
+.blog-post-content a:hover { text-decoration: underline; }
+.blog-post-content img { max-width: 100%; border-radius: 6px; margin: 0.85rem 0; }
+.blog-post-content ul,
+.blog-post-content ol { margin: 0.85rem 0 0.85rem 1.4rem; }
+.blog-post-content li { margin-bottom: 0.35rem; }
+.blog-post-content h1, .blog-post-content h2, .blog-post-content h3,
+.blog-post-content h4, .blog-post-content h5, .blog-post-content h6 { margin: 1rem 0 0.6rem; font-weight: 700; }
+.blog-post-content blockquote { border-left: 3px solid var(--accent); padding-left: 0.9rem; color: var(--smudge); margin: 0.85rem 0; }
+.blog-post-content pre { background: rgba(26,23,22,0.05); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0.85rem 0; }
+.blog-post-content code { background: rgba(26,23,22,0.08); padding: 0.15rem 0.3rem; border-radius: 5px; }
 .blog-post-link {
   font-size: 12px;
   color: var(--accent2);
@@ -830,7 +846,7 @@ body::before {
             <li><a href="#" onclick="switchTab('home',this);return false;" class="nav-link active-nav"><span class="icon">~/</span> home</a></li>
             <li><a href="#" onclick="switchTab('about',this);return false;" class="nav-link"><span class="icon">./</span> about.txt</a></li>
             <li><a href="#" onclick="switchTab('projects',this);return false;" class="nav-link"><span class="icon">_</span> projects/</a></li>
-            <li><a href="#" onclick="switchTab('blog',this);return false;" class="nav-link"><span class="icon">📝</span> blog</a></li>
+            <li><a href="#" onclick="switchTab('blog',this);return false;" class="nav-link"><span class="icon">·</span> blog</a></li>
             <li><a href="#" onclick="switchTab('log',this);return false;" class="nav-link"><span class="icon">$</span> devlog</a></li>
             <li><a href="#" onclick="switchTab('contact',this);return false;" class="nav-link"><span class="icon">@</span> contact</a></li>
           </ul>
@@ -1244,6 +1260,131 @@ function initAbout() {
 }
 
 // ─── BLOG ───
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function inlineMarkdown(text) {
+  return text
+    .replace(/!\[([^\]]*)]\(([^)]+)\)/g, (_, alt, url) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`)
+    .replace(/\[([^\]]+)]\(([^)]+)\)/g, (_, label, url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.+?)__/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/_(.+?)_/g, '<em>$1</em>');
+}
+
+function markdownToHtml(markdown) {
+  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+  let html = '';
+  let listType = null;
+  let inBlockquote = false;
+  let inCode = false;
+
+  const closeList = () => {
+    if (!listType) return;
+    html += listType === 'ol' ? '</ol>' : '</ul>';
+    listType = null;
+  };
+
+  const closeBlockquote = () => {
+    if (inBlockquote) {
+      html += '</blockquote>';
+      inBlockquote = false;
+    }
+  };
+
+  lines.forEach(line => {
+    if (inCode) {
+      if (line.trim() === '```') {
+        html += '</code></pre>';
+        inCode = false;
+      } else {
+        html += escapeHtml(line) + '\n';
+      }
+      return;
+    }
+
+    const trimmed = line.trim();
+    if (trimmed === '```') {
+      closeList();
+      closeBlockquote();
+      inCode = true;
+      html += '<pre><code>';
+      return;
+    }
+
+    if (/^#{1,6}\s+/.test(trimmed)) {
+      closeList();
+      closeBlockquote();
+      const level = trimmed.match(/^#{1,6}/)[0].length;
+      html += `<h${level}>${inlineMarkdown(escapeHtml(trimmed.replace(/^#{1,6}\s+/, '')))}</h${level}>`;
+      return;
+    }
+
+    if (/^>\s?/.test(trimmed)) {
+      closeList();
+      if (!inBlockquote) {
+        inBlockquote = true;
+        html += '<blockquote>';
+      }
+      html += inlineMarkdown(escapeHtml(trimmed.replace(/^>\s?/, '')));
+      return;
+    }
+
+    if (/^[-*+]\s+/.test(trimmed)) {
+      closeBlockquote();
+      if (listType !== 'ul') {
+        closeList();
+        listType = 'ul';
+        html += '<ul>';
+      }
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^[-*+]\s+/, '')))}</li>`;
+      return;
+    }
+
+    if (/^\d+\.\s+/.test(trimmed)) {
+      closeBlockquote();
+      if (listType !== 'ol') {
+        closeList();
+        listType = 'ol';
+        html += '<ol>';
+      }
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^\d+\.\s+/, '')))}</li>`;
+      return;
+    }
+
+    closeList();
+    closeBlockquote();
+
+    if (/^---+$/.test(trimmed)) {
+      html += '<hr>';
+      return;
+    }
+
+    if (!trimmed) return;
+    html += `<p>${inlineMarkdown(escapeHtml(trimmed))}</p>`;
+  });
+
+  closeList();
+  closeBlockquote();
+  return html;
+}
+
+function extractExcerpt(markdown, maxLength = 220) {
+  const plain = markdown
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/!\[([^\]]*)]\(([^)]+)\)/g, '$1')
+    .replace(/\[([^\]]+)]\(([^)]+)\)/g, '$1')
+    .replace(/[#>*`_~\-+]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return plain.length <= maxLength ? plain : plain.slice(0, maxLength).trim() + '…';
+}
+
 let blogDone = false;
 function initBlog() {
   if (blogDone) return;
@@ -1253,25 +1394,18 @@ function initBlog() {
     .then(posts => {
       const container = document.getElementById('blog-posts');
       posts.forEach(post => {
-        const excerpt = post.content.length > 220 ? post.content.slice(0, 220).replace(/\n/g, ' ') + '…' : post.content.replace(/\n/g, ' ');
         const div = document.createElement('div');
         div.className = 'blog-post';
         div.innerHTML = `
-          <div class="blog-post-title">${post.title}</div>
+          <div class="blog-post-title">${escapeHtml(post.title)}</div>
           <div class="blog-post-date">${new Date(post.date).toLocaleDateString()}</div>
-          <div class="blog-post-content">${escapeHtml(excerpt)}</div>
+          <div class="blog-post-content">${escapeHtml(extractExcerpt(post.content))}</div>
           <a class="blog-post-link" href="post.html?id=${post.id}">Read more →</a>
         `;
         container.appendChild(div);
       });
     })
     .catch(err => console.error('Failed to load posts:', err));
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
 }
 
 // ─── CONSOLE EASTER EGGS ───

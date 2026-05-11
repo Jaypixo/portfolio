@@ -6,20 +6,20 @@
 <title>Blog Admin - Cloudflare KV</title>
 <link rel="icon" type="image/png" href="Public/Jaylogo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
   --ink: #1a1716;
   --paper: #f5f0e8;
-  --panel: #ede8dc;
-  --smudge: #7b746d;
+  --paper2: #ede8dc;
+  --smudge: #9b8f82;
   --accent: #c7522a;
   --accent2: #3b6e8f;
   --accent3: #5c7a3e;
-  --border: rgba(26,23,22,0.12);
-  --background: linear-gradient(180deg, #f6f1e8 0%, #f0eadf 100%);
+  --red: #b83232;
+  --border: rgba(26,23,22,0.15);
+  --shadow: rgba(0,0,0,0.08);
   --sans: 'Inter', system-ui, sans-serif;
   --mono: 'IBM Plex Mono', monospace;
   --serif: 'Crimson Pro', Georgia, serif;
@@ -28,118 +28,146 @@
 [data-theme="dark"] {
   --ink: #e8e0d4;
   --paper: #18161a;
-  --panel: #201e24;
+  --paper2: #201e24;
   --smudge: #7a7068;
   --accent: #e0693a;
   --accent2: #5a9abf;
   --accent3: #7aaa55;
-  --border: rgba(232,224,212,0.12);
-  --background: linear-gradient(180deg, #18161a 0%, #1f1b22 100%);
+  --red: #d44444;
+  --border: rgba(232,224,212,0.18);
+  --shadow: rgba(0,0,0,0.35);
 }
 
 html { scroll-behavior: smooth; }
 body {
   min-height: 100vh;
-  font-family: var(--sans);
+  background: var(--paper);
   color: var(--ink);
-  background: var(--background);
+  font-family: var(--mono);
   padding: 2rem;
 }
 
-.page-shell {
-  max-width: 1120px;
+.admin-shell {
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .admin-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.75rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
 }
 
-.admin-header h1 {
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  width: 56px;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+}
+
+.brand-title {
   font-family: var(--serif);
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
-  font-weight: 300;
+  font-size: 2rem;
+  font-style: italic;
   color: var(--accent);
-  line-height: 1.05;
 }
 
-.admin-header .subline {
-  margin-top: 0.75rem;
+.brand-note {
   color: var(--smudge);
-  max-width: 640px;
-  line-height: 1.7;
+  font-size: 0.95rem;
+  margin-top: 0.35rem;
+  max-width: 520px;
 }
 
 .header-actions {
   display: flex;
-  gap: 0.75rem;
-  align-items: center;
   flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.button,
-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.9rem 1.3rem;
+button,
+.theme-toggle,
+.secondary-button {
+  border: 1px solid var(--border);
   border-radius: 999px;
-  border: 1px solid transparent;
-  background: var(--accent);
-  color: white;
+  padding: 0.85rem 1.25rem;
   font-family: var(--mono);
-  font-size: 0.95rem;
+  background: var(--paper2);
+  color: var(--ink);
   cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 button:hover,
-.button:hover { background: var(--accent2); transform: translateY(-1px); }
-button.secondary,
-.button.secondary {
-  background: transparent;
-  color: var(--ink);
+.theme-toggle:hover,
+.secondary-button:hover {
+  background: rgba(199,82,42,0.08);
   border-color: var(--accent);
 }
 
-.auth-panel,
-.card {
-  background: rgba(255,255,255,0.92);
+.secondary-button {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 1.5rem;
+}
+
+.panel {
+  background: var(--paper2);
   border: 1px solid var(--border);
-  border-radius: 22px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-  padding: 2rem;
-  margin-bottom: 1.5rem;
+  border-radius: 24px;
+  box-shadow: 0 24px 60px var(--shadow);
+  padding: 1.75rem;
 }
 
-.auth-panel {
-  max-width: 700px;
-  margin: 0 auto 1.5rem;
+.auth-panel,
+.add-post,
+.save-section,
+.posts-panel {
+  background: rgba(255,255,255,0.8);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem;
 }
 
-.form-group { margin-bottom: 1.2rem; }
+.auth-panel p,
+.save-section p {
+  margin-bottom: 1rem;
+  color: var(--smudge);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
 label {
   display: block;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
-  color: var(--ink);
 }
+
 input,
 textarea {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 14px;
-  background: var(--paper);
-  padding: 0.95rem 1rem;
-  font-family: var(--mono);
-  font-size: 0.95rem;
+  background: rgba(255,255,255,0.92);
   color: var(--ink);
+  padding: 0.95rem 1rem;
+  font: inherit;
 }
 
 textarea {
@@ -147,200 +175,254 @@ textarea {
   resize: vertical;
 }
 
-textarea:focus,
-input:focus {
-  outline: 2px solid rgba(199,82,42,0.18);
+input:focus,
+textarea:focus {
+  outline: 2px solid rgba(199,82,42,0.25);
 }
 
-.section-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+button {
+  min-width: 130px;
+  font-weight: 700;
+  color: var(--paper);
+  background: var(--accent);
+  border-color: transparent;
 }
 
-.section-title h2 {
+button:hover {
+  background: var(--accent2);
+}
+
+.posts-panel h2,
+.add-post h2,
+.save-section h2 {
   font-family: var(--serif);
-  font-size: 1.4rem;
   color: var(--accent);
-  margin: 0;
+  margin-bottom: 1rem;
 }
 
-.note {
-  color: var(--smudge);
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.preview-panel {
+.preview-card {
   margin-top: 1.5rem;
   border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
+  border-radius: 18px;
+  background: var(--paper);
+  padding: 1.25rem;
 }
 
-.preview-header {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel);
-  font-family: var(--mono);
-  font-size: 0.9rem;
-  color: var(--smudge);
-}
-
-.preview-content {
-  padding: 1.5rem;
-  background: white;
-  color: var(--ink);
-  min-height: 180px;
-  line-height: 1.8;
-}
-
-.preview-content p { margin-bottom: 1rem; }
-
-.post-card {
+.preview-card h3 {
   margin-bottom: 1rem;
+  font-size: 1rem;
+  color: var(--ink);
 }
 
-.post-card h3 {
-  margin: 0 0 0.5rem;
+.preview-area,
+.post-content,
+.content {
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.preview-area p,
+.content p {
+  margin-bottom: 0.85rem;
+}
+
+.preview-area code,
+.content code {
+  background: rgba(26,23,22,0.05);
+  padding: 0.15rem 0.35rem;
+  border-radius: 6px;
+  font-family: var(--mono);
+}
+
+.preview-area img,
+.content img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 0.85rem 0;
+}
+
+.posts-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.post {
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  background: var(--paper);
+}
+
+.post h3 {
+  margin-bottom: 0.45rem;
   font-family: var(--serif);
   color: var(--accent);
 }
 
-.post-card .post-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
+.post .meta {
   color: var(--smudge);
+  font-size: 0.95rem;
   margin-bottom: 1rem;
 }
 
-.post-card .post-content {
-  margin-bottom: 1.3rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: var(--ink);
+.post .content {
+  max-height: 9rem;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 1rem;
 }
 
-.card-actions {
+.post .content::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3rem;
+  background: linear-gradient(transparent, var(--paper));
+}
+
+.post-actions {
   display: flex;
-  gap: 0.75rem;
   flex-wrap: wrap;
+  gap: 0.65rem;
 }
 
-.post-card button {
-  padding: 0.75rem 1rem;
-}
-
-.post-card .delete-button {
-  background: var(--red);
-}
-
-.markdown-preview {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: var(--panel);
-  border-radius: 14px;
-  min-height: 150px;
+.post-actions button {
+  background: var(--paper2);
   color: var(--ink);
-  line-height: 1.7;
+  border: 1px solid var(--border);
+  min-width: auto;
 }
 
-.markdown-preview p { margin-bottom: 1rem; }
+.post-actions button.delete {
+  background: var(--red);
+  color: white;
+  border-color: transparent;
+}
 
 .status {
   margin-top: 1rem;
-  padding: 1rem 1.25rem;
+  padding: 0.9rem 1rem;
   border-radius: 14px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.status.success { background: rgba(92,122,62,0.16); color: var(--accent3); }
-.status.error { background: rgba(184,50,50,0.14); color: var(--red); }
-.status.info { background: rgba(59,110,143,0.14); color: var(--accent2); }
+.status.success { background: var(--accent3); color: white; }
+.status.error { background: var(--red); color: white; }
+.status.info { background: var(--accent2); color: white; }
 
-@media (max-width: 900px) {
-  body { padding: 1.5rem; }
+@media (max-width: 980px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  body { padding: 1rem; }
   .admin-header { flex-direction: column; }
-  .button,
-  button { width: 100%; }
-  .header-actions { width: 100%; }
-}
-
-@media (max-width: 640px) {
-  .preview-content { min-height: 130px; }
+  .preview-card { padding: 1rem; }
+  .post { padding: 1rem; }
 }
 </style>
 </head>
 <body>
-<div class="page-shell">
+<div class="admin-shell">
   <header class="admin-header">
-    <div>
-      <h1>Blog Admin</h1>
-      <p class="subline">Write markdown-ready posts and save them directly into Cloudflare KV. No GitHub commits, no extra steps.</p>
+    <div class="brand">
+      <img src="Public/Jaylogo.png" alt="Jaypix logo" class="logo">
+      <div>
+        <div class="brand-title">Blog Admin</div>
+        <p class="brand-note">Manage posts in markdown, preview formatting live, and publish with the same Jaypix theme.</p>
+      </div>
     </div>
     <div class="header-actions">
-      <button class="secondary" onclick="window.location.href='index.html#blog'">View Blog</button>
-      <button class="secondary" onclick="logout()">Logout</button>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"><span id="themeLabel">dark mode</span></button>
+      <a href="index.html" class="secondary-button">Back to site</a>
     </div>
   </header>
 
-  <div id="auth-screen" class="auth-panel">
-    <p>Enter your admin password to unlock the editor.</p>
-    <div class="form-group">
-      <label for="admin-password">Password:</label>
-      <input type="password" id="admin-password" placeholder="Enter password">
-    </div>
-    <button onclick="authenticate()">Login</button>
-  </div>
+  <main class="admin-grid">
+    <section class="panel">
+      <div id="auth-screen" class="auth-panel">
+        <p>Enter your admin password to access the blog editor.</p>
+        <div class="form-group">
+          <label for="admin-password">Password:</label>
+          <input type="password" id="admin-password" placeholder="Enter password">
+        </div>
+        <button onclick="authenticate()">Login</button>
+      </div>
 
-  <div id="editor" style="display:none;">
-    <section class="card">
-      <div class="section-title">
-        <h2>New post</h2>
-      </div>
-      <div class="form-group">
-        <label for="new-title">Title</label>
-        <input type="text" id="new-title" placeholder="Post title">
-      </div>
-      <div class="form-group">
-        <label for="new-content">Content</label>
-        <textarea id="new-content" rows="10" placeholder="Write your post in Markdown..." oninput="updateNewPreview()"></textarea>
-      </div>
-      <div class="note">Markdown supported: headings, lists, numbered lists, images, links, blockquotes, code blocks.</div>
-      <div class="preview-panel">
-        <div class="preview-header">Live preview</div>
-        <div id="new-preview" class="preview-content">Start typing markdown to see it rendered here.</div>
-      </div>
-      <div style="margin-top:1.5rem; text-align:right;">
-        <button onclick="addPost()">Add Post</button>
+      <div id="editor" style="display:none;">
+        <div class="add-post">
+          <h2>Add New Post</h2>
+          <div class="form-group">
+            <label for="new-title">Title:</label>
+            <input type="text" id="new-title" placeholder="Post title">
+          </div>
+          <div class="form-group">
+            <label for="new-content">Content:</label>
+            <textarea id="new-content" rows="8" placeholder="Write your post content here..."></textarea>
+          </div>
+          <button onclick="addPost()">Add Post</button>
+        </div>
+
+        <div class="preview-card">
+          <h3>Live preview</h3>
+          <div id="new-preview" class="preview-area prose">Start typing markdown to see your post preview.</div>
+        </div>
       </div>
     </section>
 
-    <section class="card">
-      <div class="section-title">
-        <h2>Manage Posts</h2>
+    <section class="panel posts-panel">
+      <h2>Manage Posts</h2>
+      <div id="posts-list" class="posts-list"></div>
+      <div class="save-section">
+        <h2>Save All Changes</h2>
+        <p>Click below to save all posts to Cloudflare KV instantly. No GitHub commits needed.</p>
+        <button id="save-btn" onclick="savePosts()">Save to Cloudflare KV</button>
+        <div id="save-status" class="status" style="display:none;"></div>
       </div>
-      <div id="posts-list"></div>
     </section>
-
-    <section class="card save-section">
-      <div class="section-title">
-        <h2>Save changes</h2>
-      </div>
-      <p>All updates are saved directly into Cloudflare KV. Click once to persist everything.</p>
-      <button id="save-btn" onclick="savePosts()">Save to Cloudflare KV</button>
-      <div id="save-status" class="status" style="display:none;"></div>
-    </section>
-  </div>
+  </main>
 </div>
 
 <script>
 let authToken = localStorage.getItem('adminToken') || '';
 let posts = [];
 let editingId = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  const contentField = document.getElementById('new-content');
+  if (contentField) {
+    contentField.addEventListener('input', updatePreview);
+  }
+  if (authToken) showEditor();
+  updatePreview();
+});
+
+function initTheme() {
+  const stored = localStorage.getItem('adminTheme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = stored || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+  updateThemeLabel();
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('adminTheme', next);
+  updateThemeLabel();
+}
+
+function updateThemeLabel() {
+  const label = document.getElementById('themeLabel');
+  if (label) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    label.textContent = isDark ? 'light mode' : 'dark mode';
+  }
+}
 
 function showEditor() {
   document.getElementById('auth-screen').style.display = 'none';
@@ -355,9 +437,9 @@ async function authenticate() {
     return;
   }
 
-  const loginButton = document.querySelector('#auth-screen button');
-  loginButton.disabled = true;
-  loginButton.textContent = 'Logging in...';
+  const authButton = document.querySelector('#auth-screen button');
+  authButton.disabled = true;
+  authButton.textContent = 'Logging in...';
 
   try {
     const response = await fetch('/api/login', {
@@ -365,19 +447,17 @@ async function authenticate() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password })
     });
-
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.error || 'Login failed');
     }
-
     authToken = data.token;
     localStorage.setItem('adminToken', authToken);
     showEditor();
   } catch (error) {
     alert('Login failed: ' + error.message);
-    loginButton.disabled = false;
-    loginButton.textContent = 'Login';
+    authButton.disabled = false;
+    authButton.textContent = 'Login';
   }
 }
 
@@ -402,64 +482,43 @@ async function loadPosts() {
   }
 }
 
-function renderMarkdownPreview(text) {
-  if (!text) {
-    return '<p style="opacity:0.7;">Nothing to preview yet.</p>';
-  }
-  if (window.marked) {
-    return marked.parse(text);
-  }
-  return escapeHtml(text).replace(/\n/g, '<br>');
-}
-
-function updateNewPreview() {
-  const preview = document.getElementById('new-preview');
-  preview.innerHTML = renderMarkdownPreview(document.getElementById('new-content').value);
-}
-
-function updateEditPreview(id) {
-  const textarea = document.querySelector(`.edit-card[data-id="${id}"] textarea`);
-  const preview = document.querySelector(`#edit-preview-${id}`);
-  if (textarea && preview) {
-    preview.innerHTML = renderMarkdownPreview(textarea.value);
-  }
-}
-
 function renderPosts() {
   const list = document.getElementById('posts-list');
-  list.innerHTML = posts.length === 0 ?
-    '<p style="text-align:center; color:var(--smudge); padding:2rem;">No posts yet. Add your first post above!</p>' :
-    posts.map((post, index) => `
-      <div class="post-card ${editingId === post.id ? 'edit-mode' : ''}" data-id="${post.id}">
-        ${editingId === post.id ? `
+  if (!list) return;
+  if (posts.length === 0) {
+    list.innerHTML = '<p style="text-align:center; color:var(--smudge); padding:2rem;">No posts yet. Add your first post above!</p>';
+    return;
+  }
+
+  list.innerHTML = posts.map((post, index) => {
+    const editing = editingId === post.id;
+    return `
+      <div class="post ${editing ? 'edit-mode' : ''}" data-id="${post.id}">
+        ${editing ? `
           <div class="form-group">
-            <label>Title</label>
-            <input type="text" value="${escapeHtml(post.title)}" onchange="updatePostField(${post.id}, 'title', this.value)">
+            <label>Title:</label>
+            <input type="text" value="${escapeHtml(post.title)}" oninput="updatePostField(${post.id}, 'title', this.value)">
           </div>
           <div class="form-group">
-            <label>Content</label>
-            <textarea rows="6" oninput="updatePostField(${post.id}, 'content', this.value); updateEditPreview(${post.id})">${escapeHtml(post.content)}</textarea>
+            <label>Content:</label>
+            <textarea rows="6" oninput="updatePostField(${post.id}, 'content', this.value)">${escapeHtml(post.content)}</textarea>
           </div>
-          <div class="markdown-preview" id="edit-preview-${post.id}">${renderMarkdownPreview(post.content)}</div>
-          <div class="card-actions">
+          <div class="post-actions">
             <button onclick="saveEdit(${post.id})">Save</button>
-            <button class="secondary" onclick="cancelEdit()">Cancel</button>
+            <button onclick="cancelEdit()">Cancel</button>
           </div>
         ` : `
           <h3>${escapeHtml(post.title)}</h3>
-          <div class="post-meta">${new Date(post.date).toLocaleDateString()}</div>
-          <div class="post-content">${escapeHtml(post.content).replace(/\n/g, '<br>')}</div>
-          <div class="card-actions">
+          <div class="meta">${new Date(post.date).toLocaleDateString()}</div>
+          <div class="content prose">${markdownToHtml(getExcerptMarkdown(post.content))}</div>
+          <div class="post-actions">
             <button onclick="startEdit(${post.id})">Edit</button>
-            <button class="delete-button" onclick="deletePost(${index})">Delete</button>
+            <button class="delete" onclick="deletePost(${index})">Delete</button>
           </div>
         `}
       </div>
-    `).join('');
-
-  if (editingId) {
-    updateEditPreview(editingId);
-  }
+    `;
+  }).join('');
 }
 
 function escapeHtml(text) {
@@ -485,7 +544,7 @@ function addPost() {
 
   document.getElementById('new-title').value = '';
   document.getElementById('new-content').value = '';
-  updateNewPreview();
+  updatePreview();
   renderPosts();
 }
 
@@ -501,10 +560,13 @@ function cancelEdit() {
 
 function updatePostField(id, field, value) {
   const post = posts.find(p => p.id === id);
-  if (post) post[field] = value;
+  if (post) {
+    post[field] = value;
+    if (field === 'content') renderPosts();
+  }
 }
 
-function saveEdit(id) {
+function saveEdit() {
   editingId = null;
   renderPosts();
 }
@@ -537,12 +599,10 @@ async function savePosts() {
       },
       body: JSON.stringify({ posts })
     });
-
     const data = await response.json();
     if (!response.ok) {
       throw new Error(data.error || 'Save failed');
     }
-
     showStatus('Posts saved successfully to Cloudflare KV!', 'success');
   } catch (error) {
     console.error('Save error:', error);
@@ -562,8 +622,126 @@ function showStatus(message, type) {
   setTimeout(() => status.style.display = 'none', 5000);
 }
 
-if (authToken) {
-  showEditor();
+function updatePreview() {
+  const content = document.getElementById('new-content')?.value || '';
+  const preview = document.getElementById('new-preview');
+  if (!preview) return;
+  preview.innerHTML = content.trim() ? markdownToHtml(content) : 'Start typing markdown to see your post preview.';
+}
+
+function getExcerptMarkdown(markdown) {
+  const blocks = markdown.trim().split(/\n\s*\n/).filter(Boolean);
+  const first = blocks[0] || '';
+  return first.split('\n').slice(0, 6).join('\n');
+}
+
+function inlineMarkdown(text) {
+  return text
+    .replace(/!\[([^\]]*)]\(([^)]+)\)/g, (_, alt, url) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`)
+    .replace(/\[([^\]]+)]\(([^)]+)\)/g, (_, label, url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`)
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.+?)__/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/_(.+?)_/g, '<em>$1</em>');
+}
+
+function markdownToHtml(markdown) {
+  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+  let html = '';
+  let listType = null;
+  let inBlockquote = false;
+  let inCode = false;
+
+  const closeList = () => {
+    if (!listType) return;
+    html += listType === 'ol' ? '</ol>' : '</ul>';
+    listType = null;
+  };
+
+  const closeBlockquote = () => {
+    if (inBlockquote) {
+      html += '</blockquote>';
+      inBlockquote = false;
+    }
+  };
+
+  lines.forEach(line => {
+    if (inCode) {
+      if (line.trim() === '```') {
+        html += '</code></pre>';
+        inCode = false;
+      } else {
+        html += escapeHtml(line) + '\n';
+      }
+      return;
+    }
+
+    const trimmed = line.trim();
+
+    if (trimmed === '```') {
+      closeList();
+      closeBlockquote();
+      inCode = true;
+      html += '<pre><code>';
+      return;
+    }
+
+    if (/^#{1,6}\s+/.test(trimmed)) {
+      closeList();
+      closeBlockquote();
+      const level = trimmed.match(/^#{1,6}/)[0].length;
+      html += `<h${level}>${inlineMarkdown(escapeHtml(trimmed.replace(/^#{1,6}\s+/, '')))}</h${level}>`;
+      return;
+    }
+
+    if (/^>\s?/.test(trimmed)) {
+      closeList();
+      if (!inBlockquote) {
+        inBlockquote = true;
+        html += '<blockquote>';
+      }
+      html += inlineMarkdown(escapeHtml(trimmed.replace(/^>\s?/, '')));
+      return;
+    }
+
+    if (/^[-*+]\s+/.test(trimmed)) {
+      closeBlockquote();
+      if (listType !== 'ul') {
+        closeList();
+        listType = 'ul';
+        html += '<ul>';
+      }
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^[-*+]\s+/, '')))}</li>`;
+      return;
+    }
+
+    if (/^\d+\.\s+/.test(trimmed)) {
+      closeBlockquote();
+      if (listType !== 'ol') {
+        closeList();
+        listType = 'ol';
+        html += '<ol>';
+      }
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^\d+\.\s+/, '')))}</li>`;
+      return;
+    }
+
+    closeList();
+    closeBlockquote();
+
+    if (/^---+$/.test(trimmed)) {
+      html += '<hr>';
+      return;
+    }
+
+    if (!trimmed) return;
+    html += `<p>${inlineMarkdown(escapeHtml(trimmed))}</p>`;
+  });
+
+  closeList();
+  closeBlockquote();
+  return html;
 }
 </script>
 </body>
