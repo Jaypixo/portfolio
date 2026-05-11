@@ -1066,7 +1066,6 @@ const root = document.documentElement;
 let dark = false;
 try { dark = localStorage.getItem('jaypix-theme') === 'dark'; } catch(e) {}
 applyTheme(dark);
-restoreTab();
 
 function applyTheme(isDark) {
   dark = isDark;
@@ -1103,6 +1102,8 @@ function rememberBlogPosition() {
     localStorage.setItem('jaypix-blog-scroll', String(window.scrollY));
   } catch (e) {}
 }
+
+restoreTab();
 
 window.addEventListener('scroll', () => {
   const blogSection = document.getElementById('tab-blog');

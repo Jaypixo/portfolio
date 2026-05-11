@@ -15,6 +15,7 @@
   --paper2: #ede8dc;
   --surface: #ffffff;
   --surface-soft: #f8f3eb;
+  --logo-filter: none;
   --smudge: #9b8f82;
   --accent: #c7522a;
   --accent2: #3b6e8f;
@@ -33,6 +34,7 @@
   --paper2: #201e24;
   --surface: #1f1d23;
   --surface-soft: #2b2730;
+  --logo-filter: invert(1) brightness(0.9);
   --smudge: #a69e8f;
   --accent: #e0693a;
   --accent2: #5a9abf;
@@ -75,6 +77,7 @@ body {
   width: 56px;
   border-radius: 14px;
   box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+  filter: var(--logo-filter);
 }
 
 .brand-title {
