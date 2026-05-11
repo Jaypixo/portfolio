@@ -1104,6 +1104,7 @@ function rememberBlogPosition() {
 }
 
 restoreTab();
+initBlog();
 
 window.addEventListener('scroll', () => {
   const blogSection = document.getElementById('tab-blog');
@@ -1427,8 +1428,6 @@ let blogDone = false;
 function initBlog() {
   const container = document.getElementById('blog-posts');
   if (!container) return;
-  if (blogDone && container.children.length > 0) return;
-  blogDone = true;
   container.innerHTML = '';
   fetch('/api/posts')
     .then(r => r.json())
