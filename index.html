@@ -1425,12 +1425,18 @@ function extractExcerpt(markdown, maxLength = 220) {
 
 let blogDone = false;
 function initBlog() {
-  if (blogDone) return;
+  const container = document.getElementById('blog-posts');
+  if (!container) return;
+  if (blogDone && container.children.length > 0) return;
   blogDone = true;
+  container.innerHTML = '';
   fetch('/api/posts')
     .then(r => r.json())
     .then(posts => {
-      const container = document.getElementById('blog-posts');
+      if (!posts || !posts.length) {
+        container.innerHTML = '<p style="color:var(--smudge);">No posts found.</p>';
+        return;
+      }
       posts.forEach(post => {
         const div = document.createElement('div');
         div.className = 'blog-post';
@@ -1443,7 +1449,10 @@ function initBlog() {
         container.appendChild(div);
       });
     })
-    .catch(err => console.error('Failed to load posts:', err));
+    .catch(err => {
+      console.error('Failed to load posts:', err);
+      container.innerHTML = '<p style="color:var(--red);">Unable to load posts.</p>';
+    });
 }
 
 // ─── CONSOLE EASTER EGGS ───
