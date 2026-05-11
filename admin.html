@@ -13,6 +13,8 @@
   --ink: #1a1716;
   --paper: #f5f0e8;
   --paper2: #ede8dc;
+  --surface: #ffffff;
+  --surface-soft: #f8f3eb;
   --smudge: #9b8f82;
   --accent: #c7522a;
   --accent2: #3b6e8f;
@@ -29,7 +31,9 @@
   --ink: #e8e0d4;
   --paper: #18161a;
   --paper2: #201e24;
-  --smudge: #7a7068;
+  --surface: #1f1d23;
+  --surface-soft: #2b2730;
+  --smudge: #a69e8f;
   --accent: #e0693a;
   --accent2: #5a9abf;
   --accent3: #7aaa55;
@@ -136,15 +140,18 @@ button:hover,
 .auth-panel,
 .add-post,
 .save-section,
-.posts-panel {
-  background: rgba(255,255,255,0.8);
+.posts-panel,
+.preview-card,
+.panel {
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 18px;
   padding: 1.5rem;
 }
 
 .auth-panel p,
-.save-section p {
+.save-section p,
+.brand-note {
   margin-bottom: 1rem;
   color: var(--smudge);
 }
@@ -164,7 +171,7 @@ textarea {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 14px;
-  background: rgba(255,255,255,0.92);
+  background: var(--surface-soft);
   color: var(--ink);
   padding: 0.95rem 1rem;
   font: inherit;
@@ -204,7 +211,7 @@ button:hover {
   margin-top: 1.5rem;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: var(--paper);
+  background: var(--surface);
   padding: 1.25rem;
 }
 
@@ -250,7 +257,7 @@ button:hover {
   border-radius: 18px;
   border: 1px solid var(--border);
   padding: 1.25rem;
-  background: var(--paper);
+  background: var(--surface-soft);
 }
 
 .post h3 {
@@ -279,7 +286,7 @@ button:hover {
   right: 0;
   bottom: 0;
   height: 3rem;
-  background: linear-gradient(transparent, var(--paper));
+  background: linear-gradient(transparent, var(--surface));
 }
 
 .post-actions {
@@ -389,6 +396,7 @@ button:hover {
 let authToken = localStorage.getItem('adminToken') || '';
 let posts = [];
 let editingId = null;
+let editDraft = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
@@ -497,14 +505,14 @@ function renderPosts() {
         ${editing ? `
           <div class="form-group">
             <label>Title:</label>
-            <input type="text" value="${escapeHtml(post.title)}" oninput="updatePostField(${post.id}, 'title', this.value)">
+            <input type="text" value="${escapeHtml(editDraft?.title || post.title)}" oninput="updateEditDraft('title', this.value)">
           </div>
           <div class="form-group">
             <label>Content:</label>
-            <textarea rows="6" oninput="updatePostField(${post.id}, 'content', this.value)">${escapeHtml(post.content)}</textarea>
+            <textarea rows="6" oninput="updateEditDraft('content', this.value)">${escapeHtml(editDraft?.content || post.content)}</textarea>
           </div>
           <div class="post-actions">
-            <button onclick="saveEdit(${post.id})">Save</button>
+            <button onclick="saveEdit()">Save</button>
             <button onclick="cancelEdit()">Cancel</button>
           </div>
         ` : `
@@ -549,25 +557,34 @@ function addPost() {
 }
 
 function startEdit(id) {
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
   editingId = id;
+  editDraft = { ...post };
   renderPosts();
 }
 
 function cancelEdit() {
   editingId = null;
+  editDraft = null;
   renderPosts();
 }
 
-function updatePostField(id, field, value) {
-  const post = posts.find(p => p.id === id);
-  if (post) {
-    post[field] = value;
-    if (field === 'content') renderPosts();
-  }
+function updateEditDraft(field, value) {
+  if (!editDraft) return;
+  editDraft[field] = value;
 }
 
 function saveEdit() {
+  if (!editDraft) return;
+  const post = posts.find(p => p.id === editingId);
+  if (post) {
+    post.title = editDraft.title;
+    post.content = editDraft.content;
+    post.date = new Date().toISOString();
+  }
   editingId = null;
+  editDraft = null;
   renderPosts();
 }
 

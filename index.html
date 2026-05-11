@@ -1066,6 +1066,7 @@ const root = document.documentElement;
 let dark = false;
 try { dark = localStorage.getItem('jaypix-theme') === 'dark'; } catch(e) {}
 applyTheme(dark);
+restoreTab();
 
 function applyTheme(isDark) {
   dark = isDark;
@@ -1074,6 +1075,41 @@ function applyTheme(isDark) {
   document.getElementById('themeLabel').textContent = isDark ? 'light mode' : 'dark mode';
   try { localStorage.setItem('jaypix-theme', isDark ? 'dark' : 'light'); } catch(e) {}
 }
+
+function restoreTab() {
+  const params = new URLSearchParams(window.location.search);
+  let requestedTab = null;
+  try {
+    requestedTab = params.get('tab') || localStorage.getItem('jaypix-active-tab');
+  } catch (e) {
+    requestedTab = params.get('tab');
+  }
+  if (requestedTab && document.getElementById('tab-' + requestedTab)) {
+    switchTab(requestedTab);
+    if (requestedTab === 'blog') {
+      try {
+        const savedScroll = parseInt(localStorage.getItem('jaypix-blog-scroll'), 10);
+        if (!Number.isNaN(savedScroll)) {
+          setTimeout(() => window.scrollTo({ top: savedScroll, behavior: 'auto' }), 250);
+        }
+      } catch (e) {}
+    }
+  }
+}
+
+function rememberBlogPosition() {
+  try {
+    localStorage.setItem('jaypix-active-tab', 'blog');
+    localStorage.setItem('jaypix-blog-scroll', String(window.scrollY));
+  } catch (e) {}
+}
+
+window.addEventListener('scroll', () => {
+  const blogSection = document.getElementById('tab-blog');
+  if (blogSection && blogSection.classList.contains('active')) {
+    try { localStorage.setItem('jaypix-blog-scroll', String(window.scrollY)); } catch (e) {}
+  }
+}, { passive: true });
 
 function toggleTheme() {
   applyTheme(!dark);
@@ -1094,6 +1130,7 @@ function switchTab(name, el) {
   if (name === 'log') initLog();
   if (name === 'about') initAbout();
   if (name === 'blog') initBlog();
+  try { localStorage.setItem('jaypix-active-tab', name); if (name === 'blog') localStorage.setItem('jaypix-blog-scroll', String(window.scrollY)); } catch (e) {}
 }
 
 // ─── TOAST ───
@@ -1400,7 +1437,7 @@ function initBlog() {
           <div class="blog-post-title">${escapeHtml(post.title)}</div>
           <div class="blog-post-date">${new Date(post.date).toLocaleDateString()}</div>
           <div class="blog-post-content">${escapeHtml(extractExcerpt(post.content))}</div>
-          <a class="blog-post-link" href="post.html?id=${post.id}">Read more →</a>
+          <a class="blog-post-link" href="post.html?id=${post.id}" onclick="rememberBlogPosition()">Read more →</a>
         `;
         container.appendChild(div);
       });
