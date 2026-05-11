@@ -397,7 +397,6 @@ button:hover {
 
 <script>
 let authToken = localStorage.getItem('adminToken') || '';
-let isLoggedIn = false;
 let posts = [];
 let editingId = null;
 let editDraft = null;
@@ -408,8 +407,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (contentField) {
     contentField.addEventListener('input', updatePreview);
   }
+  if (authToken) showEditor();
   updatePreview();
-  document.getElementById('save-btn').disabled = true;
 });
 
 function initTheme() {
@@ -439,7 +438,6 @@ function updateThemeLabel() {
 function showEditor() {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('editor').style.display = 'block';
-  document.getElementById('save-btn').disabled = false;
   loadPosts();
 }
 
@@ -466,7 +464,6 @@ async function authenticate() {
     }
     authToken = data.token;
     localStorage.setItem('adminToken', authToken);
-    isLoggedIn = true;
     showEditor();
   } catch (error) {
     alert('Login failed: ' + error.message);
@@ -477,13 +474,11 @@ async function authenticate() {
 
 function logout() {
   authToken = '';
-  isLoggedIn = false;
   localStorage.removeItem('adminToken');
   document.getElementById('editor').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'block';
   posts = [];
   editingId = null;
-  document.getElementById('save-btn').disabled = true;
 }
 
 async function loadPosts() {
@@ -603,7 +598,7 @@ function deletePost(index) {
 }
 
 async function savePosts() {
-  if (!isLoggedIn || !authToken) {
+  if (!authToken) {
     alert('Please log in first.');
     return;
   }
