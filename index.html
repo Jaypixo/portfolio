@@ -1076,13 +1076,10 @@ function applyTheme(isDark) {
 }
 
 function restoreTab() {
-  const params = new URLSearchParams(window.location.search);
-  let requestedTab = null;
+  let requestedTab = 'home';
   try {
-    requestedTab = params.get('tab') || localStorage.getItem('jaypix-active-tab');
-  } catch (e) {
-    requestedTab = params.get('tab');
-  }
+    requestedTab = localStorage.getItem('jaypix-active-tab') || 'home';
+  } catch (e) {}
   if (requestedTab && document.getElementById('tab-' + requestedTab)) {
     switchTab(requestedTab);
     if (requestedTab === 'blog') {
@@ -1104,6 +1101,7 @@ function rememberBlogPosition() {
 }
 
 restoreTab();
+initBlog();
 
 window.addEventListener('scroll', () => {
   const blogSection = document.getElementById('tab-blog');
@@ -1426,13 +1424,17 @@ function extractExcerpt(markdown, maxLength = 220) {
 let blogDone = false;
 let blogLoading = false;
 function initBlog() {
-  if (blogDone || blogLoading) return;
   const container = document.getElementById('blog-posts');
-  if (!container) return;
+  if (!container || blogLoading) return;
+  if (blogDone && container.children.length) return;
   blogLoading = true;
   container.innerHTML = '<p style="color:var(--smudge);">Loading posts...</p>';
+
   fetch('/api/posts')
-    .then(r => r.json())
+    .then(r => {
+      if (!r.ok) throw new Error('Network response was not ok');
+      return r.json();
+    })
     .then(posts => {
       blogLoading = false;
       if (!posts || !posts.length) {
@@ -1457,9 +1459,19 @@ function initBlog() {
     .catch(err => {
       console.error('Failed to load posts:', err);
       blogLoading = false;
-      container.innerHTML = '<p style="color:var(--red);">Unable to load posts.</p>';
+      if (!container.children.length || container.textContent.includes('Loading posts')) {
+        container.innerHTML = '<p style="color:var(--red);">Unable to load posts.</p>';
+      }
     });
 }
+
+window.addEventListener('pageshow', event => {
+  const blogSection = document.getElementById('tab-blog');
+  const container = document.getElementById('blog-posts');
+  if (blogSection && blogSection.classList.contains('active') && container && !container.children.length) {
+    initBlog();
+  }
+});
 
 // ─── CONSOLE EASTER EGGS ───
 console.log('%cjaypix.dev', 'font-size:32px;font-family:Georgia,serif;font-style:italic;color:#c7522a;font-weight:300;');

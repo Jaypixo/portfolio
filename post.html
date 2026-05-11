@@ -156,7 +156,7 @@ body {
 <body>
 <div class="page">
   <div class="topbar">
-    <a href="index.html" class="back-btn">← Back to blog</a>
+    <button type="button" class="back-btn" onclick="if (window.history.length > 1) history.back(); else window.location.href='index.html';">← Back to blog</button>
     <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()"><span id="themeLabel">dark mode</span></button>
   </div>
   <article class="post-card">
