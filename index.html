@@ -1104,7 +1104,6 @@ function rememberBlogPosition() {
 }
 
 restoreTab();
-initBlog();
 
 window.addEventListener('scroll', () => {
   const blogSection = document.getElementById('tab-blog');
@@ -1425,17 +1424,23 @@ function extractExcerpt(markdown, maxLength = 220) {
 }
 
 let blogDone = false;
+let blogLoading = false;
 function initBlog() {
+  if (blogDone || blogLoading) return;
   const container = document.getElementById('blog-posts');
   if (!container) return;
-  container.innerHTML = '';
+  blogLoading = true;
+  container.innerHTML = '<p style="color:var(--smudge);">Loading posts...</p>';
   fetch('/api/posts')
     .then(r => r.json())
     .then(posts => {
+      blogLoading = false;
       if (!posts || !posts.length) {
         container.innerHTML = '<p style="color:var(--smudge);">No posts found.</p>';
+        blogDone = true;
         return;
       }
+      container.innerHTML = '';
       posts.forEach(post => {
         const div = document.createElement('div');
         div.className = 'blog-post';
@@ -1447,9 +1452,11 @@ function initBlog() {
         `;
         container.appendChild(div);
       });
+      blogDone = true;
     })
     .catch(err => {
       console.error('Failed to load posts:', err);
+      blogLoading = false;
       container.innerHTML = '<p style="color:var(--red);">Unable to load posts.</p>';
     });
 }
