@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+* { border-radius: 0 !important; } /* force square corners site-wide */
 
 :root {
   --ink: #1a1716;
@@ -1104,7 +1105,6 @@ function rememberBlogPosition() {
 }
 
 restoreTab();
-initBlog();
 
 window.addEventListener('scroll', () => {
   const blogSection = document.getElementById('tab-blog');
@@ -1306,14 +1306,25 @@ function escapeHtml(text) {
 }
 
 function inlineMarkdown(text) {
-  return text
-    .replace(/!\[([^\]]*)]\(([^)]+)\)/g, (_, alt, url) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`)
-    .replace(/\[([^\]]+)]\(([^)]+)\)/g, (_, label, url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`)
+  const preserved = [];
+  const token = html => {
+    const key = `\u0000MD${preserved.length}\u0000`;
+    preserved.push(html);
+    return key;
+  };
+
+  let out = text
+    .replace(/!\[([^\]]*)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, alt, url) => token(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`))
+    .replace(/\[([^\]]+)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, label, url) => token(`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`))
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.+?)__/g, '<strong>$1</strong>')
+    .replace(/~~(.+?)~~/g, '<del>$1</del>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/_(.+?)_/g, '<em>$1</em>');
+
+  out = out.replace(/\u0000MD(\d+)\u0000/g, (_, i) => preserved[Number(i)] || '');
+  return out;
 }
 
 function markdownToHtml(markdown) {
@@ -1424,19 +1435,28 @@ function extractExcerpt(markdown, maxLength = 220) {
   return plain.length <= maxLength ? plain : plain.slice(0, maxLength).trim() + '…';
 }
 
-let blogDone = false;
+let blogLoading = false;
+let blogRequestId = 0;
 function initBlog() {
+  if (blogLoading) return;
   const container = document.getElementById('blog-posts');
   if (!container) return;
   container.innerHTML = '';
+  blogLoading = true;
+  const requestId = ++blogRequestId;
   fetch('/api/posts')
-    .then(r => r.json())
+    .then(r => {
+      if (!r.ok) throw new Error('Failed to load posts');
+      return r.json();
+    })
     .then(posts => {
-      if (!posts || !posts.length) {
+      if (requestId !== blogRequestId) return;
+      const uniquePosts = Array.from(new Map((posts || []).map(post => [String(post.id), post])).values());
+      if (!uniquePosts.length) {
         container.innerHTML = '<p style="color:var(--smudge);">No posts found.</p>';
         return;
       }
-      posts.forEach(post => {
+      uniquePosts.forEach(post => {
         const div = document.createElement('div');
         div.className = 'blog-post';
         div.innerHTML = `
@@ -1449,8 +1469,12 @@ function initBlog() {
       });
     })
     .catch(err => {
+      if (requestId !== blogRequestId) return;
       console.error('Failed to load posts:', err);
       container.innerHTML = '<p style="color:var(--red);">Unable to load posts.</p>';
+    })
+    .finally(() => {
+      blogLoading = false;
     });
 }
 
