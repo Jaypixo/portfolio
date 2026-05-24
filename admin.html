@@ -411,6 +411,20 @@ document.addEventListener('DOMContentLoaded', () => {
   updatePreview();
 });
 
+function hasUsableToken() {
+  if (!authToken) return false;
+  const parts = authToken.split('.');
+  if (parts.length !== 3) return false;
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+    const payload = JSON.parse(atob(padded));
+    return typeof payload.exp === 'number' && Date.now() <= payload.exp;
+  } catch {
+    return false;
+  }
+}
+
 function initTheme() {
   const stored = localStorage.getItem('adminTheme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -614,7 +628,7 @@ function deletePost(index) {
 }
 
 async function savePosts() {
-  if (!authToken) {
+  if (!hasUsableToken()) {
     alert('Please log in first.');
     return;
   }
