@@ -408,12 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (contentField) {
     contentField.addEventListener('input', updatePreview);
   }
-  if (hasUsableToken()) {
-    showEditor();
-  } else {
-    authToken = '';
-    localStorage.removeItem('adminToken');
-  }
   updatePreview();
 });
 
@@ -559,7 +553,7 @@ function escapeHtml(text) {
 }
 
 function addPost() {
-  if (!hasUsableToken()) {
+  if (!authToken) {
     alert('Please log in first.');
     return;
   }
@@ -584,7 +578,7 @@ function addPost() {
 }
 
 function startEdit(id) {
-  if (!hasUsableToken()) {
+  if (!authToken) {
     alert('Please log in first.');
     return;
   }
@@ -607,7 +601,7 @@ function updateEditDraft(field, value) {
 }
 
 function saveEdit() {
-  if (!hasUsableToken()) {
+  if (!authToken) {
     alert('Please log in first.');
     return;
   }
@@ -624,7 +618,7 @@ function saveEdit() {
 }
 
 function deletePost(index) {
-  if (!hasUsableToken()) {
+  if (!authToken) {
     alert('Please log in first.');
     return;
   }
@@ -692,6 +686,7 @@ function getExcerptMarkdown(markdown) {
 }
 
 function inlineMarkdown(text) {
+codex/fix-blogging-system-issues-zcbn9b
   const preserved = [];
   const token = html => {
     const key = `\u0000MD${preserved.length}\u0000`;
@@ -701,6 +696,7 @@ function inlineMarkdown(text) {
   let out = text
     .replace(/!\[([^\]]*)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, alt, url) => token(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`))
     .replace(/\[([^\]]+)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, label, url) => token(`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`))
+
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.+?)__/g, '<strong>$1</strong>')

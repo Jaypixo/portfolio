@@ -184,6 +184,7 @@ function inlineMarkdown(text) {
   let out = text
     .replace(/!\[([^\]]*)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, alt, url) => token(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`))
     .replace(/\[([^\]]+)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, label, url) => token(`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`))
+
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.+?)__/g, '<strong>$1</strong>')

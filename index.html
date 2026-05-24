@@ -1306,6 +1306,7 @@ function escapeHtml(text) {
 }
 
 function inlineMarkdown(text) {
+
   const preserved = [];
   const token = html => {
     const key = `\u0000MD${preserved.length}\u0000`;
@@ -1439,11 +1440,14 @@ let blogLoading = false;
 let blogRequestId = 0;
 function initBlog() {
   if (blogLoading) return;
+
   const container = document.getElementById('blog-posts');
   if (!container) return;
   container.innerHTML = '';
   blogLoading = true;
+codex/fix-blogging-system-issues-zcbn9b
   const requestId = ++blogRequestId;
+
   fetch('/api/posts')
     .then(r => {
       if (!r.ok) throw new Error('Failed to load posts');
@@ -1451,6 +1455,7 @@ function initBlog() {
     })
     .then(posts => {
       if (requestId !== blogRequestId) return;
+
       const uniquePosts = Array.from(new Map((posts || []).map(post => [String(post.id), post])).values());
       if (!uniquePosts.length) {
         container.innerHTML = '<p style="color:var(--smudge);">No posts found.</p>';
@@ -1467,6 +1472,7 @@ function initBlog() {
         `;
         container.appendChild(div);
       });
+      blogDone = true;
     })
     .catch(err => {
       if (requestId !== blogRequestId) return;
