@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+* { border-radius: 0 !important; } /* force square corners site-wide */
 :root {
   --ink: #1a1716;
   --paper: #f5f0e8;
@@ -175,11 +176,12 @@ function escapeHtml(text) {
 
 function inlineMarkdown(text) {
   return text
-    .replace(/!\[([^\]]*)]\(([^)]+)\)/g, (_, alt, url) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`)
-    .replace(/\[([^\]]+)]\(([^)]+)\)/g, (_, label, url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`)
+    .replace(/!\[([^\]]*)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, alt, url) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`)
+    .replace(/\[([^\]]+)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, label, url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`)
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.+?)__/g, '<strong>$1</strong>')
+    .replace(/~~(.+?)~~/g, '<del>$1</del>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/_(.+?)_/g, '<em>$1</em>');
 }
