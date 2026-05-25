@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jaypix.dev — COMMISSIONS</title>
+    <meta name="theme-color" content="#1a1716">
+    <title>● jaypix.dev — COMMISSIONS</title>
+    <link rel="icon" href="https://jaypix.dev/Public/Jaylogo.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@1,300&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --paper: #f5f0e8;
@@ -16,7 +19,6 @@
             --secondary: #3b6e8f;
             --tertiary: #5c7a3e;
             --warning: #d4a017;
-            --error: #b83232;
             --border: rgba(26, 23, 22, 0.12);
             --grid-line: rgba(26, 23, 22, 0.015);
         }
@@ -32,15 +34,7 @@
             }
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@1,300&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Inter:wght@300;400;500&amp;display=swap');
-
-        :root {
-            --accent-glow: #c7522a;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -51,63 +45,48 @@
                 repeating-linear-gradient(90deg, var(--grid-line) 0px, transparent 1px, transparent 40px, var(--grid-line) 40px);
             background-size: 40px 28px;
             color: var(--ink);
-            line-height: 1.5;
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
+        /* Enhanced Status Bar */
         .status-bar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 28px;
+            height: 32px;
             background: var(--paper-alt);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            padding: 0 1rem;
-            font-size: 0.7rem;
+            padding: 0 1.5rem;
+            font-size: 0.75rem;
             color: var(--muted);
             z-index: 1000;
             overflow: hidden;
             white-space: nowrap;
+            gap: 1.5rem;
         }
 
         .status-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .cursor {
-            display: inline-block;
-        }
-
-        .cursor::after {
-            content: '█';
-            animation: blink 1.1s step-end infinite;
-            color: var(--primary);
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
         .ticker {
-            display: inline-block;
+            flex: 1;
             white-space: nowrap;
-            animation: marquee 28s linear infinite;
-            padding-left: 2rem;
+            animation: marquee 35s linear infinite;
         }
 
         .header {
-            clip-path: polygon(
-                0% 12%, 3% 2%, 7% 9%, 12% 1%, 17% 8%, 23% 0%,
-                29% 7%, 35% 2%, 41% 9%, 48% 1%, 54% 7%, 61% 0%,
-                68% 8%, 75% 3%, 82% 9%, 89% 1%, 95% 6%, 100% 0%,
-                100% 100%, 0% 100%
-            );
+            clip-path: polygon(0% 12%, 3% 2%, 7% 9%, 12% 1%, 17% 8%, 23% 0%, 29% 7%, 35% 2%, 41% 9%, 48% 1%, 54% 7%, 61% 0%, 68% 8%, 75% 3%, 82% 9%, 89% 1%, 95% 6%, 100% 0%, 100% 100%, 0% 100%);
             background-color: var(--ink);
             color: var(--paper);
-            padding: 5.5rem 2rem 3rem 2rem;
+            padding: 5.5rem 2rem 3.5rem 2rem;
             position: relative;
-            margin-top: 28px;
+            margin-top: 32px;
         }
 
         .logo-container {
@@ -133,14 +112,14 @@
         .wrapper {
             max-width: 720px;
             margin: 0 auto;
-            padding: 2rem 1.5rem 4rem;
+            padding: 2rem 1.5rem 5rem;
         }
 
         h1 {
             font-family: 'Crimson Pro', serif;
             font-style: italic;
             font-weight: 300;
-            font-size: 3.2rem;
+            font-size: 3.3rem;
             line-height: 1.05;
             letter-spacing: -0.03em;
             margin: 0 0 0.5rem;
@@ -150,130 +129,66 @@
             font-family: 'Inter', sans-serif;
             font-weight: 300;
             color: var(--muted);
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             font-size: 0.95rem;
         }
 
-        .section {
-            margin-bottom: 3.5rem;
-        }
+        .section { margin-bottom: 4rem; }
 
         .section-title {
             font-family: 'Crimson Pro', serif;
             font-style: italic;
-            font-size: 1.65rem;
+            font-size: 1.7rem;
             margin-bottom: 1.25rem;
             color: var(--primary);
             border-bottom: 1px solid var(--border);
             padding-bottom: 0.5rem;
         }
 
-        .rules {
-            display: grid;
-            gap: 1rem;
-        }
-
         .sticky-note {
             background: #f5e642;
             color: #1a1716;
-            padding: 1.1rem 1.3rem;
+            padding: 1.2rem 1.4rem;
             transform: rotate(-1.5deg);
             border: 2px solid #1a1716;
             position: relative;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
         }
 
         .sticky-note:nth-child(2) {
             transform: rotate(1.2deg);
-            margin-left: 40px;
-        }
-
-        .sticky-note::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 45%;
-            width: 18px;
-            height: 18px;
-            background: var(--error);
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-left: 45px;
         }
 
         .service-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-            gap: 1.5rem;
+            gap: 1.6rem;
         }
 
         .service-card {
             background: var(--paper-alt);
             border: 1px solid var(--border);
-            padding: 1.5rem;
-            transition: transform 0.2s ease;
+            padding: 1.6rem;
+            transition: transform 0.25s ease;
         }
 
         .service-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .service-card h3 {
-            font-family: 'Crimson Pro', serif;
-            font-style: italic;
-            margin: 0 0 0.75rem;
-            font-size: 1.4rem;
+            transform: translateY(-6px);
         }
 
         .price {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--primary);
             font-weight: 500;
-        }
-
-        .info-strip {
-            display: grid;
-            grid-template-columns: 140px 1fr;
-            border-bottom: 1px solid var(--border);
-            padding: 0.5rem 0;
-            font-size: 0.8rem;
-        }
-
-        .info-strip:last-child {
-            border-bottom: none;
-        }
-
-        .label {
-            color: var(--muted);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-bottom: 0.4rem;
-            text-transform: uppercase;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--border);
-            padding: 0.75rem;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            color: var(--ink);
         }
 
         .btn {
             background: var(--primary);
             color: var(--paper);
             border: 2px solid var(--ink);
-            padding: 0.85rem 2rem;
+            padding: 0.95rem 2rem;
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             text-transform: uppercase;
@@ -281,12 +196,13 @@
             cursor: pointer;
             transition: all 0.2s;
             width: 100%;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
         }
 
         .btn:hover {
-            background: color-mix(in srgb, var(--primary) 80%, var(--ink));
-            transform: translateY(-1px);
+            background: color-mix(in srgb, var(--primary) 85%, var(--ink));
+            transform: translateY(-2px);
         }
 
         .ghost-btn {
@@ -295,23 +211,8 @@
             border: 2px solid var(--ink);
         }
 
-        .terminal-log {
-            background: #18161a;
-            color: #9b8f82;
-            padding: 1rem;
-            font-size: 0.75rem;
-            border: 1px solid var(--border);
-            margin: 1.5rem 0;
-            line-height: 1.4;
-        }
-
-        .log-time { color: var(--secondary); margin-right: 0.6rem; }
-        .log-level { margin-right: 0.6rem; font-weight: 500; }
-        .log-level.info { color: var(--secondary); }
-        .log-level.warn { color: var(--warning); }
-
         footer {
-            margin-top: 6rem;
+            margin-top: 7rem;
             padding-top: 2rem;
             border-top: 1px solid var(--border);
             font-size: 0.7rem;
@@ -319,16 +220,7 @@
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .footnote {
-            margin: 0.3rem 0;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+            gap: 2rem;
         }
 
         @keyframes marquee {
@@ -338,46 +230,50 @@
 
         .floating-grid {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: -1;
-            opacity: 0.07;
+            opacity: 0.06;
             background: 
                 linear-gradient(45deg, transparent 40%, var(--primary) 42%, transparent 44%),
                 linear-gradient(-45deg, transparent 40%, var(--tertiary) 42%, transparent 44%);
-            background-size: 120px 120px;
-            animation: float-grid 45s linear infinite;
+            background-size: 130px 130px;
+            animation: float-grid 50s linear infinite;
         }
 
         @keyframes float-grid {
             0% { background-position: 0 0; }
-            100% { background-position: 300px 300px; }
+            100% { background-position: 400px 400px; }
+        }
+
+        /* Mobile Improvements */
+        @media (max-width: 640px) {
+            .header { padding: 5rem 1.25rem 3rem; }
+            h1 { font-size: 2.7rem; }
+            .wrapper { padding: 1.5rem 1rem 4rem; }
+            .service-grid { grid-template-columns: 1fr; }
+            .status-bar { font-size: 0.7rem; padding: 0 1rem; height: 30px; }
         }
     </style>
 </head>
 <body>
     <!-- STATUS BAR -->
     <div class="status-bar">
-        <div class="status-left">
-            <span class="cursor">SYS</span>
-            <span id="uptime">00:00:00</span>
-        </div>
+        <div class="status-left">JAYPIX STUDIO • OPEN</div>
         <div class="ticker">
-            COMMISSIONS OPEN • NO NSFW • NO AI • NO DATING SIMS • RESPONSE TIME 24-48HRS • E-MAIL TO ORDER • NO REFUNDS
+            COMMISSIONS OPEN • NO NSFW • NO AI • NO DATING SIMS • 24-48H RESPONSE • EMAIL TO ORDER
         </div>
     </div>
 
-    <!-- TORN HEADER -->
+    <!-- HEADER -->
     <header class="header">
         <div class="logo-container">
             <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix Logo">
         </div>
         <div class="wrapper">
             <h1 style="color: var(--paper);">COMMISSIONS</h1>
-            <p class="subtitle">jaypix.dev — v0.8.4-beta</p>
+            <p class="subtitle">jaypix.dev • Web Development and Graphic Design &amp; Branding</p>
         </div>
     </header>
 
@@ -385,16 +281,10 @@
 
         <!-- HERO -->
         <div class="section">
-            <p style="max-width: 520px; font-size: 1.1rem; margin-bottom: 2rem;">
-                Graphic design, branding &amp; UI work.<br>
-                Currently accepting limited projects during free-time.
+            <p style="max-width: 520px; font-size: 1.15rem; margin-bottom: 2.5rem;">
+                Web development, Graphic design, branding, and thoughtful UI work.<br>
+                Currently accepting a limited number of projects.
             </p>
-            
-            <div class="terminal-log">
-                <span class="log-time">14:22:09</span>
-                <span class="log-level info">INFO</span>
-                <span class="log-msg">commission queue: 2 active • 1 pending</span>
-            </div>
         </div>
 
         <!-- RULES -->
@@ -402,12 +292,12 @@
             <div class="section-title">IMPORTANT INFORMATION</div>
             <div class="rules">
                 <div class="sticky-note">
-                    I will NOT accept commissions for NSFW, AI (including chatbots), or dating sims.<br>
-                    If unsure — contact me.
+                    I will NOT accept commissions for NSFW, AI-generated work, or dating sims.<br>
+                    If unsure, just ask.
                 </div>
                 <div class="sticky-note">
-                    Response time typically 24-48 hrs.<br>
-                    Estimates include me being busy with other projects or school.
+                    Average response time is 24-48 hours.<br>
+                    Timelines may shift depending on school and current workload.
                 </div>
             </div>
         </div>
@@ -416,41 +306,28 @@
         <div class="section">
             <div class="section-title">SERVICES</div>
             <div class="service-grid">
-                
-                <!-- Basic Logo -->
                 <div class="service-card">
                     <h3>Basic Logo + Fonts</h3>
                     <div class="price">Small Scale: $5</div>
-                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">One color logo + matching fonts.<br>PNG + SVG.</p>
-                    <div class="info-strip">
-                        <div class="label">Exports</div>
-                        <div>PNG, SVG</div>
-                    </div>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">One-color logo with matching fonts.<br>PNG + SVG included.</p>
                 </div>
 
-                <!-- Flyers -->
                 <div class="service-card">
                     <h3>Flyers / Static Ads</h3>
                     <div class="price">Small Scale: $20–$35</div>
-                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Single page promotional graphics.</p>
-                    <div class="info-strip">
-                        <div class="label">Formats</div>
-                        <div>PNG, SVG, PDF</div>
-                    </div>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Single-page promotional graphics for print or web.</p>
                 </div>
 
-                <!-- Branding -->
                 <div class="service-card">
                     <h3>Logo + Full Branding</h3>
                     <div class="price">Small: $15–$30 • Large: $20–$40</div>
-                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Variants, palette, fonts, guidelines.</p>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Complete package: variants, palette, fonts, and basic guidelines.</p>
                 </div>
 
-                <!-- UI -->
                 <div class="service-card">
                     <h3>UI Design</h3>
                     <div class="price">Small: $15–$78 • Large: $63+</div>
-                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Responsive desktop + mobile layouts.</p>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Clean, responsive desktop + mobile interfaces.</p>
                 </div>
             </div>
         </div>
@@ -458,29 +335,39 @@
         <!-- HOW TO COMMISSION -->
         <div class="section">
             <div class="section-title">HOW TO COMMISSION</div>
-            <p>Send the following template to <strong>contact@jaypix.dev</strong></p>
+            <p>Send the template below to <strong>contact@jaypix.dev</strong></p>
             
-            <div style="background: var(--paper-alt); padding: 1.5rem; border: 1px solid var(--border); font-size: 0.85rem; margin: 1.5rem 0;">
-                <strong>Scale:</strong> [Small/Large]<br>
-                <strong>Project Type:</strong> [Logo / Branding / Flyer / UI Design / Etc]<br>
-                <strong>Style:</strong> [Frutiger Aero / Y2K / Minimal / etc]<br>
-                <strong>Description:</strong> [Detailed description, references, mood, inspirations...]
+            <div style="background: var(--paper-alt); padding: 1.6rem; border: 1px solid var(--border); font-size: 0.85rem; margin: 1.8rem 0; line-height: 1.7;">
+                <strong>Scale:</strong> [Small / Large]<br>
+                <strong>Project Type:</strong> [Logo / Branding / Flyer / UI Design / Other]<br>
+                <strong>Style:</strong> [Frutiger Aero / Y2K / Minimal / Cyber / etc.]<br>
+                <strong>Description:</strong> [Detailed description, references, mood, and inspirations]
             </div>
 
-            <p style="font-size: 0.85rem; color: var(--muted);">
-                I'll reply with sketches, moodboards, and a quote. Payment via PayPal, Cash App, or Venmo.<br>
-                50/50 split available on request.
+            <p style="font-size: 0.9rem; color: var(--muted);">
+                I'll reply with initial sketches, moodboards, and a quote.<br><br>
+                <strong>Payment:</strong> PayPal or Bank Transfer only.
+            </p>
+        </div>
+
+        <!-- PROCESS -->
+        <div class="section">
+            <div class="section-title">MY PROCESS</div>
+            <p style="font-size: 0.95rem;">
+                1. Initial discussion &amp; moodboard<br>
+                2. Rough sketches / concepts<br>
+                3. Refinement rounds (usually 2 included)<br>
+                4. Final delivery with source files
             </p>
         </div>
 
         <!-- CONTACT -->
         <div class="section">
             <div class="section-title">CONTACT</div>
-            <div style="display: flex; gap: 3rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 3rem; flex-wrap: wrap; font-size: 0.95rem;">
                 <div>
                     <strong>Developer</strong><br>
-                    Jaypix<br>
-                    <a href="https://jaypix.dev" style="color: var(--primary); border-bottom: 1px dashed var(--primary);">jaypix.dev</a>
+                    <a href="https://jaypix.dev" style="color: var(--primary);">jaypix.dev</a>
                 </div>
                 <div>
                     <strong>Email</strong><br>
@@ -495,11 +382,11 @@
     <!-- FOOTER -->
     <footer class="wrapper">
         <div>
-            <div class="footnote">[1] Source files always included. Named layers available for 5-8% extra.</div>
-            <div class="footnote">[2] WIP previews sent during development. Estimates may shift with academic load.</div>
+            <div class="footnote">[1] Source files always included. Named layers + extra assets available.</div>
+            <div class="footnote">[2] 50/50 payment split available on bigger projects.</div>
         </div>
         <div style="text-align: right; font-size: 0.65rem;">
-            BUILT BY HAND • 2026<br>
+            HANDCRAFTED • 2026<br>
             jaypix.dev
         </div>
     </footer>
@@ -507,38 +394,12 @@
     <div class="floating-grid"></div>
 
     <script>
-        // Uptime counter
-        let seconds = 0;
-        function updateUptime() {
-            seconds++;
-            const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-            const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
-            document.getElementById('uptime').textContent = `${h}:${m}:${s}`;
-        }
-        setInterval(updateUptime, 1000);
-
-        // Subtle logo filter toggle on scroll
-        window.addEventListener('scroll', () => {
-            const logo = document.querySelector('.logo-container img');
-            if (window.scrollY > 300) {
-                logo.style.filter = 'invert(1) hue-rotate(20deg)';
-            } else {
-                logo.style.filter = 'invert(1)';
-            }
-        });
-
-        // Easter egg: click logo 5 times
-        let clickCount = 0;
+        // Logo hover effect
         document.querySelector('.logo-container').addEventListener('click', () => {
-            clickCount++;
-            if (clickCount >= 5) {
-                alert("JAYPIX PROTOCOL ENGAGED.\n\nThank you for visiting.");
-                clickCount = 0;
-            }
+            alert("JAYPIX PROTOCOL ENGAGED.\n\nThanks for checking out my commissions page.");
         });
 
-        console.log('%cjaypix.dev commissions system initialized', 'color:#c7522a; font-family:monospace');
+        console.log('%cjaypix.dev commissions • v0.9', 'color:#c7522a; font-family:monospace');
     </script>
 </body>
 </html>
