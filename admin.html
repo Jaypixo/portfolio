@@ -264,6 +264,10 @@ button:hover {
   background: var(--surface-soft);
 }
 
+.post.edit-mode {
+  border: 2px solid var(--accent);
+}
+
 .post h3 {
   margin-bottom: 0.45rem;
   font-family: var(--serif);
@@ -404,10 +408,13 @@ let editDraft = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
-  const contentField = document.getElementById('new-content');
-  if (contentField) {
-    contentField.addEventListener('input', updatePreview);
+  
+  const contentInput = document.getElementById('new-content');
+  if (contentInput) {
+    contentInput.addEventListener('input', updatePreview);
   }
+
+  if (authToken) showEditor();
   updatePreview();
 });
 
@@ -493,6 +500,12 @@ async function loadPosts() {
   }
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function renderPosts() {
   const list = document.getElementById('posts-list');
   if (!list) return;
@@ -530,12 +543,6 @@ function renderPosts() {
       </div>
     `;
   }).join('');
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
 }
 
 function addPost() {
@@ -684,7 +691,7 @@ function inlineMarkdown(text) {
 }
 
 function markdownToHtml(markdown) {
-  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+  const lines = (markdown || '').replace(/\r\n/g, '\n').split('\n');
   let html = '';
   let listType = null;
   let inBlockquote = false;
@@ -728,7 +735,7 @@ function markdownToHtml(markdown) {
       closeList();
       closeBlockquote();
       const level = trimmed.match(/^#{1,6}/)[0].length;
-      html += `<h${level}>${inlineMarkdown(escapeHtml(trimmed.replace(/^#{1,6}\s+/, '')))}</h${level}>`;
+      html += `<h${level}>${inlineMarkdown(escapeHtml(trimmed.replace(/^#{1,6}\s+/, "")))}</h${level}>`;
       return;
     }
 
@@ -738,7 +745,7 @@ function markdownToHtml(markdown) {
         inBlockquote = true;
         html += '<blockquote>';
       }
-      html += inlineMarkdown(escapeHtml(trimmed.replace(/^>\s?/, '')));
+      html += inlineMarkdown(escapeHtml(trimmed.replace(/^>\s?/, "")));
       return;
     }
 
@@ -749,7 +756,7 @@ function markdownToHtml(markdown) {
         listType = 'ul';
         html += '<ul>';
       }
-      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^[-*+]\s+/, '')))}</li>`;
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^[-*+]\s+/, "")))}</li>`;
       return;
     }
 
@@ -760,7 +767,7 @@ function markdownToHtml(markdown) {
         listType = 'ol';
         html += '<ol>';
       }
-      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^\d+\.\s+/, '')))}</li>`;
+      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^\d+\.\s+/, "")))}</li>`;
       return;
     }
 
