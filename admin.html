@@ -679,15 +679,25 @@ function getExcerptMarkdown(markdown) {
 }
 
 function inlineMarkdown(text) {
-  return text
-    .replace(/!\[([^\]]*)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, alt, url) => `<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`)
-    .replace(/\[([^\]]+)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, label, url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`)
+codex/fix-blogging-system-issues-zcbn9b
+  const preserved = [];
+  const token = html => {
+    const key = `\u0000MD${preserved.length}\u0000`;
+    preserved.push(html);
+    return key;
+  };
+  let out = text
+    .replace(/!\[([^\]]*)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, alt, url) => token(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`))
+    .replace(/\[([^\]]+)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, label, url) => token(`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`))
+
     .replace(/`([^`]+)`/g, '<code>$1</code>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/__(.+?)__/g, '<strong>$1</strong>')
     .replace(/~~(.+?)~~/g, '<del>$1</del>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/_(.+?)_/g, '<em>$1</em>');
+  out = out.replace(/\u0000MD(\d+)\u0000/g, (_, i) => preserved[Number(i)] || '');
+  return out;
 }
 
 function markdownToHtml(markdown) {
