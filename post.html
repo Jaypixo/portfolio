@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blog Post — Jaypix</title>
-<link rel="icon" type="image/png" href="Public/Jaylogo.png">
+<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,6 +17,8 @@
   --accent: #c7522a;
   --accent2: #3b6e8f;
   --accent3: #5c7a3e;
+  --yellow: #d4a017;
+  --red: #b83232;
   --border: rgba(26,23,22,0.15);
   --shadow: rgba(0,0,0,0.08);
   --sans: 'Inter', system-ui, sans-serif;
@@ -31,6 +33,8 @@
   --accent: #e0693a;
   --accent2: #5a9abf;
   --accent3: #7aaa55;
+  --yellow: #e6b830;
+  --red: #d44444;
   --border: rgba(232,224,212,0.18);
   --shadow: rgba(0,0,0,0.35);
 }
@@ -86,10 +90,23 @@ body {
   color: var(--accent);
   margin-bottom: 0.5rem;
 }
-.post-date {
+.post-meta {
   color: var(--smudge);
   font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin-bottom: 1.75rem;
+}
+.post-tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  color: var(--smudge);
 }
 .prose {
   line-height: 1.8;
@@ -148,151 +165,72 @@ body {
   color: var(--red);
   margin-top: 1rem;
 }
+.post-extras {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+.edit-link {
+  font-size: 0.8rem;
+  color: var(--yellow);
+  text-decoration: none;
+  border: 1px solid var(--yellow);
+  padding: 0.4rem 0.8rem;
+}
+.edit-link:hover { background: rgba(212,160,23,0.12); }
+.post-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.post-nav a {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.post-nav a:hover { background: var(--paper2); }
+.post-nav .nav-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--smudge);
+  margin-bottom: 0.35rem;
+}
+.post-nav .nav-next { text-align: right; grid-column: 2; }
 @media (max-width: 640px) {
   body { padding: 1rem; }
   .post-card { padding: 1.5rem; }
+  .post-nav { grid-template-columns: 1fr; }
+  .post-nav .nav-next { grid-column: 1; text-align: left; }
 }
 </style>
 </head>
 <body>
 <div class="page">
   <div class="topbar">
-    <a href="index.html" class="back-btn">← Back to blog</a>
+    <a href="blog.html" class="back-btn">← Back to blog</a>
     <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()"><span id="themeLabel">dark mode</span></button>
   </div>
   <article class="post-card">
     <div id="post-title" class="post-title">Loading...</div>
-    <div id="post-date" class="post-date"></div>
+    <div id="post-meta" class="post-meta"></div>
+    <div id="post-tags" class="post-tags"></div>
     <div id="post-body" class="prose"></div>
     <div id="error" class="error-message"></div>
+    <div id="post-extras" class="post-extras"></div>
+    <nav id="post-nav" class="post-nav"></nav>
   </article>
 </div>
+<script src="js/markdown.js"></script>
 <script>
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function inlineMarkdown(text) {
-  const preserved = [];
-  const token = html => {
-    const key = `\u0000MD${preserved.length}\u0000`;
-    preserved.push(html);
-    return key;
-  };
-  let out = text
-    .replace(/!\[([^\]]*)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, alt, url) => token(`<img src="${escapeHtml(url)}" alt="${escapeHtml(alt)}">`))
-    .replace(/\[([^\]]+)]\(((?:[^()\s]|\([^()]*\))+?)\)/g, (_, label, url) => token(`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`))
-
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/__(.+?)__/g, '<strong>$1</strong>')
-    .replace(/~~(.+?)~~/g, '<del>$1</del>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/_(.+?)_/g, '<em>$1</em>');
-  out = out.replace(/\u0000MD(\d+)\u0000/g, (_, i) => preserved[Number(i)] || '');
-  return out;
-}
-
-function markdownToHtml(markdown) {
-  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
-  let html = '';
-  let listType = null;
-  let inBlockquote = false;
-  let inCode = false;
-
-  const closeList = () => {
-    if (!listType) return;
-    html += listType === 'ol' ? '</ol>' : '</ul>';
-    listType = null;
-  };
-
-  const closeBlockquote = () => {
-    if (inBlockquote) {
-      html += '</blockquote>';
-      inBlockquote = false;
-    }
-  };
-
-  lines.forEach(line => {
-    if (inCode) {
-      if (line.trim() === '```') {
-        html += '</code></pre>';
-        inCode = false;
-      } else {
-        html += escapeHtml(line) + '\n';
-      }
-      return;
-    }
-
-    const trimmed = line.trim();
-    if (trimmed === '```') {
-      closeList();
-      closeBlockquote();
-      inCode = true;
-      html += '<pre><code>';
-      return;
-    }
-
-    if (/^#{1,6}\s+/.test(trimmed)) {
-      closeList();
-      closeBlockquote();
-      const level = trimmed.match(/^#{1,6}/)[0].length;
-      html += `<h${level}>${inlineMarkdown(escapeHtml(trimmed.replace(/^#{1,6}\s+/, '')))}</h${level}>`;
-      return;
-    }
-
-    if (/^>\s?/.test(trimmed)) {
-      closeList();
-      if (!inBlockquote) {
-        inBlockquote = true;
-        html += '<blockquote>';
-      }
-      html += inlineMarkdown(escapeHtml(trimmed.replace(/^>\s?/, '')));
-      return;
-    }
-
-    if (/^[-*+]\s+/.test(trimmed)) {
-      closeBlockquote();
-      if (listType !== 'ul') {
-        closeList();
-        listType = 'ul';
-        html += '<ul>';
-      }
-      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^[-*+]\s+/, '')))}</li>`;
-      return;
-    }
-
-    if (/^\d+\.\s+/.test(trimmed)) {
-      closeBlockquote();
-      if (listType !== 'ol') {
-        closeList();
-        listType = 'ol';
-        html += '<ol>';
-      }
-      html += `<li>${inlineMarkdown(escapeHtml(trimmed.replace(/^\d+\.\s+/, '')))}</li>`;
-      return;
-    }
-
-    closeList();
-    closeBlockquote();
-    if (/^---+$/.test(trimmed)) {
-      html += '<hr>';
-      return;
-    }
-
-    if (!trimmed) return;
-    html += `<p>${inlineMarkdown(escapeHtml(trimmed))}</p>`;
-  });
-
-  closeList();
-  closeBlockquote();
-  return html;
-}
-
 function initTheme() {
-  const stored = localStorage.getItem('postTheme');
+  const stored = localStorage.getItem('postTheme') || localStorage.getItem('jaypix-theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const theme = stored || (prefersDark ? 'dark' : 'light');
   document.documentElement.setAttribute('data-theme', theme);
@@ -304,6 +242,7 @@ function toggleTheme() {
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('postTheme', next);
+  localStorage.setItem('jaypix-theme', next);
   document.getElementById('themeLabel').textContent = next === 'dark' ? 'light mode' : 'dark mode';
 }
 
@@ -319,27 +258,57 @@ function showError(message) {
 }
 
 function renderPost(post) {
+  document.title = `${post.title} — Jaypix`;
   document.getElementById('post-title').textContent = post.title;
-  document.getElementById('post-date').textContent = new Date(post.date).toLocaleDateString();
+
+  const date = new Date(post.date).toLocaleDateString();
+  document.getElementById('post-meta').textContent = `${date} · ${estimateReadingTime(post.content)} min read`;
+
+  const tagsEl = document.getElementById('post-tags');
+  tagsEl.innerHTML = (post.tags || []).map(tag => `<span class="post-tag">${escapeHtml(tag)}</span>`).join('');
+
   document.getElementById('post-body').innerHTML = markdownToHtml(post.content);
+
+  if (localStorage.getItem('adminToken')) {
+    document.getElementById('post-extras').innerHTML =
+      `<a class="edit-link" href="admin.html?edit=${post.id}">edit this post →</a>`;
+  }
+}
+
+function renderNav(posts, index) {
+  const nav = document.getElementById('post-nav');
+  const older = posts[index + 1];
+  const newer = posts[index - 1];
+  let html = '';
+  if (newer) {
+    html += `<a class="nav-prev" href="post.html?slug=${encodeURIComponent(newer.slug || newer.id)}"><span class="nav-label">← newer</span>${escapeHtml(newer.title)}</a>`;
+  } else {
+    html += '<span></span>';
+  }
+  if (older) {
+    html += `<a class="nav-next" href="post.html?slug=${encodeURIComponent(older.slug || older.id)}"><span class="nav-label">older →</span>${escapeHtml(older.title)}</a>`;
+  }
+  nav.innerHTML = html;
 }
 
 function loadPost() {
+  const slug = getQueryParam('slug');
   const id = getQueryParam('id');
-  if (!id) {
-    showError('No post id provided.');
+  if (!slug && !id) {
+    showError('No post specified.');
     return;
   }
 
   fetch('/api/posts')
     .then(r => r.json())
     .then(posts => {
-      const post = posts.find(p => p.id == id);
-      if (!post) {
+      const index = posts.findIndex(p => (slug && p.slug === slug) || (id && String(p.id) === id));
+      if (index === -1) {
         showError('Post could not be found.');
         return;
       }
-      renderPost(post);
+      renderPost(posts[index]);
+      renderNav(posts, index);
     })
     .catch(() => showError('Unable to load post. Try again later.'));
 }

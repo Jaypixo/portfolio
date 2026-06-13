@@ -1,14 +1,14 @@
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
-function jsonResponse(data, status = 200) {
+export function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
   });
 }
 
-function errorResponse(message, status = 400) {
+export function errorResponse(message, status = 400) {
   return jsonResponse({ error: message }, status);
 }
 
@@ -51,6 +51,9 @@ function equalUint8(a, b) {
   return result === 0;
 }
 
+// Admin sessions last 12 hours before requiring a fresh login.
+export const TOKEN_TTL_MS = 1000 * 60 * 60 * 12;
+
 export function createToken(payload, secret) {
   const header = { alg: 'HS256', typ: 'JWT' };
   const encodedHeader = toBase64Url(textEncoder.encode(JSON.stringify(header)));
@@ -73,6 +76,7 @@ export async function verifyToken(token, secret) {
 }
 
 export async function requireAdmin(request, env) {
+  if (!env.ADMIN_TOKEN_SECRET) return null;
   const token = parseAuthToken(request);
   if (!token) return null;
   const payload = await verifyToken(token, env.ADMIN_TOKEN_SECRET);
@@ -80,19 +84,62 @@ export async function requireAdmin(request, env) {
   return payload;
 }
 
-export function encodeContent(content) {
-  const bytes = textEncoder.encode(content);
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-  return btoa(binary);
+// ─── POST HELPERS ───
+
+export function slugify(text) {
+  return (text || '')
+    .toString()
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
-export function shortJsonResponse(data, status = 200) {
-  const response = new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
-  });
-  return response;
+// Appends -2, -3, ... until the slug is unique among the other posts.
+export function uniqueSlug(base, posts, ignoreId) {
+  const slug = base || 'post';
+  const taken = new Set(posts.filter(p => p.id !== ignoreId).map(p => p.slug));
+  if (!taken.has(slug)) return slug;
+  let n = 2;
+  while (taken.has(`${slug}-${n}`)) n++;
+  return `${slug}-${n}`;
 }
 
-export { jsonResponse, errorResponse };
+// Fills in defaults for posts written before tags/slug/published existed.
+export function normalizePost(post) {
+  const date = post.date || new Date().toISOString();
+  const title = (post.title || '').toString().trim();
+  return {
+    id: post.id,
+    slug: post.slug || slugify(title) || String(post.id),
+    title,
+    content: (post.content || '').toString(),
+    tags: Array.isArray(post.tags) ? post.tags.map(t => String(t).trim()).filter(Boolean) : [],
+    published: post.published !== false,
+    date,
+    updated: post.updated || date
+  };
+}
+
+export function sortPosts(posts) {
+  return [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+export async function getPosts(env) {
+  if (!env.BLOG) return [];
+  try {
+    const posts = await env.BLOG.get('posts', 'json');
+    return Array.isArray(posts) ? posts.map(normalizePost) : [];
+  } catch (error) {
+    console.error('KV read error:', error);
+    return [];
+  }
+}
+
+export async function savePosts(env, posts) {
+  if (!env.BLOG) throw new Error('KV binding not configured');
+  await env.BLOG.put('posts', JSON.stringify(posts));
+}

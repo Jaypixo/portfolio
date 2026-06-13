@@ -1,4 +1,4 @@
-import { createToken, errorResponse, jsonResponse } from '../lib.js';
+import { createToken, errorResponse, jsonResponse, TOKEN_TTL_MS } from '../lib.js';
 
 export async function onRequest(context) {
   const { request, env } = context;
@@ -24,6 +24,7 @@ export async function onRequest(context) {
     return errorResponse('Invalid credentials', 401);
   }
 
-  const token = await createToken({ role: 'admin', exp: Date.now() + 1000 * 60 * 60 }, env.ADMIN_TOKEN_SECRET);
-  return jsonResponse({ token });
+  const exp = Date.now() + TOKEN_TTL_MS;
+  const token = await createToken({ role: 'admin', exp }, env.ADMIN_TOKEN_SECRET);
+  return jsonResponse({ token, exp });
 }
