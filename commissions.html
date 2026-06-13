@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1716">
+    <title>● jaypix.dev — COMMISSIONS</title>
+    <link rel="icon" href="https://jaypix.dev/Public/Jaylogo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@1,300&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --paper: #f5f0e8;
+            --paper-alt: #ede8dc;
+            --ink: #1a1716;
+            --muted: #9b8f82;
+            --primary: #c7522a;
+            --secondary: #3b6e8f;
+            --tertiary: #5c7a3e;
+            --warning: #d4a017;
+            --border: rgba(26, 23, 22, 0.12);
+            --grid-line: rgba(26, 23, 22, 0.015);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --paper: #201e24;
+                --paper-alt: #18161a;
+                --ink: #e8e2d9;
+                --muted: #7a7068;
+                --border: rgba(232, 226, 217, 0.10);
+                --grid-line: rgba(232, 226, 217, 0.015);
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: var(--paper);
+            background-image:
+                repeating-linear-gradient(var(--grid-line) 0px, transparent 1px, transparent 28px, var(--grid-line) 28px),
+                repeating-linear-gradient(90deg, var(--grid-line) 0px, transparent 1px, transparent 40px, var(--grid-line) 40px);
+            background-size: 40px 28px;
+            color: var(--ink);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Status Bar */
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 32px;
+            background: var(--paper-alt);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            font-size: 0.75rem;
+            color: var(--muted);
+            z-index: 1000;
+            overflow: hidden;
+            white-space: nowrap;
+            gap: 1.5rem;
+        }
+
+        .status-left {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .ticker {
+            flex: 1;
+            white-space: nowrap;
+            animation: marquee 35s linear infinite;
+        }
+
+        .header {
+            clip-path: polygon(0% 12%, 3% 2%, 7% 9%, 12% 1%, 17% 8%, 23% 0%, 29% 7%, 35% 2%, 41% 9%, 48% 1%, 54% 7%, 61% 0%, 68% 8%, 75% 3%, 82% 9%, 89% 1%, 95% 6%, 100% 0%, 100% 100%, 0% 100%);
+            background-color: var(--ink);
+            color: var(--paper);
+            padding: 5.5rem 2rem 3.5rem 2rem;
+            position: relative;
+            margin-top: 32px;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 2.5rem;
+            left: 2rem;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border: 3px solid var(--paper);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: brightness(0.85) contrast(1.2);
+        }
+
+        .logo-container img {
+            width: 65px;
+            height: auto;
+            filter: invert(1);
+        }
+
+        .wrapper {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 5rem;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 3.3rem;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin: 0 0 0.5rem;
+        }
+
+        .subtitle {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+
+        .section { margin-bottom: 4rem; }
+
+        .section-title {
+            font-family: 'Crimson Pro', serif;
+            font-style: italic;
+            font-size: 1.7rem;
+            margin-bottom: 1.25rem;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .sticky-note {
+            background: #f5e642;
+            color: #1a1716;
+            padding: 1.2rem 1.4rem;
+            transform: rotate(-1.5deg);
+            border: 2px solid #1a1716;
+            position: relative;
+            font-size: 0.85rem;
+        }
+
+        .sticky-note:nth-child(2) {
+            transform: rotate(1.2deg);
+            margin-left: 45px;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 1.6rem;
+        }
+
+        .service-card {
+            background: var(--paper-alt);
+            border: 1px solid var(--border);
+            padding: 1.6rem;
+            transition: transform 0.25s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .price {
+            font-size: 1.15rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--paper);
+            border: 2px solid var(--ink);
+            padding: 0.95rem 2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            background: color-mix(in srgb, var(--primary) 85%, var(--ink));
+            transform: translateY(-2px);
+        }
+
+        .ghost-btn {
+            background: transparent;
+            color: var(--ink);
+            border: 2px solid var(--ink);
+        }
+
+        footer {
+            margin-top: 7rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        @keyframes marquee {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+
+        .floating-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.06;
+            background: 
+                linear-gradient(45deg, transparent 40%, var(--primary) 42%, transparent 44%),
+                linear-gradient(-45deg, transparent 40%, var(--tertiary) 42%, transparent 44%);
+            background-size: 130px 130px;
+            animation: float-grid 50s linear infinite;
+        }
+
+        @keyframes float-grid {
+            0% { background-position: 0 0; }
+            100% { background-position: 400px 400px; }
+        }
+
+        /* Mobile Improvements */
+        @media (max-width: 640px) {
+            .header { padding: 5rem 1.25rem 3rem; }
+            h1 { font-size: 2.7rem; }
+            .wrapper { padding: 1.5rem 1rem 4rem; }
+            .service-grid { grid-template-columns: 1fr; }
+            .status-bar { font-size: 0.7rem; padding: 0 1rem; height: 30px; }
+        }
+    </style>
+        <!-- SOCIAL MEDIA EMBEDS (Open Graph) -->
+    <meta property="og:title" content="jaypix.dev — Commissions Open">
+    <meta property="og:description" content="Graphic design, branding & UI work. Currently accepting limited projects. No NSFW • No AI. Professional and clean aesthetic.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jaypix.dev/commissions"> <!-- Change this to your actual page URL -->
+    <meta property="og:image" content="https://jaypix.dev/Public/EmbedLogo.png">  
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="800">
+    <meta name="twitter:image" content="https://jaypix.dev/Public/EmbedLogo.png">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="800">
+    <meta property="og:site_name" content="jaypix.dev">
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="jaypix.dev — Commissions Open">
+    <meta name="twitter:description" content="Graphic design, branding & UI work. Limited slots available.">
+    <meta name="twitter:image" content="https://jaypix.dev/Public/Jaylogo.png">
+
+    <!-- Extra SEO -->
+    <meta name="description" content="jaypix.dev commissions - Graphic design, branding, and UI/UX work. Clean, retro-inspired design.">
+</head>
+<body>
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+        <div class="status-left">JAYPIX STUDIO • OPEN</div>
+        <div class="ticker">
+            COMMISSIONS OPEN • NO NSFW • NO AI • NO DATING SIMS • 24-48H RESPONSE • EMAIL TO ORDER
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix Logo">
+        </div>
+        <div class="wrapper">
+            <h1 style="color: var(--paper);">COMMISSIONS</h1>
+            <p class="subtitle">jaypix.dev • Web Development and Graphic Design &amp; Branding</p>
+        </div>
+    </header>
+
+    <div class="wrapper">
+
+        <!-- HERO -->
+        <div class="section">
+            <p style="max-width: 520px; font-size: 1.15rem; margin-bottom: 2.5rem;">
+                Web development, Graphic design, branding, and thoughtful UI work.<br>
+                Currently accepting a limited number of projects.
+            </p>
+        </div>
+
+        <!-- RULES -->
+        <div class="section">
+            <div class="section-title">IMPORTANT INFORMATION</div>
+            <div class="rules">
+                <div class="sticky-note">
+                    I will NOT accept commissions for NSFW, AI-generated work, or dating sims.<br>
+                    If unsure, just ask.
+                </div>
+                <div class="sticky-note">
+                    Average response time is 24-48 hours.<br>
+                    Timelines may shift depending on school and current workload.
+                </div>
+            </div>
+        </div>
+
+        <!-- SERVICES -->
+        <div class="section">
+            <div class="section-title">SERVICES</div>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h3>Basic Logo + Fonts</h3>
+                    <div class="price">Small Scale: $5</div>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">One-color logo with matching fonts.<br>PNG + SVG included.</p>
+                </div>
+
+                <div class="service-card">
+                    <h3>Flyers / Static Ads</h3>
+                    <div class="price">Small Scale: $20–$35</div>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Single-page promotional graphics for print or web.</p>
+                </div>
+
+                <div class="service-card">
+                    <h3>Logo + Full Branding</h3>
+                    <div class="price">Small: $15–$30 • Large: $20–$40</div>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Complete package: variants, palette, fonts, and basic guidelines.</p>
+                </div>
+
+                <div class="service-card">
+                    <h3>UI Design</h3>
+                    <div class="price">Small: $15–$78 • Large: $63+</div>
+                    <p style="margin: 0.8rem 0; font-size: 0.85rem;">Clean, responsive desktop + mobile interfaces.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOW TO COMMISSION -->
+        <div class="section">
+            <div class="section-title">HOW TO COMMISSION</div>
+            <p>Send the template below to <strong>contact@jaypix.dev</strong></p>
+            
+            <div style="background: var(--paper-alt); padding: 1.6rem; border: 1px solid var(--border); font-size: 0.85rem; margin: 1.8rem 0; line-height: 1.7;">
+                <strong>Scale:</strong> [Small / Large]<br>
+                <strong>Project Type:</strong> [Logo / Branding / Flyer / UI Design / Other]<br>
+                <strong>Style:</strong> [Frutiger Aero / Y2K / Minimal / Cyber / etc.]<br>
+                <strong>Description:</strong> [Detailed description, references, mood, and inspirations]
+            </div>
+
+            <p style="font-size: 0.9rem; color: var(--muted);">
+                I'll reply with initial sketches, moodboards, and a quote.<br><br>
+                <strong>Payment:</strong> PayPal or Bank Transfer only.
+            </p>
+        </div>
+
+        <!-- PROCESS -->
+        <div class="section">
+            <div class="section-title">MY PROCESS</div>
+            <p style="font-size: 0.95rem;">
+                1. Initial discussion &amp; moodboard<br>
+                2. Rough sketches / concepts<br>
+                3. Refinement rounds (usually 2 included)<br>
+                4. Final delivery with source files
+            </p>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="section">
+            <div class="section-title">CONTACT</div>
+            <div style="display: flex; gap: 3rem; flex-wrap: wrap; font-size: 0.95rem;">
+                <div>
+                    <strong>Developer</strong><br>
+                    <a href="https://jaypix.dev" style="color: var(--primary);">jaypix.dev</a>
+                </div>
+                <div>
+                    <strong>Email</strong><br>
+                    <a href="mailto:contact@jaypix.dev" style="color: var(--primary);">contact@jaypix.dev</a>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="btn ghost-btn">BACK TO TOP</button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="wrapper">
+        <div>
+            <div class="footnote">[1] Source files always included. Named layers + extra assets available.</div>
+            <div class="footnote">[2] 50/50 payment split available on bigger projects.</div>
+        </div>
+        <div style="text-align: right; font-size: 0.65rem;">
+            HANDCRAFTED • 2026<br>
+            jaypix.dev
+        </div>
+    </footer>
+
+    <div class="floating-grid"></div>
+
+    <script>
+        // Logo hover effect
+        document.querySelector('.logo-container').addEventListener('click', () => {
+            alert("JAYPIX PROTOCOL ENGAGED.\n\nThanks for checking out my commissions page.");
+        });
+
+        console.log('%cjaypix.dev commissions • v0.9', 'color:#c7522a; font-family:monospace');
+    </script>
+</body>
+</html>
