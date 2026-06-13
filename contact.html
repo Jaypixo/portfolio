@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>contact - jaypix.dev</title>
+<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
+
+<!-- Social Media Embeds -->
+<meta property="og:title" content="Jaypix | Developer & Tinkerer">
+<meta property="og:description" content="I build things that exist and occasionally make sense. Professional tab hoarder and code breaker.">
+<meta property="og:image" content="https://jaypix.dev/Public/EmbedLogo.png">
+<meta property="og:url" content="https://jaypix.dev/contact.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#c7522a">
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+  <div class="torn-top"></div>
+  <div class="layout">
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+
+        <!-- Logo replacing the circle avatar -->
+        <div class="logo-area">
+          <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix logo" class="site-logo" id="logoBtn" title="jaypix.dev">
+        </div>
+
+        <div class="name-block">
+          <div class="name">Jaypix</div>
+          <div class="handle">@<span>jaypixo</span> · jaypix.dev</div>
+          <div class="status-indicator"><div class="dot"></div><span>building · online</span></div>
+        </div>
+
+        <nav>
+          <ul class="sidebar-nav">
+            <li><a href="index.html" class="nav-link"><span class="icon">~/</span> home</a></li>
+            <li><a href="about.html" class="nav-link"><span class="icon">./</span> about.txt</a></li>
+            <li><a href="projects.html" class="nav-link"><span class="icon">_</span> projects/</a></li>
+            <li><a href="blog.html" class="nav-link"><span class="icon">·</span> blog</a></li>
+            <li><a href="log.html" class="nav-link"><span class="icon">$</span> devlog</a></li>
+            <li><a href="contact.html" class="nav-link active-nav"><span class="icon">@</span> contact</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="sidebar-links">
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="toggle dark mode">
+          <span class="toggle-icon" id="themeIcon">☽</span>
+          <span id="themeLabel">dark mode</span>
+        </button>
+        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener" class="pill-link yt">▶ youtube · @jaypixo</a>
+        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener" class="pill-link gh">◆ github · jaypixo</a>
+        <a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" rel="noopener" class="pill-link sp">♫ spotify · jaypix</a>
+        <a href="https://x.com/jaypixoo" target="_blank" rel="noopener" class="pill-link tw">✕ x · @jaypixoo</a>
+      </div>
+    </aside>
+
+    <!-- ─── MAIN ─── -->
+    <main class="main">
+      <div class="tabs">
+        <a href="index.html" class="tab">home</a>
+        <a href="about.html" class="tab">about.txt</a>
+        <a href="projects.html" class="tab">projects/</a>
+        <a href="blog.html" class="tab">blog</a>
+        <a href="log.html" class="tab">devlog</a>
+        <a href="contact.html" class="tab active">contact</a>
+      </div>
+
+      <div style="padding-top: 1rem;">
+        <div class="section-label">contact</div>
+        <p style="font-size: 12px; color: var(--smudge); margin-bottom: 1.5rem; line-height: 1.7;">Slide into my inbox. It's the fastest and most reliable way to reach me. Faster than any DM, and I actually read it.</p>
+
+        <div class="contact-block" style="position:relative;">
+          <div style="font-size: 11px; color: var(--smudge); text-transform: uppercase; letter-spacing: 0.1em;">primary · email</div>
+          <a href="mailto:contact@jaypix.dev" class="contact-email" onclick="toast('📨 opening mail client...')">contact@jaypix.dev</a>
+          <div class="contact-note">fastest + most reliable · I actually read this one</div>
+          <!-- logo tucked in corner of contact card -->
+          <img src="https://jaypix.dev/Public/Jaylogo.png" alt="" class="contact-logo" aria-hidden="true">
+        </div>
+
+        <div style="height: 1.5rem;"></div>
+
+        <div class="section-label">also reachable at</div>
+        <table class="specs-table" style="max-width: 400px;">
+          <tr><td>youtube</td><td><a href="https://www.youtube.com/@Jaypixo" target="_blank" style="color:var(--accent2);">@Jaypixo</a> <span style="font-size:10px;color:var(--smudge);">· comments watched</span></td></tr>
+          <tr><td>github</td><td><a href="https://github.com/Jaypixo" target="_blank" style="color:var(--accent2);">Jaypixo</a> <span style="font-size:10px;color:var(--smudge);">· issues & PRs welcome</span></td></tr>
+          <tr><td>x</td><td><a href="https://x.com/jaypixoo" target="_blank" style="color:var(--ink);">@jaypixoo</a> <span style="font-size:10px;color:var(--smudge);">· slower response</span></td></tr>
+          <tr><td>spotify</td><td><a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" style="color:#1DB954;">jaypix</a> <span style="font-size:10px;color:var(--smudge);">· vibes only</span></td></tr>
+        </table>
+
+        <div style="height: 1.5rem;"></div>
+        <div style="font-size: 11px; color: var(--smudge); font-style: italic; border-left: 3px solid var(--border); padding-left: 12px; line-height: 1.6;">
+          Not accepting spam, get-rich-quick schemes, or "quick question just 5 minutes" requests that are definitely not 5 minutes.<br>
+          <span style="font-size: 10px; opacity: 0.6;">Weird projects, collabs, and memes: welcome.</span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+/* ─── ADMIN PAGE ─── */
+.admin-page {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.admin-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.5rem;
+}
+
+.admin-brand { display: flex; align-items: center; gap: 1rem; }
+.admin-logo { width: 48px; height: auto; filter: var(--logo-filter); }
+.admin-title { font-family: var(--serif); font-size: 1.8rem; font-style: italic; color: var(--accent); }
+.admin-subtitle { font-size: 12px; color: var(--smudge); margin-top: 4px; max-width: 420px; line-height: 1.5; }
+
+.admin-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+
+.secondary-btn,
+.primary-btn,
+.danger-btn,
+.theme-toggle {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  background: var(--paper2);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.secondary-btn:hover,
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+.primary-btn { background: var(--accent); color: var(--paper); border-color: transparent; font-weight: 700; }
+.primary-btn:hover { background: var(--accent2); }
+.primary-btn:disabled { opacity: 0.6; cursor: default; }
+
+.danger-btn { background: transparent; color: var(--red); border-color: var(--red); }
+.danger-btn:hover { background: var(--red); color: white; }
+
+/* ─── AUTH ─── */
+.auth-panel {
+  max-width: 420px;
+  margin: 4rem auto;
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  padding: 2rem;
+}
+.auth-panel p { color: var(--smudge); font-size: 12px; margin-bottom: 1.2rem; line-height: 1.6; }
+.form-error { color: var(--red); font-size: 12px; margin-bottom: 0.8rem; min-height: 1em; }
+
+/* ─── FORM ─── */
+.form-group { margin-bottom: 1rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.admin-page label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--smudge);
+  margin-bottom: 0.4rem;
+}
+.admin-page input[type="text"],
+.admin-page input[type="password"],
+.admin-page input[type="search"],
+.admin-page textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 10px 12px;
+}
+.admin-page input:focus,
+.admin-page textarea:focus { outline: 1px solid var(--accent); }
+.admin-page textarea { resize: vertical; min-height: 240px; line-height: 1.6; }
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--smudge);
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+.checkbox-label input { width: auto; }
+
+.word-count { font-size: 11px; color: var(--smudge); margin-bottom: 1rem; }
+
+/* ─── MARKDOWN HELP ─── */
+.md-help-toggle {
+  font-size: 11px;
+  color: var(--accent2);
+  cursor: pointer;
+  text-decoration: underline dotted;
+  margin-bottom: 0.8rem;
+  display: inline-block;
+  background: none;
+  border: none;
+  font-family: var(--mono);
+  padding: 0;
+}
+.md-help {
+  font-size: 11px;
+  color: var(--smudge);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+.md-help code {
+  background: rgba(128,128,128,0.12);
+  padding: 1px 4px;
+  font-family: var(--mono);
+}
+
+/* ─── LAYOUT ─── */
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+.editor-grid.has-editor { grid-template-columns: 380px 1fr; }
+
+.panel {
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+}
+.panel-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.panel-header h2 { font-family: var(--serif); color: var(--accent); font-style: italic; font-size: 1.3rem; }
+
+/* ─── POSTS LIST ─── */
+.admin-posts { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; max-height: 70vh; overflow-y: auto; }
+.admin-post {
+  border: 1px solid var(--border);
+  background: var(--paper);
+  padding: 0.9rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  transition: border-color 0.15s;
+}
+.admin-post.editing { border-color: var(--accent); }
+.admin-post-title { font-family: var(--serif); font-style: italic; color: var(--ink); margin-bottom: 4px; font-size: 1rem; }
+.admin-post-meta { font-size: 10px; color: var(--smudge); display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.status-pill { font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 6px; border: 1px solid var(--border); }
+.status-pill.published { color: var(--accent3); border-color: var(--accent3); }
+.status-pill.draft { color: var(--yellow); border-color: var(--yellow); }
+.admin-post-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--paper2);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn.danger:hover { border-color: var(--red); color: var(--red); }
+.admin-empty { color: var(--smudge); font-size: 12px; padding: 1rem 0; }
+
+/* ─── EDITOR ─── */
+.editor-panel { display: flex; flex-direction: column; gap: 1rem; }
+.editor-actions { display: flex; gap: 0.75rem; }
+.preview-wrap { border-top: 1px solid var(--border); padding-top: 1rem; }
+.preview-wrap h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--smudge); margin-bottom: 0.6rem; }
+.preview-area { font-size: 13px; }
+
+@media (max-width: 900px) {
+  .editor-grid.has-editor { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}

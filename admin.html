@@ -3,397 +3,106 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog Admin - Cloudflare KV</title>
-<link rel="icon" type="image/png" href="Public/Jaylogo.png">
+<title>Blog Admin — Jaypix</title>
+<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
+<meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-* { border-radius: 0 !important; } /* force square corners site-wide */
-
-:root {
-  --ink: #1a1716;
-  --paper: #f5f0e8;
-  --paper2: #ede8dc;
-  --surface: #ffffff;
-  --surface-soft: #f8f3eb;
-  --logo-filter: none;
-  --smudge: #9b8f82;
-  --accent: #c7522a;
-  --accent2: #3b6e8f;
-  --accent3: #5c7a3e;
-  --red: #b83232;
-  --border: rgba(26,23,22,0.15);
-  --shadow: rgba(0,0,0,0.08);
-  --sans: 'Inter', system-ui, sans-serif;
-  --mono: 'IBM Plex Mono', monospace;
-  --serif: 'Crimson Pro', Georgia, serif;
-}
-
-[data-theme="dark"] {
-  --ink: #e8e0d4;
-  --paper: #18161a;
-  --paper2: #201e24;
-  --surface: #1f1d23;
-  --surface-soft: #2b2730;
-  --logo-filter: invert(1) brightness(0.9);
-  --smudge: #a69e8f;
-  --accent: #e0693a;
-  --accent2: #5a9abf;
-  --accent3: #7aaa55;
-  --red: #d44444;
-  --border: rgba(232,224,212,0.18);
-  --shadow: rgba(0,0,0,0.35);
-}
-
-html { scroll-behavior: smooth; }
-body {
-  min-height: 100vh;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--mono);
-  padding: 2rem;
-}
-
-.admin-shell {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.admin-header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.logo {
-  width: 56px;
-  border-radius: 14px;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.08);
-  filter: var(--logo-filter);
-}
-
-.brand-title {
-  font-family: var(--serif);
-  font-size: 2rem;
-  font-style: italic;
-  color: var(--accent);
-}
-
-.brand-note {
-  color: var(--smudge);
-  font-size: 0.95rem;
-  margin-top: 0.35rem;
-  max-width: 520px;
-}
-
-.header-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-button,
-.theme-toggle,
-.secondary-button {
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.85rem 1.25rem;
-  font-family: var(--mono);
-  background: var(--paper2);
-  color: var(--ink);
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-button:hover,
-.theme-toggle:hover,
-.secondary-button:hover {
-  background: rgba(199,82,42,0.08);
-  border-color: var(--accent);
-}
-
-.secondary-button {
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-}
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 1.5rem;
-}
-
-.panel {
-  background: var(--paper2);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  box-shadow: 0 24px 60px var(--shadow);
-  padding: 1.75rem;
-}
-
-.auth-panel,
-.add-post,
-.save-section,
-.posts-panel,
-.preview-card,
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 1.5rem;
-}
-
-.auth-panel p,
-.save-section p,
-.brand-note {
-  margin-bottom: 1rem;
-  color: var(--smudge);
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-input,
-textarea {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--surface-soft);
-  color: var(--ink);
-  padding: 0.95rem 1rem;
-  font: inherit;
-}
-
-textarea {
-  min-height: 180px;
-  resize: vertical;
-}
-
-input:focus,
-textarea:focus {
-  outline: 2px solid rgba(199,82,42,0.25);
-}
-
-button {
-  min-width: 130px;
-  font-weight: 700;
-  color: var(--paper);
-  background: var(--accent);
-  border-color: transparent;
-}
-
-button:hover {
-  background: var(--accent2);
-}
-
-.posts-panel h2,
-.add-post h2,
-.save-section h2 {
-  font-family: var(--serif);
-  color: var(--accent);
-  margin-bottom: 1rem;
-}
-
-.preview-card {
-  margin-top: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  background: var(--surface);
-  padding: 1.25rem;
-}
-
-.preview-card h3 {
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  color: var(--ink);
-}
-
-.preview-area,
-.post-content,
-.content {
-  line-height: 1.75;
-  color: var(--ink);
-}
-
-.preview-area p,
-.content p {
-  margin-bottom: 0.85rem;
-}
-
-.preview-area code,
-.content code {
-  background: rgba(26,23,22,0.05);
-  padding: 0.15rem 0.35rem;
-  border-radius: 6px;
-  font-family: var(--mono);
-}
-
-.preview-area img,
-.content img {
-  max-width: 100%;
-  border-radius: 12px;
-  margin: 0.85rem 0;
-}
-
-.posts-list {
-  display: grid;
-  gap: 1rem;
-}
-
-.post {
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  padding: 1.25rem;
-  background: var(--surface-soft);
-}
-
-.post h3 {
-  margin-bottom: 0.45rem;
-  font-family: var(--serif);
-  color: var(--accent);
-}
-
-.post .meta {
-  color: var(--smudge);
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-}
-
-.post .content {
-  max-height: 9rem;
-  overflow: hidden;
-  position: relative;
-  margin-bottom: 1rem;
-}
-
-.post .content::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3rem;
-  background: linear-gradient(transparent, var(--surface));
-}
-
-.post-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-}
-
-.post-actions button {
-  background: var(--paper2);
-  color: var(--ink);
-  border: 1px solid var(--border);
-  min-width: auto;
-}
-
-.post-actions button.delete {
-  background: var(--red);
-  color: white;
-  border-color: transparent;
-}
-
-.status {
-  margin-top: 1rem;
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
-  font-weight: 700;
-}
-
-.status.success { background: var(--accent3); color: white; }
-.status.error { background: var(--red); color: white; }
-.status.info { background: var(--accent2); color: white; }
-
-@media (max-width: 980px) {
-  .admin-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 600px) {
-  body { padding: 1rem; }
-  .admin-header { flex-direction: column; }
-  .preview-card { padding: 1rem; }
-  .post { padding: 1rem; }
-}
-</style>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
-<div class="admin-shell">
+<div class="admin-page">
   <header class="admin-header">
-    <div class="brand">
-      <img src="Public/Jaylogo.png" alt="Jaypix logo" class="logo">
+    <div class="admin-brand">
+      <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix logo" class="admin-logo">
       <div>
-        <div class="brand-title">Blog Admin</div>
-        <p class="brand-note">Manage posts in markdown, preview formatting live, and publish with the same Jaypix theme.</p>
+        <div class="admin-title">Blog Admin</div>
+        <p class="admin-subtitle">Write in markdown, preview live, publish straight to Cloudflare KV — no commits needed.</p>
       </div>
     </div>
-    <div class="header-actions">
-      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn"><span id="themeLabel">dark mode</span></button>
-      <a href="index.html" class="secondary-button">Back to site</a>
+    <div class="admin-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+        <span class="toggle-icon" id="themeIcon">☽</span>
+        <span id="themeLabel">dark mode</span>
+      </button>
+      <a href="blog.html" class="secondary-btn">view blog</a>
+      <a href="index.html" class="secondary-btn">back to site</a>
+      <button id="logout-btn" class="secondary-btn" style="display:none;">log out</button>
     </div>
   </header>
 
-  <main class="admin-grid">
-    <section class="panel">
-      <div id="auth-screen" class="auth-panel">
-        <p>Enter your admin password to access the blog editor.</p>
+  <section id="auth-screen" class="auth-panel">
+    <form id="login-form">
+      <p>Enter your admin password to manage posts.</p>
+      <div class="form-group">
+        <label for="password-input">Password</label>
+        <input type="password" id="password-input" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div id="login-error" class="form-error"></div>
+      <button type="submit" id="login-btn" class="primary-btn">Log in</button>
+    </form>
+  </section>
+
+  <section id="editor-screen" class="editor-grid" style="display:none;">
+    <div class="panel posts-panel">
+      <div class="panel-header">
+        <h2>Posts</h2>
+        <button id="new-post-btn" class="primary-btn">+ new post</button>
+      </div>
+      <input type="search" id="search-input" class="blog-search" placeholder="search posts or tags...">
+      <div id="posts-list" class="admin-posts"></div>
+    </div>
+
+    <div id="editor-panel" class="panel editor-panel" style="display:none;">
+      <div class="panel-header">
+        <h2 id="editor-title">New post</h2>
+        <button id="cancel-edit-btn" class="icon-btn" title="Close editor">✕</button>
+      </div>
+      <form id="post-form">
         <div class="form-group">
-          <label for="admin-password">Password:</label>
-          <input type="password" id="admin-password" placeholder="Enter password">
+          <label for="title-input">Title</label>
+          <input type="text" id="title-input" placeholder="Post title" required>
         </div>
-        <button onclick="authenticate()">Login</button>
-      </div>
-
-      <div id="editor" style="display:none;">
-        <div class="add-post">
-          <h2>Add New Post</h2>
+        <div class="form-row">
           <div class="form-group">
-            <label for="new-title">Title:</label>
-            <input type="text" id="new-title" placeholder="Post title">
+            <label for="slug-input">Slug</label>
+            <input type="text" id="slug-input" placeholder="auto-generated-from-title">
           </div>
           <div class="form-group">
-            <label for="new-content">Content:</label>
-            <textarea id="new-content" rows="8" placeholder="Write your post content here..."></textarea>
+            <label for="tags-input">Tags</label>
+            <input type="text" id="tags-input" placeholder="dev, life, rant">
           </div>
-          <button onclick="addPost()">Add Post</button>
+        </div>
+        <label class="checkbox-label">
+          <input type="checkbox" id="published-input" checked>
+          published (visible on the public blog)
+        </label>
+
+        <button type="button" id="md-help-toggle" class="md-help-toggle">markdown cheat sheet ▾</button>
+        <div id="md-help" class="md-help" style="display:none;">
+          <code>**bold**</code> · <code>*italic*</code> · <code>~~strike~~</code> · <code>`code`</code><br>
+          <code># Heading</code> through <code>######</code> · <code>&gt; quote</code> · <code>---</code> rule<br>
+          <code>- item</code> or <code>1. item</code> for lists · <code>```code block```</code><br>
+          <code>[link text](https://example.com)</code> · <code>![alt text](https://example.com/image.png)</code>
         </div>
 
-        <div class="preview-card">
-          <h3>Live preview</h3>
-          <div id="new-preview" class="preview-area prose">Start typing markdown to see your post preview.</div>
+        <div class="form-group">
+          <label for="content-input">Content (markdown)</label>
+          <textarea id="content-input" rows="14" placeholder="Write your post in markdown..."></textarea>
         </div>
-      </div>
-    </section>
+        <div id="word-count" class="word-count">0 words · 1 min read</div>
+        <div class="editor-actions">
+          <button type="submit" id="save-btn" class="primary-btn">Save post</button>
+          <button type="button" id="delete-btn" class="danger-btn" style="display:none;">Delete post</button>
+        </div>
+      </form>
 
-    <section class="panel posts-panel">
-      <h2>Manage Posts</h2>
-      <div id="posts-list" class="posts-list"></div>
-      <div class="save-section">
-        <h2>Save All Changes</h2>
-        <p>Click below to save all posts to Cloudflare KV instantly. No GitHub commits needed.</p>
-        <button id="save-btn" onclick="savePosts()">Save to Cloudflare KV</button>
-        <div id="save-status" class="status" style="display:none;"></div>
+      <div class="preview-wrap">
+        <h3>Live preview</h3>
+        <div id="preview" class="blog-post-content preview-area"></div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 </div>
 
 <script>
