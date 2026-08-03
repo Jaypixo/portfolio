@@ -1,138 +1,107 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>jaypix.dev - the workshop</title>
-<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
-
-<!-- Social Media Embeds -->
-<meta property="og:title" content="Jaypix | Developer & Tinkerer">
-<meta property="og:description" content="I build things that exist and occasionally make sense. Professional tab hoarder and code breaker.">
-<meta property="og:image" content="https://jaypix.dev/Public/EmbedLogo.png">
-<meta property="og:url" content="https://jaypix.dev">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#c7522a">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jaypix</title>
+<meta name="description" content="Jaypix — indie web stuff, an operating system, and whatever else seemed worth building.">
+<link rel="icon" type="image/png" href="assets/logo-black.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
-  <div class="torn-top"></div>
-  <div class="layout">
+<div class="torn-top"></div>
 
-    <!-- ─── SIDEBAR ─── -->
-    <aside class="sidebar">
-      <div class="sidebar-top">
-
-        <!-- Logo replacing the circle avatar -->
-        <div class="logo-area">
-          <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix logo" class="site-logo" id="logoBtn" title="jaypix.dev">
-        </div>
-
-        <div class="name-block">
-          <div class="name">Jaypix</div>
-          <div class="handle">@<span>jaypixo</span> · jaypix.dev</div>
-          <div class="status-indicator"><div class="dot"></div><span>building · online</span></div>
-        </div>
-
-        <nav>
-          <ul class="sidebar-nav">
-            <li><a href="index.html" class="nav-link active-nav"><span class="icon">~/</span> home</a></li>
-            <li><a href="about.html" class="nav-link"><span class="icon">./</span> about.txt</a></li>
-            <li><a href="projects.html" class="nav-link"><span class="icon">_</span> projects/</a></li>
-            <li><a href="blog.html" class="nav-link"><span class="icon">·</span> blog</a></li>
-            <li><a href="log.html" class="nav-link"><span class="icon">$</span> devlog</a></li>
-            <li><a href="contact.html" class="nav-link"><span class="icon">@</span> contact</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="sidebar-links">
-        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="toggle dark mode">
-          <span class="toggle-icon" id="themeIcon">☽</span>
-          <span id="themeLabel">dark mode</span>
-        </button>
-        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener" class="pill-link yt">▶ youtube · @jaypixo</a>
-        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener" class="pill-link gh">◆ github · jaypixo</a>
-        <a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" rel="noopener" class="pill-link sp">♫ spotify · jaypix</a>
-        <a href="https://x.com/jaypixoo" target="_blank" rel="noopener" class="pill-link tw">✕ x · @jaypixoo</a>
-      </div>
-    </aside>
-
-    <!-- ─── MAIN ─── -->
-    <main class="main">
-      <div class="tabs">
-        <a href="index.html" class="tab active">home</a>
-        <a href="about.html" class="tab">about.txt</a>
-        <a href="projects.html" class="tab">projects/</a>
-        <a href="blog.html" class="tab">blog</a>
-        <a href="log.html" class="tab">devlog</a>
-        <a href="contact.html" class="tab">contact</a>
-      </div>
-
-      <div class="hero">
-        <div class="typewriter-block">
-          <!-- subtle watermark logo behind title -->
-          <img src="https://jaypix.dev/Public/Jaylogo.png" alt="" class="hero-logo-watermark" aria-hidden="true">
-          <div class="pre-text">jaypix.dev · v0.∞ · uptime: <span id="uptime">calculating...</span></div>
-          <div class="big-title" id="bigTitle">Jaypix<span class="cursor-blink"></span></div>
-          <div class="subtitle-line">developer · tinkerer · <span style="text-decoration:line-through;opacity:0.5">responsible adult</span> · professional tab hoarder</div>
-        </div>
-      </div>
-
-      <div class="ticker-wrap"><div class="ticker" id="tickerEl">
-        <div class="ticker-item"><span>UNDER CONSTRUCTION</span><span class="sep">◆</span><span>this site will be done "soon"</span><span class="sep">◆</span><span>probably</span><span class="sep">◆</span><span>definition of soon: ambiguous</span><span class="sep">◆</span><span>building in public · failing in public</span><span class="sep">◆</span><span>the site works tho (kinda)</span><span class="sep">◆</span><span>send help. or coffee. mostly coffee.</span><span class="sep">◆</span><span>perpetual beta mode activated</span><span class="sep">◆</span><span>code quality: it's a feature</span><span class="sep">◆</span><span>debugging: 99% of the time it's me</span><span class="sep">◆</span><span>sleep is for the weak (and well-rested)</span><span class="sep">◆</span><span>coffee: the real dependency</span><span class="sep">◆</span><span>todo: avoid real work</span><span class="sep">◆</span><span>impersonating a functional adult</span><span class="sep">◆</span><span>optimizing for existential dread</span><span class="sep">◆</span><span>building castles in the cloud... of bugs</span><span class="sep">◆</span><span>professional procrastinator</span><span class="sep">◆</span><span>side quests: infinite</span><span class="sep">◆</span></div>
-        <div class="ticker-item" aria-hidden="true"><span>UNDER CONSTRUCTION</span><span class="sep">◆</span><span>this site will be done "soon"</span><span class="sep">◆</span><span>probably</span><span class="sep">◆</span><span>definition of soon: ambiguous</span><span class="sep">◆</span><span>building in public · failing in public</span><span class="sep">◆</span><span>the site works tho (kinda)</span><span class="sep">◆</span><span>send help. or coffee. mostly coffee.</span><span class="sep">◆</span><span>perpetual beta mode activated</span><span class="sep">◆</span><span>code quality: it's a feature</span><span class="sep">◆</span><span>debugging: 99% of the time it's me</span><span class="sep">◆</span><span>sleep is for the weak (and well-rested)</span><span class="sep">◆</span><span>coffee: the real dependency</span><span class="sep">◆</span><span>todo: avoid real work</span><span class="sep">◆</span><span>impersonating a functional adult</span><span class="sep">◆</span><span>optimizing for existential dread</span><span class="sep">◆</span><span>building castles in the cloud... of bugs</span><span class="sep">◆</span><span>professional procrastinator</span><span class="sep">◆</span><span>side quests: infinite</span><span class="sep">◆</span></div>
-      </div></div>
-
-      <div style="height: 2rem;"></div>
-
-      <div class="sticky-note" id="stickyNote">
-        <div class="note-pin" title="push here" onclick="pinClick()"></div>
-        <p>Hey! I'm Jaypix. A Monster-Energy addicted developer who builds things that <span class="crossed">make sense</span> exist. I break stuff, reverse-engineer the breakage, and occasionally ship something cool. This site is basically a work in progress that's been promoted to <span class="underline" title="ship it or it doesn't exist">production</span>.</p>
-        <p style="margin-top: 0.8rem; font-size: 0.92rem; opacity: 0.75;">Currently: procrastinating on the perfect portfolio while building other things. The grind never stops.</p>
-      </div>
-
-      <div style="height: 2rem;"></div>
-
-      <div class="disclaimer-strip">
-        <span>⚠</span>
-        <span>If you googled "jaypix" looking for the Boston photographer, that's not me. His portfolio is <a href="https://www.jaypixworx.com/" target="_blank" rel="noopener" style="color: var(--accent2);">jaypixworx.com</a>. We've never met. Seems awesome tho.</span>
-      </div>
-
-      <div style="height: 1.5rem;"></div>
-
-      <!-- nerd stats -->
-      <div class="section-label">system vitals</div>
-      <div class="nerd-bar"><span style="min-width:100px;">caffeine</span><div class="bar-fill" style="--pct:88%"></div><span>88%</span></div>
-      <div class="nerd-bar"><span style="min-width:100px;">motivation</span><div class="bar-fill green" style="--pct:62%"></div><span>62%</span></div>
-      <div class="nerd-bar"><span style="min-width:100px;">tabs open</span><div class="bar-fill blue" style="--pct:94%"></div><span>94%</span></div>
-      <div class="nerd-bar"><span style="min-width:100px;">todo list</span><div class="bar-fill" style="--pct:4%"></div><span style="color:var(--red)">4% done</span></div>
-
-      <div style="height: 1.5rem;"></div>
-
-      <div class="footnote-zone">
-        <div class="section-label">footnotes</div>
-        <div class="footnote"><span class="fn-num">1</span><span>"under construction" has been the status since day 1. it's a <span class="secret-text" onclick="secretReveal(1)">feature</span>.</span></div>
-        <div class="footnote"><span class="fn-num">2</span><span>yes the page has <span class="secret-text" onclick="secretReveal(2)">easter eggs</span>. you've already almost found one.</span></div>
-        <div class="footnote"><span class="fn-num">3</span><span>this site was built with frustration and caffeine<span class="secret-text" onclick="secretReveal(3)">*</span></span></div>
-        <div class="footnote"><span class="fn-num">4</span><span>the title glitches if you <span class="secret-text" onclick="secretReveal(4)">hover it long enough</span>.</span></div>
-        <div class="konami-hint">↑ ↑ ↓ ↓ ← → ← → B A</div>
-      </div>
-
-      <div class="site-footer">
-        <span>jaypix.dev · <span id="year"></span></span>
-        <span class="footer-secret" title="psst">made with frustration, caffeine & a suspiciously helpful AI</span>
-        <span>made with frustration and caffeine</span>
-      </div>
-    </main>
+<nav>
+  <div class="container">
+    <a href="index.html" class="nav-brand"><img src="assets/logo.png" alt=""> Jaypix</a>
+    <div class="nav-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+      <a href="jaypixos.html" class="cta">JaypixOS →</a>
+      <button class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
   </div>
-</div>
+</nav>
 
-<div class="toast-container" id="toastContainer"></div>
+<header class="hero">
+  <div class="container">
+    <span class="kicker">Germany · indie web</span>
+    <h1>I build things, mostly <em>because I can't not.</em></h1>
+    <p class="lede">Web platforms, an operating system, a markdown parser that had no business being written from scratch — all built solo, all still running. Currently split between an OS that boots and a browser that (mostly) doesn't crash it.</p>
+    <div class="hero-actions">
+      <a href="projects.html" class="btn btn-ghost">See what I've built</a>
+      <a href="about.html" class="btn btn-ghost">About me</a>
+    </div>
+  </div>
+</header>
+
+<section id="featured">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">Currently</span>
+      <h2>JaypixOS</h2>
+      <p>The biggest thing I've shipped: a KDE Plasma desktop on Arch, with its own installer, its own package manager, and its own Cloudflare-backed package repo. Not a distro fork for the sake of having one — every piece exists because the stock version of it annoyed me enough to replace.</p>
+    </div>
+    <div class="terminal" style="max-width: 640px; margin-bottom: 40px;">
+      <div class="terminal-bar"><span></span><span></span><span></span></div>
+      <div class="terminal-body">
+        <div class="line"><span class="prompt">root@jaypixos</span> <span class="out">~</span> # jinstall --fast</div>
+        <div class="line comment"># pick a disk, pick a password, done</div>
+        <div class="line out">Starting install — Btrfs, KDE Plasma, Cloudflare DNS + NTP.</div>
+      </div>
+    </div>
+    <a href="jaypixos.html" class="btn btn-primary">Read about JaypixOS →</a>
+  </div>
+</section>
+
+<section id="also-building">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">Also around</span>
+      <h2>The rest of it</h2>
+      <p>Most of what I build lives on Cloudflare's stack, avoids frameworks where it reasonably can, and eventually ends up rewritten from scratch because the first version annoyed me.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">Hosting</span>
+        <h3>MyJay.net</h3>
+        <p>An indie web hosting platform — free subdomains, a blogging system, and a search/explore page that indexes Neocities and Nekoweb. Built to compete with them, not just sit next to them.</p>
+        <a href="projects.html" class="card-link">More →</a>
+      </div>
+      <div class="card">
+        <span class="tag">Tooling</span>
+        <h3>Remarker.js</h3>
+        <p>A markdown renderer built from scratch as a marked.js replacement, with extended syntax — callouts, spoilers, keyboard shortcuts, video embeds. Runs across everything else I've built since.</p>
+        <a href="projects.html" class="card-link">More →</a>
+      </div>
+      <div class="card">
+        <span class="tag">In progress</span>
+        <h3>MyJay Browser</h3>
+        <p>A Firefox fork concept with a block-based URL bar — the URL split into editable, individually-clickable segments instead of one long string.</p>
+        <a href="projects.html" class="card-link">More →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-brand"><img src="assets/logo.png" alt=""> Jaypix</div>
+    <div class="foot-links">
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <a href="docs.html">JaypixOS Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+    </div>
+  </div>
+</footer>
+
 <script src="js/site.js"></script>
-<script src="js/home.js"></script>
 </body>
 </html>

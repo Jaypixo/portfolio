@@ -1,320 +1,68 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog Post — Jaypix</title>
-<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
+<title id="page-title">Post — Jaypix</title>
+<meta name="description" id="page-description" content="A blog post from Jaypix.">
+<link rel="icon" type="image/png" href="assets/logo-black.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-* { border-radius: 0 !important; } /* force square corners site-wide */
-:root {
-  --ink: #1a1716;
-  --paper: #f5f0e8;
-  --paper2: #ede8dc;
-  --smudge: #9b8f82;
-  --accent: #c7522a;
-  --accent2: #3b6e8f;
-  --accent3: #5c7a3e;
-  --yellow: #d4a017;
-  --red: #b83232;
-  --border: rgba(26,23,22,0.15);
-  --shadow: rgba(0,0,0,0.08);
-  --sans: 'Inter', system-ui, sans-serif;
-  --mono: 'IBM Plex Mono', monospace;
-  --serif: 'Crimson Pro', Georgia, serif;
-}
-[data-theme="dark"] {
-  --ink: #e8e0d4;
-  --paper: #18161a;
-  --paper2: #201e24;
-  --smudge: #7a7068;
-  --accent: #e0693a;
-  --accent2: #5a9abf;
-  --accent3: #7aaa55;
-  --yellow: #e6b830;
-  --red: #d44444;
-  --border: rgba(232,224,212,0.18);
-  --shadow: rgba(0,0,0,0.35);
-}
-html { scroll-behavior: smooth; }
-body {
-  min-height: 100vh;
-  padding: 2rem;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--mono);
-}
-.page {
-  max-width: 900px;
-  margin: 0 auto;
-}
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-}
-.topbar .back-btn,
-.topbar .theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.85rem 1.2rem;
-  background: var(--paper2);
-  color: var(--ink);
-  text-decoration: none;
-  cursor: pointer;
-  font-family: var(--mono);
-}
-.topbar .back-btn:hover,
-.topbar .theme-toggle:hover {
-  background: rgba(199,82,42,0.08);
-}
-.post-card {
-  background: var(--paper2);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  box-shadow: 0 24px 60px var(--shadow);
-  padding: 2rem;
-}
-.post-title {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 3vw, 2.7rem);
-  font-style: italic;
-  color: var(--accent);
-  margin-bottom: 0.5rem;
-}
-.post-meta {
-  color: var(--smudge);
-  font-size: 0.95rem;
-  margin-bottom: 0.75rem;
-}
-.post-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 1.75rem;
-}
-.post-tag {
-  font-size: 0.7rem;
-  letter-spacing: 0.05em;
-  padding: 2px 8px;
-  border: 1px solid var(--border);
-  color: var(--smudge);
-}
-.prose {
-  line-height: 1.8;
-  color: var(--ink);
-}
-.prose p {
-  margin-bottom: 1rem;
-}
-.prose h1,
-.prose h2,
-.prose h3,
-.prose h4,
-.prose h5,
-.prose h6 {
-  margin: 1.4rem 0 0.6rem;
-  font-family: var(--serif);
-  color: var(--accent2);
-}
-.prose a {
-  color: var(--accent2);
-  text-decoration: none;
-}
-.prose a:hover { text-decoration: underline; }
-.prose img {
-  max-width: 100%;
-  border-radius: 16px;
-  margin: 1rem 0;
-}
-.prose ul,
-.prose ol {
-  margin: 0.9rem 0 0.9rem 1.4rem;
-}
-.prose li {
-  margin-bottom: 0.5rem;
-}
-.prose code {
-  background: rgba(26,23,22,0.06);
-  padding: 0.2rem 0.35rem;
-  border-radius: 8px;
-  font-family: var(--mono);
-}
-.prose pre {
-  background: rgba(26,23,22,0.05);
-  border-radius: 16px;
-  padding: 1rem;
-  overflow-x: auto;
-  margin: 1rem 0;
-}
-.prose blockquote {
-  border-left: 3px solid var(--accent);
-  padding-left: 1rem;
-  margin: 1rem 0;
-  color: var(--smudge);
-}
-.error-message {
-  color: var(--red);
-  margin-top: 1rem;
-}
-.post-extras {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-}
-.edit-link {
-  font-size: 0.8rem;
-  color: var(--yellow);
-  text-decoration: none;
-  border: 1px solid var(--yellow);
-  padding: 0.4rem 0.8rem;
-}
-.edit-link:hover { background: rgba(212,160,23,0.12); }
-.post-nav {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-.post-nav a {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 1rem;
-  text-decoration: none;
-  color: var(--ink);
-  font-size: 0.85rem;
-  transition: background 0.15s;
-}
-.post-nav a:hover { background: var(--paper2); }
-.post-nav .nav-label {
-  display: block;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--smudge);
-  margin-bottom: 0.35rem;
-}
-.post-nav .nav-next { text-align: right; grid-column: 2; }
-@media (max-width: 640px) {
-  body { padding: 1rem; }
-  .post-card { padding: 1.5rem; }
-  .post-nav { grid-template-columns: 1fr; }
-  .post-nav .nav-next { grid-column: 1; text-align: left; }
-}
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="page">
-  <div class="topbar">
-    <a href="blog.html" class="back-btn">← Back to blog</a>
-    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()"><span id="themeLabel">dark mode</span></button>
+<div class="torn-top"></div>
+
+<nav>
+  <div class="container">
+    <a href="index.html" class="nav-brand"><img src="assets/logo.png" alt=""> Jaypix</a>
+    <div class="nav-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html" class="active">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+      <a href="jaypixos.html" class="cta">JaypixOS →</a>
+      <button class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
   </div>
-  <article class="post-card">
-    <div id="post-title" class="post-title">Loading...</div>
-    <div id="post-meta" class="post-meta"></div>
-    <div id="post-tags" class="post-tags"></div>
-    <div id="post-body" class="prose"></div>
-    <div id="error" class="error-message"></div>
-    <div id="post-extras" class="post-extras"></div>
-    <nav id="post-nav" class="post-nav"></nav>
-  </article>
-</div>
-<script src="js/markdown.js"></script>
-<script>
-function initTheme() {
-  const stored = localStorage.getItem('postTheme') || localStorage.getItem('jaypix-theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = stored || (prefersDark ? 'dark' : 'light');
-  document.documentElement.setAttribute('data-theme', theme);
-  document.getElementById('themeLabel').textContent = theme === 'dark' ? 'light mode' : 'dark mode';
-}
+</nav>
 
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('postTheme', next);
-  localStorage.setItem('jaypix-theme', next);
-  document.getElementById('themeLabel').textContent = next === 'dark' ? 'light mode' : 'dark mode';
-}
+<div class="reading-progress"><div class="reading-progress-bar" id="reading-progress-bar"></div></div>
 
-function getQueryParam(name) {
-  return new URLSearchParams(window.location.search).get(name);
-}
+<header class="hero post-header">
+  <div class="container">
+    <span class="kicker"><a href="blog.html" style="color:var(--accent);">← Blog</a></span>
+    <h1 id="post-title">Loading…</h1>
+    <div class="post-meta" id="post-meta"></div>
+    <div class="post-tags" id="post-tags"></div>
+    <img id="post-cover" class="post-cover" alt="" style="display:none;">
+  </div>
+</header>
 
-function showError(message) {
-  const error = document.getElementById('error');
-  const title = document.getElementById('post-title');
-  if (error) error.textContent = message;
-  if (title) title.textContent = 'Post not found';
-}
+<section style="border-top: none; padding-top: 0;">
+  <div class="container">
+    <div id="post-body" class="post-body"></div>
+    <p id="post-error" class="post-error" style="display:none;"></p>
+  </div>
+</section>
 
-function renderPost(post) {
-  document.title = `${post.title} — Jaypix`;
-  document.getElementById('post-title').textContent = post.title;
+<footer>
+  <div class="container">
+    <div class="foot-brand"><img src="assets/logo.png" alt=""> Jaypix</div>
+    <div class="foot-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+    </div>
+  </div>
+</footer>
 
-  const date = new Date(post.date).toLocaleDateString();
-  document.getElementById('post-meta').textContent = `${date} · ${estimateReadingTime(post.content)} min read`;
-
-  const tagsEl = document.getElementById('post-tags');
-  tagsEl.innerHTML = (post.tags || []).map(tag => `<span class="post-tag">${escapeHtml(tag)}</span>`).join('');
-
-  document.getElementById('post-body').innerHTML = markdownToHtml(post.content);
-
-  if (localStorage.getItem('adminToken')) {
-    document.getElementById('post-extras').innerHTML =
-      `<a class="edit-link" href="admin.html?edit=${post.id}">edit this post →</a>`;
-  }
-}
-
-function renderNav(posts, index) {
-  const nav = document.getElementById('post-nav');
-  const older = posts[index + 1];
-  const newer = posts[index - 1];
-  let html = '';
-  if (newer) {
-    html += `<a class="nav-prev" href="post.html?slug=${encodeURIComponent(newer.slug || newer.id)}"><span class="nav-label">← newer</span>${escapeHtml(newer.title)}</a>`;
-  } else {
-    html += '<span></span>';
-  }
-  if (older) {
-    html += `<a class="nav-next" href="post.html?slug=${encodeURIComponent(older.slug || older.id)}"><span class="nav-label">older →</span>${escapeHtml(older.title)}</a>`;
-  }
-  nav.innerHTML = html;
-}
-
-function loadPost() {
-  const slug = getQueryParam('slug');
-  const id = getQueryParam('id');
-  if (!slug && !id) {
-    showError('No post specified.');
-    return;
-  }
-
-  fetch('/api/posts')
-    .then(r => r.json())
-    .then(posts => {
-      const index = posts.findIndex(p => (slug && p.slug === slug) || (id && String(p.id) === id));
-      if (index === -1) {
-        showError('Post could not be found.');
-        return;
-      }
-      renderPost(posts[index]);
-      renderNav(posts, index);
-    })
-    .catch(() => showError('Unable to load post. Try again later.'));
-}
-
-initTheme();
-loadPost();
-</script>
+<script src="https://remarkerwebsite.pages.dev/remarker.js"></script>
+<script src="js/site.js"></script>
+<script src="js/post.js"></script>
 </body>
 </html>

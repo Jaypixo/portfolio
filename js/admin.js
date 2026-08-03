@@ -1,290 +1,517 @@
-// ─── ADMIN PANEL BEHAVIOR ───
-// Every action (create/edit/delete/publish toggle) saves immediately via
-// the REST API — there's no separate "save everything" step to forget.
+(function () {
+  var el = {};
+  ['auth-gate', 'admin-password', 'login-btn', 'auth-error', 'admin-app', 'admin-banner',
+   'new-post-btn', 'logout-btn', 'sidebar-search', 'post-list', 'admin-editor', 'editor-empty',
+   'editor-form', 'editor-status-pill', 'unsaved-dot', 'view-live-link', 'copy-link-btn',
+   'delete-post-btn', 'save-post-btn', 'field-title', 'field-slug', 'regen-slug-btn', 'slug-hint',
+   'field-excerpt', 'fill-excerpt-btn', 'excerpt-count', 'tags-wrap', 'field-tags', 'field-cover',
+   'cover-preview', 'field-published', 'field-featured', 'field-body', 'body-preview',
+   'word-count', 'read-time'
+  ].forEach(function (id) { el[id.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); })] = document.getElementById(id); });
 
-let authToken = localStorage.getItem('adminToken') || '';
-let posts = [];
-let editingId = null; // null = creating a new post
-let slugTouched = false;
+  var state = {
+    token: localStorage.getItem('adminToken') || '',
+    posts: [],
+    currentId: null,
+    currentApiSlug: null,
+    tags: [],
+    slugManual: false,
+    settingSlug: false,
+    savedSnapshot: null,
+    filter: 'all',
+    bannerTimeout: null
+  };
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('login-form').addEventListener('submit', e => {
-    e.preventDefault();
-    authenticate();
-  });
-  document.getElementById('logout-btn').addEventListener('click', logout);
-  document.getElementById('new-post-btn').addEventListener('click', () => openEditor(null));
-  document.getElementById('cancel-edit-btn').addEventListener('click', closeEditor);
-  document.getElementById('delete-btn').addEventListener('click', () => {
-    if (editingId !== null) deletePost(editingId);
-  });
-  document.getElementById('post-form').addEventListener('submit', e => {
-    e.preventDefault();
-    savePost();
-  });
-  document.getElementById('title-input').addEventListener('input', onTitleInput);
-  document.getElementById('slug-input').addEventListener('input', () => { slugTouched = true; });
-  document.getElementById('content-input').addEventListener('input', () => { updatePreview(); updateWordCount(); });
-  document.getElementById('search-input').addEventListener('input', renderPosts);
-  document.getElementById('md-help-toggle').addEventListener('click', toggleMdHelp);
-
-  if (authToken) showEditor();
-});
-
-function authHeaders() {
-  return authToken ? { Authorization: `Bearer ${authToken}` } : {};
-}
-
-async function authenticate() {
-  const password = document.getElementById('password-input').value.trim();
-  const errorEl = document.getElementById('login-error');
-  const btn = document.getElementById('login-btn');
-  errorEl.textContent = '';
-
-  if (!password) {
-    errorEl.textContent = 'Enter your password.';
-    return;
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text == null ? '' : String(text);
+    return div.innerHTML;
   }
 
-  btn.disabled = true;
-  btn.textContent = 'Logging in...';
-  try {
-    const res = await fetch('/api/login', {
+  function slugify(input) {
+    return String(input || '')
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 96);
+  }
+
+  function renderMarkdown(markdown) {
+    var engine = window.remarker || window.marked;
+    if (!engine) return '<p>' + escapeHtml(markdown) + '</p>';
+    return typeof engine.parse === 'function' ? engine.parse(markdown) : engine(markdown);
+  }
+
+  function plainExcerpt(markdown, maxLen) {
+    var plain = (markdown || '')
+      .replace(/```[\s\S]*?```/g, '')
+      .replace(/!\[([^\]]*)]\(([^)]+)\)/g, '$1')
+      .replace(/\[([^\]]+)]\(([^)]+)\)/g, '$1')
+      .replace(/[#>*`_~\-+=|]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return plain.length <= maxLen ? plain : plain.slice(0, maxLen).trim() + '…';
+  }
+
+  function hasUsableToken() {
+    if (!state.token) return false;
+    var parts = state.token.split('.');
+    if (parts.length !== 3) return false;
+    try {
+      var base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      var padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+      var payload = JSON.parse(atob(padded));
+      return typeof payload.exp === 'number' && Date.now() <= payload.exp;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function authHeaders() {
+    return { Authorization: 'Bearer ' + state.token, 'Content-Type': 'application/json' };
+  }
+
+  function showBanner(message, type) {
+    el.adminBanner.textContent = message;
+    el.adminBanner.className = 'admin-banner visible ' + type;
+    clearTimeout(state.bannerTimeout);
+    state.bannerTimeout = setTimeout(function () { el.adminBanner.classList.remove('visible'); }, 4000);
+  }
+
+  // ---- Auth ----
+  function login() {
+    var password = el.adminPassword.value;
+    if (!password) return;
+    el.loginBtn.disabled = true;
+    el.loginBtn.textContent = 'Logging in…';
+    el.authError.textContent = '';
+    fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Login failed');
-    authToken = data.token;
-    localStorage.setItem('adminToken', authToken);
-    document.getElementById('password-input').value = '';
-    showEditor();
-  } catch (err) {
-    errorEl.textContent = err.message;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Log in';
+      body: JSON.stringify({ password: password })
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.data.error || 'Login failed');
+        state.token = res.data.token;
+        localStorage.setItem('adminToken', state.token);
+        enterApp();
+      })
+      .catch(function (err) { el.authError.textContent = err.message; })
+      .finally(function () {
+        el.loginBtn.disabled = false;
+        el.loginBtn.textContent = 'Log in';
+      });
   }
-}
 
-function logout() {
-  authToken = '';
-  localStorage.removeItem('adminToken');
-  posts = [];
-  closeEditor();
-  document.getElementById('editor-screen').style.display = 'none';
-  document.getElementById('logout-btn').style.display = 'none';
-  document.getElementById('auth-screen').style.display = '';
-}
+  function logout() {
+    if (isDirty() && !confirm('You have unsaved changes. Log out anyway?')) return;
+    state.token = '';
+    localStorage.removeItem('adminToken');
+    el.adminApp.style.display = 'none';
+    el.authGate.style.display = 'block';
+  }
 
-function showEditor() {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('editor-screen').style.display = '';
-  document.getElementById('logout-btn').style.display = '';
-  loadPosts();
-}
+  function enterApp() {
+    el.authGate.style.display = 'none';
+    el.adminApp.style.display = 'block';
+    loadPosts();
+  }
 
-// ─── POSTS LIST ───
+  // ---- Posts data ----
+  function loadPosts() {
+    fetch('/api/posts', { headers: authHeaders() })
+      .then(function (r) {
+        if (r.status === 401) { logoutSilently(); throw new Error('Session expired'); }
+        if (!r.ok) throw new Error('Failed to load posts');
+        return r.json();
+      })
+      .then(function (data) {
+        state.posts = Array.isArray(data) ? data : [];
+        renderSidebar();
+      })
+      .catch(function (err) { showBanner(err.message, 'error'); });
+  }
 
-async function loadPosts() {
-  const listEl = document.getElementById('posts-list');
-  try {
-    const res = await fetch('/api/posts', { headers: authHeaders() });
-    if (res.status === 401) return logout();
-    if (!res.ok) throw new Error('Failed to load posts');
-    posts = await res.json();
-    renderPosts();
+  function logoutSilently() {
+    state.token = '';
+    localStorage.removeItem('adminToken');
+    el.adminApp.style.display = 'none';
+    el.authGate.style.display = 'block';
+    el.authError.textContent = 'Your session expired. Please log in again.';
+  }
 
-    const editId = new URLSearchParams(window.location.search).get('edit');
-    if (editId && posts.some(p => String(p.id) === editId)) {
-      openEditor(Number(editId));
+  function filteredPosts() {
+    var query = (el.sidebarSearch.value || '').trim().toLowerCase();
+    return state.posts
+      .filter(function (p) {
+        if (state.filter === 'published' && !p.published) return false;
+        if (state.filter === 'draft' && p.published) return false;
+        if (!query) return true;
+        var haystack = (p.title + ' ' + (p.tags || []).join(' ')).toLowerCase();
+        return haystack.indexOf(query) !== -1;
+      })
+      .sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt); });
+  }
+
+  function renderSidebar() {
+    var list = filteredPosts();
+    if (!list.length) {
+      el.postList.innerHTML = '<li class="post-list-empty">No posts found.</li>';
+      return;
     }
-  } catch (err) {
-    listEl.innerHTML = `<p class="admin-empty">Failed to load posts: ${escapeHtml(err.message)}</p>`;
-  }
-}
-
-function renderPosts() {
-  const listEl = document.getElementById('posts-list');
-  const search = (document.getElementById('search-input').value || '').trim().toLowerCase();
-
-  let visible = posts;
-  if (search) {
-    visible = visible.filter(post =>
-      post.title.toLowerCase().includes(search) ||
-      (post.tags || []).some(tag => tag.toLowerCase().includes(search))
-    );
-  }
-
-  if (!visible.length) {
-    listEl.innerHTML = '<p class="admin-empty">No posts yet. Create your first one.</p>';
-    return;
+    el.postList.innerHTML = list.map(function (p) {
+      var selected = p.id === state.currentId ? ' selected' : '';
+      var pill = p.published
+        ? '<span class="status-pill published">Published</span>'
+        : '<span class="status-pill draft">Draft</span>';
+      var featured = p.featured ? '<span class="status-pill featured">★</span>' : '';
+      return (
+        '<li class="post-row' + selected + '" data-id="' + escapeHtml(p.id) + '">' +
+          '<div class="row-title">' + escapeHtml(p.title || 'Untitled') + '</div>' +
+          '<div class="row-meta">' + pill + featured + '</div>' +
+          '<div class="row-actions">' +
+            '<button type="button" data-action="toggle-publish" data-id="' + escapeHtml(p.id) + '">' + (p.published ? 'Unpublish' : 'Publish') + '</button>' +
+            '<button type="button" class="danger" data-action="delete" data-id="' + escapeHtml(p.id) + '">Delete</button>' +
+          '</div>' +
+        '</li>'
+      );
+    }).join('');
   }
 
-  listEl.innerHTML = visible.map(post => `
-    <div class="admin-post ${editingId === post.id ? 'editing' : ''}" data-id="${post.id}">
-      <div class="admin-post-main">
-        <div class="admin-post-title">${escapeHtml(post.title)}</div>
-        <div class="admin-post-meta">
-          <span>${new Date(post.date).toLocaleDateString()}</span>
-          <span>· ${estimateReadingTime(post.content)} min</span>
-          <span class="status-pill ${post.published ? 'published' : 'draft'}">${post.published ? 'published' : 'draft'}</span>
-          ${(post.tags || []).map(tag => `<span class="tag-chip-sm">${escapeHtml(tag)}</span>`).join('')}
-        </div>
-      </div>
-      <div class="admin-post-actions">
-        <a href="post.html?slug=${encodeURIComponent(post.slug)}" target="_blank" class="icon-btn" title="View post">↗</a>
-        <button class="icon-btn" title="${post.published ? 'Unpublish' : 'Publish'}" onclick="togglePublish(${post.id})">${post.published ? '☑' : '☐'}</button>
-        <button class="icon-btn" title="Edit" onclick="openEditor(${post.id})">✎</button>
-        <button class="icon-btn danger" title="Delete" onclick="deletePost(${post.id})">✕</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ─── EDITOR ───
-
-function openEditor(id) {
-  editingId = id;
-  slugTouched = id !== null;
-
-  const post = id !== null ? posts.find(p => p.id === id) : null;
-
-  document.getElementById('editor-title').textContent = post ? 'Edit post' : 'New post';
-  document.getElementById('title-input').value = post ? post.title : '';
-  document.getElementById('slug-input').value = post ? post.slug : '';
-  document.getElementById('tags-input').value = post ? (post.tags || []).join(', ') : '';
-  document.getElementById('published-input').checked = post ? post.published : true;
-  document.getElementById('content-input').value = post ? post.content : '';
-  document.getElementById('delete-btn').style.display = post ? '' : 'none';
-
-  updatePreview();
-  updateWordCount();
-
-  document.getElementById('editor-panel').style.display = '';
-  document.getElementById('editor-screen').classList.add('has-editor');
-  renderPosts();
-  document.getElementById('editor-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function closeEditor() {
-  editingId = null;
-  document.getElementById('editor-panel').style.display = 'none';
-  document.getElementById('editor-screen').classList.remove('has-editor');
-  document.getElementById('post-form').reset();
-
-  const url = new URL(window.location.href);
-  if (url.searchParams.has('edit')) {
-    url.searchParams.delete('edit');
-    window.history.replaceState({}, '', url);
-  }
-
-  renderPosts();
-}
-
-function onTitleInput() {
-  if (!slugTouched) {
-    document.getElementById('slug-input').value = slugify(document.getElementById('title-input').value);
-  }
-}
-
-function updatePreview() {
-  const content = document.getElementById('content-input').value;
-  const preview = document.getElementById('preview');
-  preview.innerHTML = content.trim() ? markdownToHtml(content) : '<p class="admin-empty">Nothing to preview yet.</p>';
-}
-
-function updateWordCount() {
-  const content = document.getElementById('content-input').value;
-  const words = content.trim().split(/\s+/).filter(Boolean).length;
-  document.getElementById('word-count').textContent = `${words} word${words === 1 ? '' : 's'} · ${estimateReadingTime(content)} min read`;
-}
-
-function toggleMdHelp() {
-  const help = document.getElementById('md-help');
-  const btn = document.getElementById('md-help-toggle');
-  const open = help.style.display !== 'none';
-  help.style.display = open ? 'none' : '';
-  btn.textContent = open ? 'markdown cheat sheet ▾' : 'markdown cheat sheet ▴';
-}
-
-// ─── SAVE / PUBLISH / DELETE ───
-
-async function savePost() {
-  const title = document.getElementById('title-input').value.trim();
-  const content = document.getElementById('content-input').value.trim();
-  const slug = document.getElementById('slug-input').value.trim();
-  const tags = document.getElementById('tags-input').value.split(',').map(t => t.trim()).filter(Boolean);
-  const published = document.getElementById('published-input').checked;
-
-  if (!title || !content) {
-    toast('> error: title and content are required');
-    return;
-  }
-
-  const btn = document.getElementById('save-btn');
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Saving...';
-
-  try {
-    const url = editingId !== null ? `/api/posts/${editingId}` : '/api/posts';
-    const method = editingId !== null ? 'PUT' : 'POST';
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
-      body: JSON.stringify({ title, content, slug, tags, published })
+  // ---- Editor ----
+  function snapshot() {
+    return JSON.stringify({
+      title: el.fieldTitle.value,
+      slug: el.fieldSlug.value,
+      excerpt: el.fieldExcerpt.value,
+      body: el.fieldBody.value,
+      published: el.fieldPublished.checked,
+      featured: el.fieldFeatured.checked,
+      tags: state.tags,
+      coverImage: el.fieldCover.value
     });
-
-    if (res.status === 401) return logout();
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Save failed');
-
-    toast(editingId !== null ? '> post updated' : '> post created');
-    closeEditor();
-    await loadPosts();
-  } catch (err) {
-    toast('> error: ' + err.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
   }
-}
 
-async function togglePublish(id) {
-  const post = posts.find(p => p.id === id);
-  if (!post) return;
+  function isDirty() {
+    if (el.editorForm.style.display === 'none') return false;
+    return state.savedSnapshot !== null && state.savedSnapshot !== snapshot();
+  }
 
-  try {
-    const res = await fetch(`/api/posts/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
-      body: JSON.stringify({ published: !post.published })
+  function updateUnsavedDot() {
+    el.unsavedDot.classList.toggle('visible', isDirty());
+  }
+
+  function renderTags() {
+    var chips = state.tags.map(function (t, i) {
+      return '<span class="chip">' + escapeHtml(t) + '<button type="button" data-index="' + i + '">×</button></span>';
+    }).join('');
+    var input = el.tagsWrap.querySelector('input');
+    el.tagsWrap.innerHTML = chips;
+    el.tagsWrap.appendChild(input);
+    el.tagsWrap.querySelectorAll('button').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        state.tags.splice(Number(btn.getAttribute('data-index')), 1);
+        renderTags();
+        updateUnsavedDot();
+      });
     });
-    if (res.status === 401) return logout();
-    if (!res.ok) throw new Error('Failed to update post');
-
-    toast(post.published ? '> post unpublished' : '> post published');
-    await loadPosts();
-  } catch (err) {
-    toast('> error: ' + err.message);
   }
-}
 
-async function deletePost(id) {
-  if (!confirm('Delete this post? This cannot be undone.')) return;
-
-  try {
-    const res = await fetch(`/api/posts/${id}`, { method: 'DELETE', headers: authHeaders() });
-    if (res.status === 401) return logout();
-    if (!res.ok) throw new Error('Failed to delete post');
-
-    if (editingId === id) closeEditor();
-    toast('> post deleted');
-    await loadPosts();
-  } catch (err) {
-    toast('> error: ' + err.message);
+  function addTagFromInput() {
+    var value = el.fieldTags.value.trim().toLowerCase().replace(/,+$/, '');
+    if (value && state.tags.indexOf(value) === -1) state.tags.push(value);
+    el.fieldTags.value = '';
+    renderTags();
+    updateUnsavedDot();
   }
-}
+
+  function updateStatsAndPreview() {
+    var body = el.fieldBody.value;
+    var words = body.trim() ? body.trim().split(/\s+/).length : 0;
+    el.wordCount.textContent = words + ' word' + (words === 1 ? '' : 's');
+    el.readTime.textContent = Math.max(1, Math.round(words / 200)) + ' min read';
+    el.bodyPreview.innerHTML = body.trim() ? renderMarkdown(body) : '<p style="color:var(--smudge);">Nothing to preview yet.</p>';
+  }
+
+  function updateStatusPill() {
+    el.editorStatusPill.textContent = el.fieldPublished.checked ? 'Published' : 'Draft';
+    el.editorStatusPill.className = 'status-pill ' + (el.fieldPublished.checked ? 'published' : 'draft');
+  }
+
+  function updateCoverPreview() {
+    var url = el.fieldCover.value.trim();
+    if (url && /^https?:\/\//i.test(url)) {
+      el.coverPreview.src = url;
+      el.coverPreview.classList.add('visible');
+    } else {
+      el.coverPreview.classList.remove('visible');
+      el.coverPreview.src = '';
+    }
+  }
+
+  function updateActionVisibility() {
+    var hasId = Boolean(state.currentId);
+    el.deletePostBtn.style.display = hasId ? 'inline-flex' : 'none';
+    el.copyLinkBtn.style.display = hasId ? 'inline-flex' : 'none';
+    var slug = el.fieldSlug.value.trim();
+    if (hasId && el.fieldPublished.checked && slug) {
+      el.viewLiveLink.style.display = 'inline-flex';
+      el.viewLiveLink.href = 'post.html?slug=' + encodeURIComponent(slug);
+    } else {
+      el.viewLiveLink.style.display = 'none';
+    }
+    el.slugHint.textContent = slug ? window.location.origin + '/post.html?slug=' + encodeURIComponent(slug) : 'jaypix.dev/post.html?slug=…';
+  }
+
+  function fillForm(post) {
+    el.fieldTitle.value = post.title || '';
+    state.settingSlug = true;
+    el.fieldSlug.value = post.slug || '';
+    state.settingSlug = false;
+    el.fieldExcerpt.value = post.excerpt || '';
+    el.fieldBody.value = post.body || '';
+    el.fieldPublished.checked = Boolean(post.published);
+    el.fieldFeatured.checked = Boolean(post.featured);
+    el.fieldCover.value = post.coverImage || '';
+    state.tags = (post.tags || []).slice();
+    state.slugManual = Boolean(post.slug);
+    renderTags();
+    el.excerptCount.textContent = String(el.fieldExcerpt.value.length);
+    updateStatsAndPreview();
+    updateStatusPill();
+    updateCoverPreview();
+    updateActionVisibility();
+    state.savedSnapshot = snapshot();
+    updateUnsavedDot();
+  }
+
+  function openEditor() {
+    el.editorEmpty.style.display = 'none';
+    el.editorForm.style.display = 'block';
+  }
+
+  function selectPost(id) {
+    if (isDirty() && !confirm('You have unsaved changes. Discard them?')) return;
+    var post = state.posts.find(function (p) { return p.id === id; });
+    if (!post) return;
+    state.currentId = post.id;
+    state.currentApiSlug = post.slug;
+    openEditor();
+    fillForm(post);
+    renderSidebar();
+  }
+
+  function newPost() {
+    if (isDirty() && !confirm('You have unsaved changes. Discard them?')) return;
+    state.currentId = null;
+    state.currentApiSlug = null;
+    openEditor();
+    fillForm({ title: '', slug: '', excerpt: '', body: '', published: false, featured: false, tags: [], coverImage: '' });
+    el.fieldTitle.focus();
+    renderSidebar();
+  }
+
+  function validateDraft(draft) {
+    if (!draft.title.trim()) return 'Title is required.';
+    if (!draft.slug.trim()) return 'Slug is required.';
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(draft.slug.trim())) return 'Slug can only contain lowercase letters, numbers, and hyphens.';
+    return null;
+  }
+
+  function savePost() {
+    var draft = {
+      title: el.fieldTitle.value.trim(),
+      slug: el.fieldSlug.value.trim(),
+      excerpt: el.fieldExcerpt.value.trim(),
+      body: el.fieldBody.value,
+      published: el.fieldPublished.checked,
+      featured: el.fieldFeatured.checked,
+      tags: state.tags,
+      coverImage: el.fieldCover.value.trim()
+    };
+
+    var validationError = validateDraft(draft);
+    if (validationError) { showBanner(validationError, 'error'); return; }
+
+    var isNew = !state.currentId;
+    var url = isNew ? '/api/posts' : '/api/posts/' + encodeURIComponent(state.currentApiSlug);
+    var method = isNew ? 'POST' : 'PUT';
+
+    el.savePostBtn.disabled = true;
+    el.savePostBtn.textContent = 'Saving…';
+
+    fetch(url, { method: method, headers: authHeaders(), body: JSON.stringify(draft) })
+      .then(function (r) {
+        if (r.status === 401) { logoutSilently(); throw new Error('Session expired'); }
+        return r.json().then(function (data) { return { ok: r.ok, data: data }; });
+      })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.data.error || 'Save failed');
+        var saved = res.data;
+        state.currentId = saved.id;
+        state.currentApiSlug = saved.slug;
+        var idx = state.posts.findIndex(function (p) { return p.id === saved.id; });
+        if (idx === -1) state.posts.push(saved); else state.posts[idx] = saved;
+        fillForm(saved);
+        renderSidebar();
+        showBanner('Saved.', 'success');
+      })
+      .catch(function (err) { showBanner(err.message, 'error'); })
+      .finally(function () {
+        el.savePostBtn.disabled = false;
+        el.savePostBtn.textContent = 'Save';
+      });
+  }
+
+  function deleteBySlug(slug, id) {
+    return fetch('/api/posts/' + encodeURIComponent(slug), { method: 'DELETE', headers: authHeaders() })
+      .then(function (r) {
+        if (r.status === 401) { logoutSilently(); throw new Error('Session expired'); }
+        if (!r.ok) return r.json().then(function (data) { throw new Error(data.error || 'Delete failed'); });
+        state.posts = state.posts.filter(function (p) { return p.id !== id; });
+        if (state.currentId === id) {
+          state.currentId = null;
+          state.currentApiSlug = null;
+          state.savedSnapshot = null;
+          el.editorForm.style.display = 'none';
+          el.editorEmpty.style.display = 'block';
+        }
+        renderSidebar();
+        showBanner('Post deleted.', 'success');
+      })
+      .catch(function (err) { showBanner(err.message, 'error'); });
+  }
+
+  function deleteCurrentPost() {
+    if (!state.currentApiSlug || !state.currentId) return;
+    if (!confirm('Delete "' + el.fieldTitle.value + '"? This cannot be undone.')) return;
+    deleteBySlug(state.currentApiSlug, state.currentId);
+  }
+
+  function copyLink() {
+    var slug = el.fieldSlug.value.trim();
+    if (!slug) return;
+    var link = window.location.origin + '/post.html?slug=' + encodeURIComponent(slug);
+    navigator.clipboard.writeText(link).then(function () {
+      showBanner('Link copied.', 'success');
+    }).catch(function () {
+      showBanner(link, 'info');
+    });
+  }
+
+  // ---- Events ----
+  el.loginBtn.addEventListener('click', login);
+  el.adminPassword.addEventListener('keydown', function (e) { if (e.key === 'Enter') login(); });
+  el.logoutBtn.addEventListener('click', logout);
+  el.newPostBtn.addEventListener('click', newPost);
+  el.sidebarSearch.addEventListener('input', renderSidebar);
+
+  document.querySelectorAll('.filter-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.filter-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      state.filter = btn.getAttribute('data-filter');
+      renderSidebar();
+    });
+  });
+
+  el.postList.addEventListener('click', function (e) {
+    var actionBtn = e.target.closest('[data-action]');
+    if (actionBtn) {
+      var id = actionBtn.getAttribute('data-id');
+      var action = actionBtn.getAttribute('data-action');
+      var post = state.posts.find(function (p) { return p.id === id; });
+      if (!post) return;
+      if (action === 'delete') {
+        if (confirm('Delete "' + post.title + '"? This cannot be undone.')) deleteBySlug(post.slug, post.id);
+      } else if (action === 'toggle-publish') {
+        fetch('/api/posts/' + encodeURIComponent(post.slug), {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(Object.assign({}, post, { published: !post.published }))
+        })
+          .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+          .then(function (res) {
+            if (!res.ok) throw new Error(res.data.error || 'Update failed');
+            var idx = state.posts.findIndex(function (p) { return p.id === res.data.id; });
+            if (idx !== -1) state.posts[idx] = res.data;
+            if (state.currentId === res.data.id) fillForm(res.data);
+            renderSidebar();
+          })
+          .catch(function (err) { showBanner(err.message, 'error'); });
+      }
+      return;
+    }
+    var row = e.target.closest('.post-row');
+    if (row) selectPost(row.getAttribute('data-id'));
+  });
+
+  el.fieldTitle.addEventListener('input', function () {
+    if (!state.slugManual) {
+      state.settingSlug = true;
+      el.fieldSlug.value = slugify(el.fieldTitle.value);
+      state.settingSlug = false;
+      updateActionVisibility();
+    }
+    updateUnsavedDot();
+  });
+  el.fieldSlug.addEventListener('input', function () {
+    if (!state.settingSlug) state.slugManual = true;
+    updateActionVisibility();
+    updateUnsavedDot();
+  });
+  el.regenSlugBtn.addEventListener('click', function () {
+    state.settingSlug = true;
+    el.fieldSlug.value = slugify(el.fieldTitle.value);
+    state.settingSlug = false;
+    state.slugManual = false;
+    updateActionVisibility();
+    updateUnsavedDot();
+  });
+
+  el.fieldExcerpt.addEventListener('input', function () {
+    el.excerptCount.textContent = String(el.fieldExcerpt.value.length);
+    updateUnsavedDot();
+  });
+  el.fillExcerptBtn.addEventListener('click', function () {
+    el.fieldExcerpt.value = plainExcerpt(el.fieldBody.value, 400);
+    el.excerptCount.textContent = String(el.fieldExcerpt.value.length);
+    updateUnsavedDot();
+  });
+
+  el.fieldTags.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTagFromInput(); }
+    else if (e.key === 'Backspace' && !el.fieldTags.value && state.tags.length) {
+      state.tags.pop();
+      renderTags();
+      updateUnsavedDot();
+    }
+  });
+  el.fieldTags.addEventListener('blur', function () { if (el.fieldTags.value.trim()) addTagFromInput(); });
+
+  el.fieldCover.addEventListener('input', function () { updateCoverPreview(); updateUnsavedDot(); });
+  el.coverPreview.addEventListener('error', function () { el.coverPreview.classList.remove('visible'); });
+
+  el.fieldPublished.addEventListener('change', function () { updateStatusPill(); updateActionVisibility(); updateUnsavedDot(); });
+  el.fieldFeatured.addEventListener('change', updateUnsavedDot);
+
+  el.fieldBody.addEventListener('input', function () { updateStatsAndPreview(); updateUnsavedDot(); });
+
+  el.savePostBtn.addEventListener('click', savePost);
+  el.deletePostBtn.addEventListener('click', deleteCurrentPost);
+  el.copyLinkBtn.addEventListener('click', copyLink);
+
+  window.addEventListener('beforeunload', function (e) {
+    if (isDirty()) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  // ---- Init ----
+  if (hasUsableToken()) {
+    enterApp();
+  } else {
+    localStorage.removeItem('adminToken');
+  }
+})();

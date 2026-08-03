@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docs — JaypixOS</title>
+<link rel="icon" type="image/png" href="assets/logo-black.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="torn-top"></div>
+
+<nav>
+  <div class="container">
+    <a href="index.html" class="nav-brand"><img src="assets/logo.png" alt=""> Jaypix</a>
+    <div class="nav-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html" class="active">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+      <a href="docs.html#installing" class="cta">Get JaypixOS</a>
+      <button class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+<div class="docs-layout">
+
+  <aside class="docs-nav">
+    <div class="group">
+      <div class="group-title">Get started</div>
+      <a href="#installing">Installing</a>
+      <a href="#fast-install">Fast install</a>
+      <a href="#custom-install">Custom install</a>
+      <a href="#partitioning">Partitioning</a>
+    </div>
+    <div class="group">
+      <div class="group-title">Using it</div>
+      <a href="#jpkg">jpkg</a>
+      <a href="#network">Network &amp; DNS</a>
+      <a href="#terminal">The terminal</a>
+    </div>
+    <div class="group">
+      <div class="group-title">Reference</div>
+      <a href="#jpkg-commands">jpkg commands</a>
+      <a href="#faq">FAQ</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+    </div>
+  </aside>
+
+  <main class="docs-content">
+    <h1>Documentation</h1>
+    <p class="intro">Everything you need to install and run JaypixOS. If something here doesn't match what you're seeing, the ISO you have is probably older than this page — check for a newer build.</p>
+
+    <h2 id="installing">Installing</h2>
+    <p>Boot the ISO, log in as <code>root</code> (automatic, no password), and run:</p>
+    <pre><code>jinstall</code></pre>
+    <p>You'll get a choice between two paths:</p>
+    <table>
+      <tr><th>Mode</th><th>What it asks</th><th>Good for</th></tr>
+      <tr><td><code>jinstall --fast</code></td><td>Disk, hostname, username, password. Everything else defaulted.</td><td>Most people, most of the time.</td></tr>
+      <tr><td><code>jinstall --custom</code></td><td>The full menu — locale, mirrors, disk layout, profile, network, bootloader, users, packages.</td><td>Dual-boot setups, non-default filesystems, anyone who wants full control.</td></tr>
+    </table>
+    <div class="callout">A terminal (Konsole) is always installed regardless of which path you take or what you pick along the way — you're never left without one after first boot.</div>
+
+    <h3 id="fast-install">Fast install</h3>
+    <p><code>jinstall --fast</code> picks a disk automatically if there's only one, uses Btrfs with the standard subvolume layout, installs KDE Plasma, and wires up Cloudflare DNS/NTP — all without asking. You only answer:</p>
+    <ul>
+      <li>Which disk, if there's more than one</li>
+      <li>Hostname (defaults to <code>jaypixos</code>)</li>
+      <li>Username (defaults to <code>jaypix</code>)</li>
+      <li>Password</li>
+    </ul>
+    <p>That's it — the rest runs unattended.</p>
+
+    <h3 id="custom-install">Custom install</h3>
+    <p><code>jinstall --custom</code> opens the full guided menu. Every section shows its current state on the right as you move through it, and nothing is locked in until you choose <strong>Install</strong> at the bottom. The menu order roughly follows: locale → mirrors → disk → swap → bootloader → hostname → authentication → profile (desktop environment) → network → additional packages → timezone.</p>
+
+    <h3 id="partitioning">Partitioning</h3>
+    <p>Under <strong>Disk configuration</strong>, <strong>Use a best-effort default partition layout</strong> is the recommended, pre-selected option: a 1 GiB boot partition (FAT32) plus a Btrfs root using the rest of the disk, with the standard subvolumes:</p>
+    <table>
+      <tr><th>Subvolume</th><th>Mounted at</th></tr>
+      <tr><td><code>@</code></td><td><code>/</code></td></tr>
+      <tr><td><code>@home</code></td><td><code>/home</code></td></tr>
+      <tr><td><code>@log</code></td><td><code>/var/log</code></td></tr>
+      <tr><td><code>@pkg</code></td><td><code>/var/cache/pacman/pkg</code></td></tr>
+    </table>
+    <div class="callout">If your chosen disk is under 20 GiB, both install paths will warn you and ask for confirmation before continuing — KDE Plasma needs more room than that, and installing anyway is very likely to run out of space partway through.</div>
+
+    <h2 id="jpkg">jpkg</h2>
+    <p>jpkg is JaypixOS's package manager — a friendlier layer over pacman and the AUR, not a replacement for either. It checks core and extra first, then JPN (JaypixOS's own repo), then falls back to the AUR.</p>
+    <pre><code>jpkg install &lt;package&gt;
+jpkg search &lt;term&gt;
+jpkg update</code></pre>
+
+    <h3 id="jpkg-commands">Command reference</h3>
+    <table>
+      <tr><th>Command</th><th>Alias</th><th>Does</th></tr>
+      <tr><td><code>update</code></td><td><code>up</code></td><td>Full sync + upgrade (<code>pacman -Syu</code>)</td></tr>
+      <tr><td><code>install</code></td><td><code>i</code></td><td>Install a package — checks core/extra, then JPN, then AUR</td></tr>
+      <tr><td><code>remove</code></td><td><code>rm</code></td><td>Remove a package</td></tr>
+      <tr><td><code>purge</code></td><td>—</td><td>Remove a package, its now-unneeded deps, and its configs</td></tr>
+      <tr><td><code>search</code></td><td><code>s</code></td><td>Search core/extra + JPN + AUR in one call</td></tr>
+      <tr><td><code>info</code></td><td>—</td><td>Show package info</td></tr>
+      <tr><td><code>list</code></td><td>—</td><td>List installed packages</td></tr>
+      <tr><td><code>orphans</code></td><td>—</td><td>List orphaned packages</td></tr>
+      <tr><td><code>clean-orphans</code></td><td>—</td><td>Remove all orphaned packages</td></tr>
+      <tr><td><code>rollback</code></td><td>—</td><td>Undo the last transaction — full filesystem snapshot on Btrfs, package-db-level otherwise</td></tr>
+      <tr><td><code>build</code></td><td>—</td><td>Build and install an AUR package (git clone + makepkg -si)</td></tr>
+      <tr><td><code>edit</code></td><td>—</td><td>Open a package's PKGBUILD in <code>$EDITOR</code> before building</td></tr>
+      <tr><td><code>merge-configs</code></td><td>—</td><td>Review <code>.pacnew</code> files left after a transaction</td></tr>
+    </table>
+    <p>Pass <code>-y</code> / <code>--yes</code> to skip confirmation prompts, same as pacman's <code>--noconfirm</code>.</p>
+
+    <h2 id="network">Network &amp; DNS</h2>
+    <p>Ethernet, Wi-Fi, and mobile broadband should all come up automatically via DHCP, both in the live environment and after install (NetworkManager is enabled by default even if you skip network configuration entirely during a custom install). DNS and NTP are pointed at Cloudflare out of the box:</p>
+    <ul>
+      <li>DNS: <code>1.1.1.1</code> / <code>1.0.0.1</code>, opportunistic DNS-over-TLS</li>
+      <li>NTP: <code>time.cloudflare.com</code>, falling back to <code>pool.ntp.org</code></li>
+    </ul>
+    <p>For Wi-Fi specifically, use <code>iwctl</code> to authenticate; for mobile broadband modems, <code>mmcli</code>.</p>
+
+    <h2 id="terminal">The terminal</h2>
+    <p>Konsole is installed unconditionally — you'll always have a terminal available after login, regardless of which desktop packages you picked during install.</p>
+
+    <h2 id="faq">FAQ</h2>
+    <h3>Is this still Arch?</h3>
+    <p>Yes. Full core/extra compatibility, standard pacman package format, nothing about dependency resolution reinvented. JaypixOS adds an installer, a package manager, and some defaults — it doesn't fork the package ecosystem.</p>
+    <h3>Can I use archinstall instead?</h3>
+    <p>No — it's not on the system. jinstall replaces it entirely, including the underlying menu system for the custom path.</p>
+    <h3>What desktop environments are supported?</h3>
+    <p>KDE Plasma is the maintained, default target. Other desktop environments are selectable in the custom install menu (it's still the same profile system Arch's own installer uses under the hood) but aren't the focus of testing.</p>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
+    <h3>Install seems stuck during package downloads</h3>
+    <p>We're actively tracking a download stall that can occur during package retrieval on some setups. If you hit it, check back here — this section will be updated as soon as it's root-caused. In the meantime, a fresh attempt with a different network path (e.g. a different Wi-Fi network, or wired instead of Wi-Fi) is worth trying.</p>
+    <h3>"Could not commit transaction" partway through install</h3>
+    <p>This almost always means the target disk is too small for the packages being installed (KDE Plasma needs meaningfully more than the bare minimum). Both install paths warn you up front if your disk is under 20 GiB — if you skipped past that warning, try again with more space.</p>
+    <h3>Something else went wrong</h3>
+    <p>Run <code>jinstall --custom share-log</code> to upload the install log and get a shareable URL.</p>
+  </main>
+
+</div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="foot-brand"><img src="assets/logo.png" alt=""> JaypixOS Docs</div>
+    <div class="foot-links">
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="index.html">Jaypix</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/site.js"></script>
+</body>
+</html>

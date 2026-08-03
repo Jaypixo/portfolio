@@ -1,115 +1,73 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>about.txt - jaypix.dev</title>
-<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
-
-<!-- Social Media Embeds -->
-<meta property="og:title" content="Jaypix | Developer & Tinkerer">
-<meta property="og:description" content="I build things that exist and occasionally make sense. Professional tab hoarder and code breaker.">
-<meta property="og:image" content="https://jaypix.dev/Public/EmbedLogo.png">
-<meta property="og:url" content="https://jaypix.dev/about.html">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#c7522a">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Jaypix</title>
+<link rel="icon" type="image/png" href="assets/logo-black.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
-  <div class="torn-top"></div>
-  <div class="layout">
+<div class="torn-top"></div>
 
-    <!-- ─── SIDEBAR ─── -->
-    <aside class="sidebar">
-      <div class="sidebar-top">
-
-        <!-- Logo replacing the circle avatar -->
-        <div class="logo-area">
-          <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix logo" class="site-logo" id="logoBtn" title="jaypix.dev">
-        </div>
-
-        <div class="name-block">
-          <div class="name">Jaypix</div>
-          <div class="handle">@<span>jaypixo</span> · jaypix.dev</div>
-          <div class="status-indicator"><div class="dot"></div><span>building · online</span></div>
-        </div>
-
-        <nav>
-          <ul class="sidebar-nav">
-            <li><a href="index.html" class="nav-link"><span class="icon">~/</span> home</a></li>
-            <li><a href="about.html" class="nav-link active-nav"><span class="icon">./</span> about.txt</a></li>
-            <li><a href="projects.html" class="nav-link"><span class="icon">_</span> projects/</a></li>
-            <li><a href="blog.html" class="nav-link"><span class="icon">·</span> blog</a></li>
-            <li><a href="log.html" class="nav-link"><span class="icon">$</span> devlog</a></li>
-            <li><a href="contact.html" class="nav-link"><span class="icon">@</span> contact</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="sidebar-links">
-        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="toggle dark mode">
-          <span class="toggle-icon" id="themeIcon">☽</span>
-          <span id="themeLabel">dark mode</span>
-        </button>
-        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener" class="pill-link yt">▶ youtube · @jaypixo</a>
-        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener" class="pill-link gh">◆ github · jaypixo</a>
-        <a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" rel="noopener" class="pill-link sp">♫ spotify · jaypix</a>
-        <a href="https://x.com/jaypixoo" target="_blank" rel="noopener" class="pill-link tw">✕ x · @jaypixoo</a>
-      </div>
-    </aside>
-
-    <!-- ─── MAIN ─── -->
-    <main class="main">
-      <div class="tabs">
-        <a href="index.html" class="tab">home</a>
-        <a href="about.html" class="tab active">about.txt</a>
-        <a href="projects.html" class="tab">projects/</a>
-        <a href="blog.html" class="tab">blog</a>
-        <a href="log.html" class="tab">devlog</a>
-        <a href="contact.html" class="tab">contact</a>
-      </div>
-
-      <div style="padding-top: 1rem;">
-        <div class="section-label">about.txt</div>
-        <div class="about-layout">
-          <div class="about-col">
-            <!-- subtle logo above the intro text -->
-            <img src="https://jaypix.dev/Public/Jaylogo.png" alt="" class="about-logo-accent" aria-hidden="true">
-            <p style="font-family: var(--serif); font-size: 1.1rem; font-style: italic;">Developer. Tinkerer. Chronic "one more feature" disease patient.</p>
-            <p style="font-size: 12px; color: var(--smudge); margin-top: 1rem; line-height: 1.7;">I build things that are sometimes useful, often weird. YouTube is where I dump music and sometimes dev content. GitHub is where the code goes to live. Or die. Depends.</p>
-            <div style="height: 1rem;"></div>
-            <table class="specs-table">
-              <tr><td>status</td><td><span style="color: var(--accent3);">● alive</span> · building stuff</td></tr>
-              <tr><td>occupation</td><td>developer / professional googler</td></tr>
-              <tr><td>based</td><td>on the internet mostly</td></tr>
-              <tr><td>current fixation</td><td id="fixation">loading...</td></tr>
-              <tr><td>tab count</td><td id="tabCount">---</td></tr>
-              <tr><td>monster cans</td><td id="monsterCount">---</td></tr>
-            </table>
-          </div>
-          <div class="about-col">
-            <div class="section-label">stack / tech</div>
-            <div id="stack-pills" style="line-height: 2.5;"></div>
-            <div class="section-label" style="margin-top: 1.5rem;">can be found</div>
-            <table class="specs-table">
-              <tr><td>youtube</td><td><a href="https://www.youtube.com/@Jaypixo" target="_blank" style="color:var(--accent2);">@Jaypixo</a></td></tr>
-              <tr><td>github</td><td><a href="https://github.com/Jaypixo" target="_blank" style="color:var(--accent2);">Jaypixo</a></td></tr>
-              <tr><td>spotify</td><td><a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" style="color:#1DB954;">jaypix</a></td></tr>
-              <tr><td>x / twitter</td><td><a href="https://x.com/jaypixoo" target="_blank" style="color:var(--ink);">@jaypixoo</a></td></tr>
-              <tr><td>email</td><td><a href="mailto:contact@jaypix.dev" style="color:var(--accent);">contact@jaypix.dev</a></td></tr>
-            </table>
-          </div>
-        </div>
-      </div>
-    </main>
+<nav>
+  <div class="container">
+    <a href="index.html" class="nav-brand"><img src="assets/logo.png" alt=""> Jaypix</a>
+    <div class="nav-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html" class="active">About</a>
+      <a href="jaypixos.html" class="cta">JaypixOS →</a>
+      <button class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
   </div>
-</div>
+</nav>
 
-<div class="toast-container" id="toastContainer"></div>
+<header class="hero" style="padding-bottom: 40px;">
+  <div class="container">
+    <span class="kicker">About</span>
+    <h1>Hi. I'm Jaypix.</h1>
+  </div>
+</header>
+
+<section style="border-top: none; padding-top: 0;">
+  <div class="container">
+    <div class="prose">
+      <p>I'm based in Germany, and I think about things too much — which mostly comes out as software, some of it useful, and writing, most of it written out of spite.</p>
+      <p class="dim">The technical version: I build primarily on Cloudflare's stack — Workers, D1, R2, KV, Pages — because it lets one person run infrastructure that used to need a team. I run my own hosting, my own package repo, my own markdown parser. If a tool exists and annoys me, there's a reasonable chance I've already started rewriting it.</p>
+
+      <h2>What I actually do</h2>
+      <p>Mostly indie web stuff: platforms, tools, the occasional operating system. I'd rather build the smaller, weirder version of something myself than configure the big corporate version of it. That's less a philosophy and more just how I end up spending weekends.</p>
+      <ul>
+        <li>Linux — daily driver, and now the thing I ship (see: JaypixOS)</li>
+        <li>Cinema — I log what I watch obsessively; the count is well past a thousand</li>
+        <li>Writing — essays, short fiction, a diary I don't curate</li>
+        <li>Markdown — unreasonably, sincerely invested in it</li>
+      </ul>
+
+      <h2>Design, if you're wondering</h2>
+      <p>Warm paper tones, IBM Plex Mono, Crimson Pro, a torn edge at the top of every page — that's the running visual thread across everything I build, this site included. Dark mode is the default; there's a toggle in the nav if you disagree.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-brand"><img src="assets/logo.png" alt=""> Jaypix</div>
+    <div class="foot-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+    </div>
+  </div>
+</footer>
+
 <script src="js/site.js"></script>
-<script src="js/about.js"></script>
 </body>
 </html>

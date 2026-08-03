@@ -1,95 +1,99 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>projects/ - jaypix.dev</title>
-<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
-
-<!-- Social Media Embeds -->
-<meta property="og:title" content="Jaypix | Developer & Tinkerer">
-<meta property="og:description" content="I build things that exist and occasionally make sense. Professional tab hoarder and code breaker.">
-<meta property="og:image" content="https://jaypix.dev/Public/EmbedLogo.png">
-<meta property="og:url" content="https://jaypix.dev/projects.html">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#c7522a">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Jaypix</title>
+<link rel="icon" type="image/png" href="assets/logo-black.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
-  <div class="torn-top"></div>
-  <div class="layout">
+<div class="torn-top"></div>
 
-    <!-- ─── SIDEBAR ─── -->
-    <aside class="sidebar">
-      <div class="sidebar-top">
-
-        <!-- Logo replacing the circle avatar -->
-        <div class="logo-area">
-          <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix logo" class="site-logo" id="logoBtn" title="jaypix.dev">
-        </div>
-
-        <div class="name-block">
-          <div class="name">Jaypix</div>
-          <div class="handle">@<span>jaypixo</span> · jaypix.dev</div>
-          <div class="status-indicator"><div class="dot"></div><span>building · online</span></div>
-        </div>
-
-        <nav>
-          <ul class="sidebar-nav">
-            <li><a href="index.html" class="nav-link"><span class="icon">~/</span> home</a></li>
-            <li><a href="about.html" class="nav-link"><span class="icon">./</span> about.txt</a></li>
-            <li><a href="projects.html" class="nav-link active-nav"><span class="icon">_</span> projects/</a></li>
-            <li><a href="blog.html" class="nav-link"><span class="icon">·</span> blog</a></li>
-            <li><a href="log.html" class="nav-link"><span class="icon">$</span> devlog</a></li>
-            <li><a href="contact.html" class="nav-link"><span class="icon">@</span> contact</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="sidebar-links">
-        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="toggle dark mode">
-          <span class="toggle-icon" id="themeIcon">☽</span>
-          <span id="themeLabel">dark mode</span>
-        </button>
-        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener" class="pill-link yt">▶ youtube · @jaypixo</a>
-        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener" class="pill-link gh">◆ github · jaypixo</a>
-        <a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" rel="noopener" class="pill-link sp">♫ spotify · jaypix</a>
-        <a href="https://x.com/jaypixoo" target="_blank" rel="noopener" class="pill-link tw">✕ x · @jaypixoo</a>
-      </div>
-    </aside>
-
-    <!-- ─── MAIN ─── -->
-    <main class="main">
-      <div class="tabs">
-        <a href="index.html" class="tab">home</a>
-        <a href="about.html" class="tab">about.txt</a>
-        <a href="projects.html" class="tab active">projects/</a>
-        <a href="blog.html" class="tab">blog</a>
-        <a href="log.html" class="tab">devlog</a>
-        <a href="contact.html" class="tab">contact</a>
-      </div>
-
-      <div style="padding-top: 1rem;">
-        <div class="section-label">projects/</div>
-        <p style="font-size: 12px; color: var(--smudge); margin-bottom: 1.5rem;">a graveyard and a garden at the same time.</p>
-        <div class="cards-grid">
-          <div class="grid-card" data-num="01" onclick="window.open('https://MyJay.net','_blank')" style="cursor:pointer;"><div class="card-tag">almost ready</div><div class="card-title">MyJay.net</div><div class="card-desc">My new site is live! Far from done. But live. Coming soon. Promise.</div><span class="card-badge done">VISIT →</span></div>
-          <div class="grid-card" data-num="02"><div class="card-tag">idea → void</div><div class="card-title">the great refactor</div><div class="card-desc">started rewriting because code was messy. rewrite is also messy.</div><span class="card-badge wip">WIP · 12%</span></div>
-          <div class="grid-card" data-num="03"><div class="card-tag">actually shipped</div><div class="card-title">this website</div><div class="card-desc">you're looking at it. it counts. don't ask questions.</div><span class="card-badge done">LIVE</span></div>
-          <div class="grid-card" data-num="04" style="cursor:pointer;" onclick="toast('👀 github.com/Jaypixo ● go explore'); window.open('https://github.com/Jaypixo','_blank')"><div class="card-tag">github</div><div class="card-title">misc. repos</div><div class="card-desc">various things in various states. some haunted.</div><span class="card-badge idea">EXPLORE →</span></div>
-          <div class="grid-card" data-num="05" onclick="window.open('https://www.youtube.com/@Jaypixo','_blank')" style="cursor:pointer;"><div class="card-tag">youtube content</div><div class="card-title">dev videos</div><div class="card-desc">building things, fails, "wait it works now??" moments.</div><span class="card-badge done">ONGOING</span></div>
-          <div class="grid-card" data-num="06" id="mysteryCard" onclick="mysteryClick()"><div class="card-tag">somewhere in the future</div><div class="card-title">???</div><div class="card-desc">there are plans. they exist in a notes app. probably.</div><span class="card-badge idea">IDEA</span></div>
-        </div>
-      </div>
-    </main>
+<nav>
+  <div class="container">
+    <a href="index.html" class="nav-brand"><img src="assets/logo.png" alt=""> Jaypix</a>
+    <div class="nav-links">
+      <a href="projects.html" class="active">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+      <a href="jaypixos.html" class="cta">JaypixOS →</a>
+      <button class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
   </div>
-</div>
+</nav>
 
-<div class="toast-container" id="toastContainer"></div>
+<header class="hero" style="padding-bottom: 40px;">
+  <div class="container">
+    <span class="kicker">Projects</span>
+    <h1>Things I've built and, mostly, kept running.</h1>
+    <p class="lede">Roughly newest first. Some of it's finished, some of it's a spec I'm still building toward — marked either way.</p>
+  </div>
+</header>
+
+<section style="border-top: none; padding-top: 0;">
+  <div class="container">
+    <div class="grid">
+
+      <div class="card">
+        <span class="tag">Shipped · OS</span>
+        <h3>JaypixOS</h3>
+        <p>An Arch Linux-based desktop OS — KDE Plasma, a from-scratch installer (jinstall), its own package manager (jpkg), and a Cloudflare-backed package repo (JPN). The big one.</p>
+        <a href="jaypixos.html" class="card-link">Full writeup →</a>
+      </div>
+
+      <div class="card">
+        <span class="tag">Shipped · Platform</span>
+        <h3>MyJay.net</h3>
+        <p>An indie web hosting platform on Cloudflare's stack — Workers, D1, R2, KV, Pages. Free subdomain hosting, a blogging system, and an explore/search page that indexes Neocities and Nekoweb (respecting robots.txt). Built as a real alternative, not a demo.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">Shipped · Tooling</span>
+        <h3>Remarker.js</h3>
+        <p>A markdown renderer built from scratch as a drop-in marked.js replacement, with extended syntax: callouts, colored spans, spoilers, keyboard shortcuts, video embeds. It's what renders this site's content and everything else I write.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">In progress</span>
+        <h3>MyJay Browser</h3>
+        <p>A Firefox fork concept: the URL bar split into individually editable, clickable segments instead of one long string, plus a broader customization system. Specced out, not yet shipped.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">In progress</span>
+        <h3>Syntonist</h3>
+        <p>A personal AI harness project — a from-scratch alternative to commercial chat interfaces, with its own memory system and a skills/custom-instructions layer. Ongoing.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">Tooling</span>
+        <h3>jpkg</h3>
+        <p>JaypixOS's package manager — a friendlier CLI over pacman and the AUR. Search, install, rollback, and orphan cleanup, in commands that read like what they do. Part of the JaypixOS project, useful on its own.</p>
+        <a href="jaypixos.html#features" class="card-link">More →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-brand"><img src="assets/logo.png" alt=""> Jaypix</div>
+    <div class="foot-links">
+      <a href="about.html">About</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+    </div>
+  </div>
+</footer>
+
 <script src="js/site.js"></script>
-<script src="js/projects.js"></script>
 </body>
 </html>

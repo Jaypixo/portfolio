@@ -1,95 +1,67 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>blog - jaypix.dev</title>
-<link rel="icon" type="image/png" href="https://jaypix.dev/Public/Jaylogo.png">
-
-<!-- Social Media Embeds -->
-<meta property="og:title" content="Jaypix | Developer & Tinkerer">
-<meta property="og:description" content="I build things that exist and occasionally make sense. Professional tab hoarder and code breaker.">
-<meta property="og:image" content="https://jaypix.dev/Public/EmbedLogo.png">
-<meta property="og:url" content="https://jaypix.dev/blog.html">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#c7522a">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Jaypix</title>
+<meta name="description" content="Thoughts, writeups, and dev notes from Jaypix.">
+<link rel="icon" type="image/png" href="assets/logo-black.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
-  <div class="torn-top"></div>
-  <div class="layout">
+<div class="torn-top"></div>
 
-    <!-- ─── SIDEBAR ─── -->
-    <aside class="sidebar">
-      <div class="sidebar-top">
-
-        <!-- Logo replacing the circle avatar -->
-        <div class="logo-area">
-          <img src="https://jaypix.dev/Public/Jaylogo.png" alt="Jaypix logo" class="site-logo" id="logoBtn" title="jaypix.dev">
-        </div>
-
-        <div class="name-block">
-          <div class="name">Jaypix</div>
-          <div class="handle">@<span>jaypixo</span> · jaypix.dev</div>
-          <div class="status-indicator"><div class="dot"></div><span>building · online</span></div>
-        </div>
-
-        <nav>
-          <ul class="sidebar-nav">
-            <li><a href="index.html" class="nav-link"><span class="icon">~/</span> home</a></li>
-            <li><a href="about.html" class="nav-link"><span class="icon">./</span> about.txt</a></li>
-            <li><a href="projects.html" class="nav-link"><span class="icon">_</span> projects/</a></li>
-            <li><a href="blog.html" class="nav-link active-nav"><span class="icon">·</span> blog</a></li>
-            <li><a href="log.html" class="nav-link"><span class="icon">$</span> devlog</a></li>
-            <li><a href="contact.html" class="nav-link"><span class="icon">@</span> contact</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="sidebar-links">
-        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="toggle dark mode">
-          <span class="toggle-icon" id="themeIcon">☽</span>
-          <span id="themeLabel">dark mode</span>
-        </button>
-        <a href="https://www.youtube.com/@Jaypixo" target="_blank" rel="noopener" class="pill-link yt">▶ youtube · @jaypixo</a>
-        <a href="https://github.com/Jaypixo" target="_blank" rel="noopener" class="pill-link gh">◆ github · jaypixo</a>
-        <a href="https://open.spotify.com/user/31vh246bkah45yitfqgczl4i25bq" target="_blank" rel="noopener" class="pill-link sp">♫ spotify · jaypix</a>
-        <a href="https://x.com/jaypixoo" target="_blank" rel="noopener" class="pill-link tw">✕ x · @jaypixoo</a>
-      </div>
-    </aside>
-
-    <!-- ─── MAIN ─── -->
-    <main class="main">
-      <div class="tabs">
-        <a href="index.html" class="tab">home</a>
-        <a href="about.html" class="tab">about.txt</a>
-        <a href="projects.html" class="tab">projects/</a>
-        <a href="blog.html" class="tab active">blog</a>
-        <a href="log.html" class="tab">devlog</a>
-        <a href="contact.html" class="tab">contact</a>
-      </div>
-
-      <div style="padding-top: 1rem;">
-        <div class="section-label">blog</div>
-        <p style="font-size: 12px; color: var(--smudge); margin-bottom: 1.5rem;">thoughts, rants, and occasional wisdom. <a href="admin.html" class="admin-link">[admin]</a></p>
-        <div class="blog-controls">
-          <input type="search" id="blog-search" class="blog-search" placeholder="search posts...">
-          <div id="blog-tags" class="blog-tags"></div>
-        </div>
-        <div id="blog-posts" class="blog-list">
-          <p class="blog-loading">loading posts...</p>
-        </div>
-      </div>
-    </main>
+<nav>
+  <div class="container">
+    <a href="index.html" class="nav-brand"><img src="assets/logo.png" alt=""> Jaypix</a>
+    <div class="nav-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html" class="active">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+      <a href="jaypixos.html" class="cta">JaypixOS →</a>
+      <button class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
   </div>
-</div>
+</nav>
 
-<div class="toast-container" id="toastContainer"></div>
+<header class="hero" style="padding-bottom: 40px;">
+  <div class="container">
+    <span class="kicker">Blog</span>
+    <h1>Writeups, dev notes, and whatever else.</h1>
+    <p class="lede">Newest first. <a href="admin.html" class="blog-admin-link">[admin]</a></p>
+  </div>
+</header>
+
+<section style="border-top: none; padding-top: 0;">
+  <div class="container">
+    <div class="blog-toolbar">
+      <input type="search" id="blog-search" class="blog-search" placeholder="Search posts…" aria-label="Search posts">
+      <div class="tag-chips" id="blog-tag-chips"></div>
+    </div>
+    <div id="blog-status" class="blog-empty" style="display:none;"></div>
+    <div id="blog-grid" class="grid blog-grid"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-brand"><img src="assets/logo.png" alt=""> Jaypix</div>
+    <div class="foot-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+    </div>
+  </div>
+</footer>
+
 <script src="js/site.js"></script>
-<script src="js/markdown.js"></script>
 <script src="js/blog.js"></script>
 </body>
 </html>

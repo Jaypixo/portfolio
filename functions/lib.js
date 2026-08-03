@@ -12,15 +12,11 @@ export function errorResponse(message, status = 400) {
   return jsonResponse({ error: message }, status);
 }
 
-function parseAuthToken(request) {
-  const header = request.headers.get('Authorization') || '';
-  const [type, token] = header.split(' ');
-  return type === 'Bearer' ? token : null;
-}
-
 function toBase64Url(buffer) {
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
-  return base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
 function fromBase64Url(str) {
@@ -40,8 +36,7 @@ async function hmac(secret, data) {
     false,
     ['sign']
   );
-  const signature = await crypto.subtle.sign('HMAC', key, textEncoder.encode(data));
-  return new Uint8Array(signature);
+  return crypto.subtle.sign('HMAC', key, textEncoder.encode(data));
 }
 
 function equalUint8(a, b) {
@@ -51,15 +46,12 @@ function equalUint8(a, b) {
   return result === 0;
 }
 
-// Admin sessions last 12 hours before requiring a fresh login.
-export const TOKEN_TTL_MS = 1000 * 60 * 60 * 12;
-
-export function createToken(payload, secret) {
+export async function createToken(payload, secret) {
   const header = { alg: 'HS256', typ: 'JWT' };
   const encodedHeader = toBase64Url(textEncoder.encode(JSON.stringify(header)));
   const encodedPayload = toBase64Url(textEncoder.encode(JSON.stringify(payload)));
-  return hmac(secret, `${encodedHeader}.${encodedPayload}`)
-    .then(signature => `${encodedHeader}.${encodedPayload}.${toBase64Url(signature)}`);
+  const signature = await hmac(secret, `${encodedHeader}.${encodedPayload}`);
+  return `${encodedHeader}.${encodedPayload}.${toBase64Url(signature)}`;
 }
 
 export async function verifyToken(token, secret) {
@@ -67,12 +59,27 @@ export async function verifyToken(token, secret) {
   const parts = token.split('.');
   if (parts.length !== 3) return null;
   const [encodedHeader, encodedPayload, encodedSignature] = parts;
-  const signature = fromBase64Url(encodedSignature);
-  const expected = await hmac(secret, `${encodedHeader}.${encodedPayload}`);
+  let signature;
+  try {
+    signature = fromBase64Url(encodedSignature);
+  } catch {
+    return null;
+  }
+  const expected = new Uint8Array(await hmac(secret, `${encodedHeader}.${encodedPayload}`));
   if (!equalUint8(signature, expected)) return null;
-  const payload = JSON.parse(textDecoder.decode(fromBase64Url(encodedPayload)));
-  if (payload.exp && Date.now() > payload.exp) return null;
-  return payload;
+  try {
+    const payload = JSON.parse(textDecoder.decode(fromBase64Url(encodedPayload)));
+    if (payload.exp && Date.now() > payload.exp) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+function parseAuthToken(request) {
+  const header = request.headers.get('Authorization') || '';
+  const [type, token] = header.split(' ');
+  return type === 'Bearer' ? token : null;
 }
 
 export async function requireAdmin(request, env) {
@@ -84,62 +91,60 @@ export async function requireAdmin(request, env) {
   return payload;
 }
 
-// ─── POST HELPERS ───
-
-export function slugify(text) {
-  return (text || '')
-    .toString()
+export function slugify(input) {
+  return String(input || '')
     .toLowerCase()
     .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 96);
 }
 
-// Appends -2, -3, ... until the slug is unique among the other posts.
-export function uniqueSlug(base, posts, ignoreId) {
-  const slug = base || 'post';
-  const taken = new Set(posts.filter(p => p.id !== ignoreId).map(p => p.slug));
-  if (!taken.has(slug)) return slug;
-  let n = 2;
-  while (taken.has(`${slug}-${n}`)) n++;
-  return `${slug}-${n}`;
-}
+const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-// Fills in defaults for posts written before tags/slug/published existed.
-export function normalizePost(post) {
-  const date = post.date || new Date().toISOString();
-  const title = (post.title || '').toString().trim();
-  return {
-    id: post.id,
-    slug: post.slug || slugify(title) || String(post.id),
-    title,
-    content: (post.content || '').toString(),
-    tags: Array.isArray(post.tags) ? post.tags.map(t => String(t).trim()).filter(Boolean) : [],
-    published: post.published !== false,
-    date,
-    updated: post.updated || date
-  };
-}
-
-export function sortPosts(posts) {
-  return [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+export function isValidSlug(slug) {
+  return typeof slug === 'string' && slug.length > 0 && slug.length <= 96 && SLUG_RE.test(slug);
 }
 
 export async function getPosts(env) {
   if (!env.BLOG) return [];
-  try {
-    const posts = await env.BLOG.get('posts', 'json');
-    return Array.isArray(posts) ? posts.map(normalizePost) : [];
-  } catch (error) {
-    console.error('KV read error:', error);
-    return [];
-  }
+  const posts = await env.BLOG.get('posts', 'json');
+  return Array.isArray(posts) ? posts : [];
 }
 
 export async function savePosts(env, posts) {
-  if (!env.BLOG) throw new Error('KV binding not configured');
   await env.BLOG.put('posts', JSON.stringify(posts));
+}
+
+export function sortPosts(posts) {
+  return [...posts].sort((a, b) => {
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
+}
+
+export function publicView(post) {
+  return post.published ? post : null;
+}
+
+export function normalizeTags(input) {
+  if (!Array.isArray(input)) return [];
+  const seen = new Set();
+  const tags = [];
+  for (const raw of input) {
+    const tag = String(raw || '').trim().toLowerCase().slice(0, 32);
+    if (!tag || seen.has(tag)) continue;
+    seen.add(tag);
+    tags.push(tag);
+  }
+  return tags.slice(0, 12);
+}
+
+export function normalizeCoverImage(input) {
+  if (typeof input !== 'string') return '';
+  const trimmed = input.trim();
+  if (!trimmed) return '';
+  if (!/^https?:\/\//i.test(trimmed)) return '';
+  return trimmed.slice(0, 2048);
 }

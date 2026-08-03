@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JaypixOS — an Arch-based desktop, made to just work</title>
+<meta name="description" content="JaypixOS is an Arch Linux-based desktop OS with a from-scratch installer (jinstall), its own package manager (jpkg), and Cloudflare-powered infrastructure.">
+<link rel="icon" type="image/png" href="assets/logo-black.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="torn-top"></div>
+
+<nav>
+  <div class="container">
+    <a href="index.html" class="nav-brand"><img src="assets/logo.png" alt=""> Jaypix</a>
+    <div class="nav-links">
+      <a href="projects.html">Projects</a>
+      <a href="jaypixos.html" class="active">JaypixOS</a>
+      <a href="docs.html">Docs</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+      <a href="about.html">About</a>
+      <a href="docs.html#installing" class="cta">Get JaypixOS</a>
+      <button class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <span class="kicker">Project — Operating System</span>
+    <h1>Arch Linux, minus the <em>assembly required</em>.</h1>
+    <p class="lede">JaypixOS is a KDE Plasma desktop built on Arch — with its own installer, its own package manager, and its own infrastructure, wired together from the first boot instead of left as homework.</p>
+    <div class="hero-actions">
+      <a href="docs.html#installing" class="btn btn-primary">Download the ISO</a>
+      <a href="docs.html" class="btn btn-ghost">Read the docs</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="container">
+    <div class="terminal" style="max-width: 640px;">
+      <div class="terminal-bar"><span></span><span></span><span></span></div>
+      <div class="terminal-body">
+        <div class="line"><span class="prompt">root@jaypixos</span> <span class="out">~</span> # jinstall --fast</div>
+        <div class="line comment"># sane defaults for everything except what actually needs your input</div>
+        <div class="line out">Only one disk found, using it: /dev/vda (256 GiB)</div>
+        <div class="line out">Hostname [jaypixos]: </div>
+        <div class="line out">Username [jaypix]: </div>
+        <div class="line out">Password: ********</div>
+        <div class="line"><span class="prompt">Starting install</span><span class="out"> — Btrfs, KDE Plasma, Cloudflare DNS + NTP, done in one pass.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="section-head">
+      <span class="kicker">Under the hood</span>
+      <h2>Everything an install needs, nothing it doesn't</h2>
+      <p>Arch's package ecosystem, without leaving you to assemble the rest yourself.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">Installer</span>
+        <h3>jinstall, not archinstall</h3>
+        <p>A ground-up installer with two modes: <code>--fast</code> for a disk and a password, or a full guided menu for everyone else. No stock Arch branding, no leftovers.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Packages</span>
+        <h3>jpkg</h3>
+        <p>A friendlier front end over pacman and the AUR — search, install, rollback, and orphan cleanup in commands that read like what they do.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Infrastructure</span>
+        <h3>Cloudflare-backed</h3>
+        <p>DNS and time sync through 1.1.1.1 by default, and JPN — JaypixOS's own package repo — runs on Workers, D1, and R2.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Desktop</span>
+        <h3>KDE Plasma, ready to use</h3>
+        <p>A terminal, a working network stack, and a desktop that's usable the moment you log in — not after an afternoon of post-install config.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Filesystem</span>
+        <h3>Btrfs by default</h3>
+        <p>Subvolume layout out of the box (<code>@</code>, <code>@home</code>, <code>@log</code>, <code>@pkg</code>), so snapshots and rollbacks are there when you need them.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Compatibility</span>
+        <h3>Still just Arch</h3>
+        <p>Full core/extra compatibility. Nothing about the package format or dependency resolution is reinvented — JaypixOS adds to Arch, it doesn't fork away from it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="jpn">
+  <div class="container">
+    <div class="split">
+      <div>
+        <span class="kicker">JPN</span>
+        <h2>A package repo that runs entirely on Cloudflare's edge</h2>
+        <p>JPN hosts JaypixOS-specific packages — starting with jpkg itself — served from R2 and indexed in D1, in front of a Worker at <code>jpn.jaypix.dev</code>. No origin server, no single region.</p>
+        <ul>
+          <li>Same repo/package format as core and extra — jpkg and pacman both just work</li>
+          <li>Signed packages, built in clean, ephemeral containers</li>
+          <li>Globally distributed by default, since it's Cloudflare's network doing the serving</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin: 0;">
+        <div class="terminal-bar"><span></span><span></span><span></span></div>
+        <div class="terminal-body">
+          <div class="line"><span class="prompt">~</span> # jpkg install jpkg</div>
+          <div class="line out">resolving dependencies...</div>
+          <div class="line out">jpn/jpkg  0.1.0-1   1.4 MiB</div>
+          <div class="line out">:: Proceed with installation? [Y/n]</div>
+          <div class="line comment"># fetched straight from jpn.jaypix.dev</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-brand"><img src="assets/logo.png" alt=""> JaypixOS, by Jaypix</div>
+    <div class="foot-links">
+      <a href="docs.html">Docs</a>
+      <a href="https://jpn.jaypix.dev" target="_blank" rel="noopener">JPN</a>
+      <a href="projects.html">Other projects</a>
+      <a href="blog.html">Blog</a>
+      <a href="commissions.html">Commissions</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/site.js"></script>
+</body>
+</html>

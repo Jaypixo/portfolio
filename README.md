@@ -1,91 +1,42 @@
-# Portfolio Blog with Cloudflare Pages Backend
+# Jaypix portfolio
 
-This project is a static portfolio site with a Cloudflare Pages Functions backend for secure blog administration.
+Static site (Cloudflare Pages) with a small blog + admin backed by Pages Functions and KV.
 
-## How it works
+## Blog backend setup
 
-- `blog.html` lists posts and `post.html` renders a single post, both via `/api/posts`
-- `admin.html` logs in via `/api/login` and manages posts through the REST API below
-- `/api/posts*` reads from and writes to **Cloudflare KV** (not GitHub)
-- Authentication and secrets are stored in Cloudflare Pages environment variables
+The blog (`blog.html`, `post.html`) and admin editor (`admin.html`) need a KV namespace
+and two environment variables configured on the Cloudflare Pages project before
+`/api/*` will work.
 
-## Required Cloudflare Pages setup
+### 1. Create a KV namespace
 
-### 1. Create a KV Namespace
+Cloudflare Dashboard → **Workers & Pages** → **KV** → **Create a namespace** → name it `BLOG`.
 
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages**
-2. Click **KV** in the sidebar
-3. Click **Create a namespace**
-4. Name it: `BLOG`
-5. Click **Create**
+### 2. Bind it to the Pages project
 
-### 2. Bind KV to your Pages project
+Pages project → **Settings** → **Functions** → **KV namespace bindings** → **Add binding**:
+- Variable name: `BLOG`
+- Namespace: `BLOG`
 
-1. Go to your **Pages project** (portfolio)
-2. **Settings** → **Functions**
-3. Under **KV namespace bindings**, click **Add binding**
-4. **Variable name**: `BLOG`
-5. **Namespace**: select `BLOG` from the dropdown
-6. Click **Save**
+### 3. Set environment variables
 
-### 3. Add environment variables
-
-In **Settings** → **Environment variables**, add:
+Pages project → **Settings** → **Environment variables**:
 
 | Name | Value |
-|------|-------|
-| `ADMIN_PASSWORD` | Your secret password |
-| `ADMIN_TOKEN_SECRET` | Random 32+ char string |
+|---|---|
+| `ADMIN_PASSWORD` | The password used to log into `/admin.html` |
+| `ADMIN_TOKEN_SECRET` | A random 32+ character string (signs the admin session token) |
 
 ### 4. Redeploy
 
-Click **Retry deployment** on your latest deployment to apply the KV binding.
+Retry the latest deployment so the new binding/variables take effect.
 
----
+## How it works
 
-## API reference
-
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| GET | `/api/posts` | optional | List posts, sorted newest first. Drafts are only included when an admin token is sent. |
-| POST | `/api/posts` | admin | Create a post. Body: `{ title, content, slug?, tags?, published? }` |
-| GET | `/api/posts/:idOrSlug` | optional | Fetch a single post by id or slug. Drafts require an admin token. |
-| PUT | `/api/posts/:id` | admin | Update a post. Any subset of `{ title, content, slug, tags, published }`. |
-| DELETE | `/api/posts/:id` | admin | Delete a post. |
-| POST | `/api/login` | — | Body: `{ password }` → `{ token, exp }`. Token is a 12-hour HMAC-signed session. |
-
-Posts are stored as a single JSON array under the `posts` key in the `BLOG` KV namespace. Each post has:
-
-```json
-{
-  "id": 1700000000000,
-  "slug": "my-first-post",
-  "title": "My First Post",
-  "content": "Markdown content...",
-  "tags": ["dev", "life"],
-  "published": true,
-  "date": "2024-01-01T00:00:00.000Z",
-  "updated": "2024-01-01T00:00:00.000Z"
-}
-```
-
-`slug`, `tags`, `published`, and `updated` are filled in automatically for older posts that predate these fields.
-
----
-
-## Admin usage
-
-1. Visit `admin.html` and enter `ADMIN_PASSWORD`
-2. Click **+ new post**, write markdown with a live preview, add tags, and toggle **published**
-3. Every save/edit/delete/publish action writes straight to Cloudflare KV — there's no separate "save everything" step
-
-The blog list (`blog.html`) supports searching and filtering by tag. Each post page (`post.html`) shows reading time, tags, and links to the previous/next post.
-
----
-
-## Notes
-
-- Posts are stored in Cloudflare KV, not in GitHub — no commits
-- The blog is read-only for public visitors; drafts (`published: false`) never appear on `blog.html` or `post.html` for non-admins
-- Only authenticated admins can create/edit/delete posts or see drafts
-- KV is replicated globally on Cloudflare's network, so posts load fast everywhere
+- Posts are stored as a single JSON array under the KV key `posts`.
+- `GET /api/posts` returns published posts only unless called with a valid admin
+  bearer token, in which case it returns everything (including drafts).
+- `POST /api/posts`, `PUT /api/posts/:slug`, `DELETE /api/posts/:slug` all require
+  the admin bearer token issued by `POST /api/login`.
+- Markdown is rendered client-side with [Remarker](https://remarkerwebsite.pages.dev/remarker.js),
+  loaded via `<script>` tag on `admin.html` (live preview) and `post.html` (published posts).
