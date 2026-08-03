@@ -41,7 +41,12 @@
   function renderMarkdown(markdown) {
     var engine = window.remarker || window.marked;
     if (!engine) return '<p>' + escapeHtml(markdown) + '</p>';
-    return typeof engine.parse === 'function' ? engine.parse(markdown) : engine(markdown);
+    try {
+      return typeof engine.parse === 'function' ? engine.parse(markdown) : engine(markdown);
+    } catch (err) {
+      console.error('Markdown preview failed:', err);
+      return '<p style="color:var(--red);">Preview failed to render (this does not affect saving).</p>';
+    }
   }
 
   function plainExcerpt(markdown, maxLen) {
@@ -291,6 +296,7 @@
   function openEditor() {
     el.editorEmpty.style.display = 'none';
     el.editorForm.style.display = 'block';
+    el.editorForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function selectPost(id) {

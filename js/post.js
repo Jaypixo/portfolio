@@ -28,7 +28,12 @@
   function renderMarkdown(markdown) {
     var engine = window.remarker || window.marked;
     if (!engine) return '<p>' + escapeHtml(markdown) + '</p>';
-    return typeof engine.parse === 'function' ? engine.parse(markdown) : engine(markdown);
+    try {
+      return typeof engine.parse === 'function' ? engine.parse(markdown) : engine(markdown);
+    } catch (err) {
+      console.error('Markdown render failed:', err);
+      return '<p>' + escapeHtml(markdown) + '</p>';
+    }
   }
 
   function showError(message) {
