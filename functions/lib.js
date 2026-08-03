@@ -107,10 +107,70 @@ export function isValidSlug(slug) {
   return typeof slug === 'string' && slug.length > 0 && slug.length <= 96 && SLUG_RE.test(slug);
 }
 
+function deriveExcerpt(text, maxLen = 300) {
+  const plain = String(text || '')
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/!\[([^\]]*)]\(([^)]+)\)/g, '$1')
+    .replace(/\[([^\]]+)]\(([^)]+)\)/g, '$1')
+    .replace(/[#>*`_~\-+=|]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return plain.length <= maxLen ? plain : plain.slice(0, maxLen).trim() + '…';
+}
+
+function isLegacyPost(post) {
+  return typeof post.id !== 'string' || typeof post.slug !== 'string' || !post.slug;
+}
+
+function normalizeLegacyPost(post, existingSlugs) {
+  if (!isLegacyPost(post)) return post;
+
+  const id = typeof post.id === 'string' ? post.id : String(post.id);
+  const body = typeof post.body === 'string' ? post.body : (typeof post.content === 'string' ? post.content : '');
+  const baseSlug = slugify(post.title || id) || `post-${id}`;
+  let slug = baseSlug;
+  let n = 2;
+  while (existingSlugs.has(slug)) {
+    slug = `${baseSlug}-${n}`;
+    n += 1;
+  }
+  existingSlugs.add(slug);
+
+  const createdAt = post.createdAt || post.date || new Date().toISOString();
+
+  return {
+    id,
+    title: post.title || 'Untitled',
+    slug,
+    excerpt: typeof post.excerpt === 'string' && post.excerpt ? post.excerpt : deriveExcerpt(body),
+    body,
+    published: typeof post.published === 'boolean' ? post.published : true,
+    featured: Boolean(post.featured),
+    tags: normalizeTags(post.tags),
+    coverImage: normalizeCoverImage(post.coverImage),
+    createdAt,
+    updatedAt: post.updatedAt || createdAt
+  };
+}
+
 export async function getPosts(env) {
   if (!env.BLOG) return [];
-  const posts = await env.BLOG.get('posts', 'json');
-  return Array.isArray(posts) ? posts : [];
+  const raw = await env.BLOG.get('posts', 'json');
+  const posts = Array.isArray(raw) ? raw : [];
+  if (!posts.length) return posts;
+
+  const existingSlugs = new Set(posts.filter(p => typeof p.slug === 'string' && p.slug).map(p => p.slug));
+  let migrated = false;
+  const normalized = posts.map(post => {
+    if (isLegacyPost(post)) migrated = true;
+    return normalizeLegacyPost(post, existingSlugs);
+  });
+
+  if (migrated) {
+    await savePosts(env, normalized);
+  }
+
+  return normalized;
 }
 
 export async function savePosts(env, posts) {
